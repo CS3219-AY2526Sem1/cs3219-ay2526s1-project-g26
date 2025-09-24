@@ -1,4 +1,4 @@
-name: Lint & Prettier Check for Frontend
+name: Lint & Prettier Check
 
 on:
   push:
