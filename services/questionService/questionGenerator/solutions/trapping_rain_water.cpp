@@ -43,5 +43,7 @@ int main()
     {
         cin >> height[i];
     }
+    int result = trap(height);
+    cout << result << endl;
     return 0;
 }

@@ -24,7 +24,8 @@ int main()
 
         if (nums[mid] == target)
         {
-            return mid;
+            cout << mid << endl;
+            return 0;
         }
         else if (nums[mid] > target)
         {
