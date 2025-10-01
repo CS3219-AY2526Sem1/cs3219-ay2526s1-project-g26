@@ -18,10 +18,12 @@ export const createUser = async (
     let emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
     let passwordRegex = /^(?=.*[a-z].*)(?=.*[A-Z].*)(?=.*\d.*)(?=.*[!-,:-@[-`{-~].*)[!-~]{8,}$/;
 
-    if (!email || !emailRegex.test(email) ||
-    !password || !passwordRegex.test(password)) {
-      throw new AppError('Invalid email or password, please apply validation before sending', 400)
-  }
+    if (!email || !emailRegex.test(email) 
+      || !password || !passwordRegex.test(password)) {
+      throw new AppError(
+        'Invalid email or password, please apply validation before sending',
+         400)
+    }
 
     const result = await pool.query<User>(
       `INSERT INTO users (email, password_hash, full_name, role)
