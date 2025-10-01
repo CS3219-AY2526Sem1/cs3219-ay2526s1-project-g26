@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   frontend:
     image: zengfu0307/peerprep-frontend:latest
