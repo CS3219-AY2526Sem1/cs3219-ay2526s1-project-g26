@@ -11,7 +11,7 @@
     }
   ],
   "paths": {
-    "/user/register": {
+    "/user/auth/register": {
       "post": {
         "tags": [
           "UserService"
@@ -109,7 +109,7 @@
         }
       }
     },
-    "/user/login": {
+    "/user/auth/login": {
       "post": {
         "tags": [
           "UserService"
@@ -207,7 +207,7 @@
         }
       }
     },
-    "/user/verify-token": {
+    "/user/auth/verify-token": {
       "post": {
         "tags": [
           "UserService"
