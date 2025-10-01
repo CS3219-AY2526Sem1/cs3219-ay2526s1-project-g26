@@ -9,5 +9,4 @@ COPY tsconfig.json ./
 
 EXPOSE 4010
 
-# Run with hot-reload
 CMD ["npm", "run", "dev"]
