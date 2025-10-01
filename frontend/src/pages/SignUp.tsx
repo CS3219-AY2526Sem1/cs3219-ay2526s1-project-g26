@@ -41,14 +41,15 @@ const registerSchema = yup.object({
     .test(
       'password-strength',
       'Password must contain at least 1 uppercase, lowercase, number, and special character',
-      value => {
+      (value) => {
         const hasUpperCase = /[A-Z]/.test(value)
         const hasLowerCase = /[a-z]/.test(value)
         const hasNumber = /[0-9]/.test(value)
         // Space not included in special characters!
         const hasASCIISpecial = /[!-,:-@[-`{-~]/.test(value)
         return hasUpperCase && hasLowerCase && hasNumber && hasASCIISpecial
-      })
+      }
+    )
     .required('Password is required'),
   confirmPassword: yup
     .string()
@@ -97,7 +98,7 @@ const SignUp = () => {
       } else if (err instanceof yup.ValidationError) {
         // just catch the error here, nothing needs to be done
       }
-      console.log(err);
+      console.log(err)
     }
   }
 
