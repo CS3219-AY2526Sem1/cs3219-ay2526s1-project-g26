@@ -1,0 +1,138 @@
+[
+  {
+    "title": "Two Sum",
+    "description": "Given an array of integers `nums` of length `n`, and an integer `target`, return the smallest indices of the two numbers such that they add up to target.\n\nYou may not use the same element twice.",
+    "difficulty_id": 1,
+    "categories": [1, 9, 10],
+    "input": "The first line contains two integers `n` and `target`. The second line contains `n` integers giving the elements in `nums`.",
+    "output": "Two integers that are the smallest indices. Output `-1 -1` if there no answer.",
+    "examples": [
+      { "input": "4 9\n2 7 11 15", "output": "0 1" },
+      { "input": "3 6\n3 2 4", "output": "1 2" }
+    ],
+    "constraints": [],
+    "hints": [
+      "A really brute force way would be to search for all possible pairs of numbers but that would be too slow. Again, it is best to try out brute force solutions just for completeness. It is from these brute force solutions that you can come up with optimizations."
+    ],
+    "_reference": "https://leetcode.com/problems/two-sum/"
+  },
+  {
+    "title": "Kth Largest Element in an Array",
+    "description": "Given an integer array `nums` of length `n`, and an integer `k`, return the `kth` largest element in the array.",
+    "difficulty_id": 2,
+    "categories": [1, 6],
+    "input": "The first line contains two integers `n` and `k`. The second line contains `n` integers giving the elements in `nums`.",
+    "output": "An integer that is the `kth` largest element in the array.",
+    "examples": [
+      { "input": "6 2\n3 2 1 5 6 4", "output": "5" },
+      { "input": "9 4\n3 2 3 1 2 4 5 5 6", "output": "4" }
+    ],
+    "constraints": [],
+    "hints": [],
+    "_reference": "https://leetcode.com/problems/kth-largest-element-in-an-array/description/"
+  },
+  {
+    "title": "Longest Palindrome Substring",
+    "description": "Given a string `s`, return the longest palindrome substring in `s`.\n\nA string is a palindrome when it reads the same backward as forward.\n\nIf there are multiple answers, return the substring with the smallest indices.",
+    "difficulty_id": 2,
+    "categories": [2, 7],
+    "input": "A single string `s`.",
+    "output": "A single string that is the longest palindrome substring.",
+    "examples": [
+      {
+        "input": "babad",
+        "output": "bab"
+      },
+      {
+        "input": "cbbd",
+        "output": "bb"
+      }
+    ],
+    "constraints": ["`s` contains only digits and English letters."],
+    "hints": [],
+    "_reference": "https://leetcode.com/problems/longest-palindromic-substring/description/"
+  },
+  {
+    "title": "Search Insert Position",
+    "description": "Given a sorted array of distinct integers and a target value, return the index if the target is found. If not, return the index where it would be if it were inserted in order.",
+    "difficulty_id": 1,
+    "categories": [1, 8],
+    "input": "The first line contains two integers `n` and `target`. The second line contains `n` integers giving the elements in `nums`.",
+    "output": "An integer - index that would be inserted.",
+    "examples": [
+      { "input": "4 5\n1 3 5 6", "output": "2" },
+      { "input": "4 2\n1 3 5 6", "output": "1" }
+    ],
+    "constraints": [
+      "`nums` contains **distinct** values and are sorted in **ascending** order."
+    ],
+    "hints": [],
+    "_reference": "https://leetcode.com/problems/search-insert-position/description/?envType=problem-list-v2&envId=binary-search"
+  },
+  {
+    "title": "Jump Game",
+    "description": "You are given an integer array `nums` of size `n`. You are initially positioned at the **first index**, and each element in the array represents your maximum jump length at that position.\n\nDetermine whether or not you can reach the last index.",
+    "difficulty_id": 2,
+    "categories": [1, 7, 10],
+    "input": "The first line contains an integer `n` indicating the length of the array `nums`. The next line contains `n` integers, that are elements of `num`.",
+    "output": "Output `YES` if the position is reachable, else output `NO`.",
+    "examples": [
+      { "input": "5\n2 3 1 1 4", "output": "YES" },
+      { "input": "5\n3 2 1 0 4", "output": "NO" }
+    ],
+    "constraints": [],
+    "hints": [],
+    "_reference": "https://leetcode.com/problems/jump-game/description/?envType=problem-list-v2&envId=dynamic-programming"
+  },
+  {
+    "title": "Number of islands",
+    "description": "Given an `m x n` 2D binary grid which represents a map `1`s (land) and `0`s (water), return the number of islands.\n\nAn island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically. You may assume all four edges of the grid are all surrounded by water. ",
+    "difficulty_id": 2,
+    "categories": [1, 5],
+    "input": "The first line contains two integers `m` and `n`. For the next `m` lines, each line contains `n` integers where each integer is either `0` or `1`.",
+    "output": "A single integer that is the number of islands.",
+    "examples": [
+      {
+        "input": "4 5\n1 1 1 1 0\n1 1 0 1 0\n1 1 0 0 0\n0 0 0 0 0",
+        "output": "1"
+      },
+      {
+        "input": "4 5\n1 1 0 0 0 \n1 1 0 0 0\n0 0 1 0 0\n0 0 0 1 1",
+        "output": "3"
+      }
+    ],
+    "constraints": [],
+    "hints": [],
+    "_reference": "https://leetcode.com/problems/number-of-islands/description/?envType=problem-list-v2&envId=depth-first-search"
+  },
+  {
+    "title": "Trapping Rain Water",
+    "description": "Given `n` non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it can trap after raining.",
+    "difficulty_id": 3,
+    "categories": [1, 7],
+    "input": "The first line contains an integer `n`. The next line contains `n` non-negative integers.",
+    "output": "A single integer that is the amount of water it can trap after raining.",
+    "examples": [
+      { "input": "12\n0 1 0 2 1 0 1 3 2 1 2 1", "output": "6" },
+      { "input": "6\n4 2 0 3 2 5", "output": "9" }
+    ],
+    "constraints": [],
+    "hints": [],
+    "_reference": "https://leetcode.com/problems/trapping-rain-water/description/"
+  },
+  {
+    "title": "Exam Manipulation",
+    "description": "A group of students is taking a True/False exam. Each question is worth one point. You, as their teacher, want to make your students look as good as possible—so you cheat! (I know, you would never actually do that.) To cheat, you manipulate the answer key so that the lowest score in the class is as high as possible.\n\nWhat is the best possible lowest score you can achieve?",
+    "difficulty_id": 2,
+    "categories": [1],
+    "input": "The first line contains two integers `n` and `k`, where `n` is the number of students and `k` is the number of True/False questions on the exam.\n\nEach of the next `n` lines contains a string of length `k`, consisting only of upper-case T and upper-case F. This string represents the answers that a student submitted, in the order the questions were given.",
+    "output": "A single integer, the best possible lowest score in the class.",
+    "examples": [
+      { "input": "5 4\nTFTF\nTFFF\nTFTT\nTFFT\nTFTF", "output": "2" },
+      { "input": "3 5\nTFTFT\nTFTFT\nTFTFT", "output": "5" }
+    ],
+    "constraints": ["1 <= n <= 1000", "1 <= k <= 10"],
+    "hints": [],
+    "_reference": "https://open.kattis.com/problems/exammanipulation?tab=metadata"
+  }
+]

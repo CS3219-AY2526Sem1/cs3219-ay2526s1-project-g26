@@ -106,6 +106,13 @@ services:
       - question-service-db-data:/var/lib/postgresql/data
       - ../services/questionService/src/database/init:/docker-entrypoint-initdb.d
 
+  question-service-question-generator:
+    build:
+      context: ../services/questionService/questionGenerator
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ../services/questionService/questionGenerator:/app
+
 volumes:
   user-service-db-data:
   question-service-db-data:
