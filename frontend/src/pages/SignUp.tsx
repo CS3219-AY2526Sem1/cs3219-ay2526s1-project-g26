@@ -37,7 +37,19 @@ const registerSchema = yup.object({
     .required('Email is required'),
   password: yup
     .string()
-    .min(6, 'Password must be at least 6 characters')
+    .min(8, 'Password must be at least 8 characters')
+    .test(
+      'password-strength',
+      'Password must contain at least 1 uppercase, lowercase, number, and special character',
+      (value) => {
+        const hasUpperCase = /[A-Z]/.test(value)
+        const hasLowerCase = /[a-z]/.test(value)
+        const hasNumber = /[0-9]/.test(value)
+        // Space not included in special characters!
+        const hasASCIISpecial = /[!-,:-@[-`{-~]/.test(value)
+        return hasUpperCase && hasLowerCase && hasNumber && hasASCIISpecial
+      }
+    )
     .required('Password is required'),
   confirmPassword: yup
     .string()
@@ -68,6 +80,8 @@ const SignUp = () => {
     try {
       const { confirmPassword: _, ...registerData } = data
 
+      // Ensure malformed input not sent to backend
+      // registerSchema.validate(registerData, { abortEarly: false })
       const result: RegisterResponse = await authService.register(registerData)
 
       localStorage.setItem('authToken', result.token as string)
@@ -81,7 +95,10 @@ const SignUp = () => {
             err.response?.data?.message ||
             'Registration failed. Please try again.',
         })
+      } else if (err instanceof yup.ValidationError) {
+        // just catch the error here, nothing needs to be done
       }
+      console.log(err)
     }
   }
 
