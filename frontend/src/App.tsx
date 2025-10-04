@@ -13,6 +13,8 @@ import LoadingSkeleton from './components/common/LoadingSkeleton.tsx'
 import NavBarLayout from './layouts/NavBarLayout.tsx'
 import Submissions from './pages/Submissions.tsx'
 import Home from './pages/Home.tsx'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
 
 const ProtectedRoutes = () => {
   const dispatch = useDispatch()
@@ -45,6 +47,10 @@ function App() {
         <Route path="/" element={<Navigate to={'home'} />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
+
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        
         <Route element={<ProtectedRoutes />}>
           <Route element={<NavBarLayout />}>
             <Route path="/home" element={<Home />} />

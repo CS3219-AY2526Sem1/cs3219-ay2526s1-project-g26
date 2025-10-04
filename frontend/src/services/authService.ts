@@ -7,6 +7,17 @@ import {
   RegisterResponse,
 } from '../types/auth.ts'
 
+export interface ForgotPasswordResponse {
+  success: boolean
+  message: string
+}
+
+export interface ResetPasswordForm {
+  email: string
+  code: string
+  newPassword: string
+}
+
 export const authService = {
   login: async (credentials: LoginFormData): Promise<LoginResponse> => {
     const response = await axiosInstance.post<LoginResponse>(
@@ -39,6 +50,23 @@ export const authService = {
     )
     return response.data
   },
+
+  forgotPassword: async (email: string): Promise<ForgotPasswordResponse> => {
+    const response = await axiosInstance.post<ForgotPasswordResponse>(
+      API_ENDPOINTS.AUTH.FORGOT_PASSWORD,
+      { email }
+    )
+    return response.data
+  },
+
+  resetPassword: async ({ email, code, newPassword }: ResetPasswordForm): Promise<ForgotPasswordResponse> => {
+    const response = await axiosInstance.post<ForgotPasswordResponse>(
+      API_ENDPOINTS.AUTH.RESET_PASSWORD,
+      { email, code, newPassword }
+    )
+    return response.data
+  },
 }
+
 
 export default authService

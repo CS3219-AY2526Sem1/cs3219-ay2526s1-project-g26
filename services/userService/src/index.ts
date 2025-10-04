@@ -26,6 +26,8 @@ app.use(express.urlencoded({ extended: true }))
 app.use('/auth', authRoute)
 app.use('/profile', profileRoute)
 
+app.use('/user/auth', authRoute)
+
 app.get('/', (_req: Request, res: Response) => {
   res.send('Hello from Express + TypeScript!')
 })
