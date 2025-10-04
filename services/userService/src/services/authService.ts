@@ -81,3 +81,26 @@ export const decodeToken = (token: string): JwtPayload => {
     throw new AppError('Invalid or expired token', 401)
   }
 }
+
+export const requestPasswordReset = async (email: string): Promise<boolean> => {
+  const result = await pool.query('SELECT id FROM users WHERE email = $1', [email])
+  return result.rows.length > 0
+}
+
+export const resetPassword = async (
+  email: string,
+  code: string,
+  newPassword: string
+): Promise<boolean> => {
+  // temporarily the OTP is fixed 1234
+  if (code !== '1234') {
+    return false
+  }
+
+  const hashed = await bcrypt.hash(newPassword, 10)
+  const result = await pool.query(
+    'UPDATE users SET password_hash = $1 WHERE email = $2',
+    [hashed, email]
+  )
+  return result.rowCount > 0
+}
