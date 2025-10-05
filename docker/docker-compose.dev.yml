@@ -113,6 +113,35 @@ services:
     volumes:
       - ../services/questionService/questionGenerator:/app
 
+  # Matching Service
+  matching-service:
+    build:
+      context: ../services/matchingService
+      dockerfile: Dockerfile.dev
+    container_name: matching-service
+    volumes:
+      - ../services/matchingService:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=4020
+      - DATABASE_URL=redis://matching-service-queue:6379
+      - JWT_SECRET=4fa01f2f08d88986b2cc1e0c3d35ae63
+    depends_on:
+      - matching-service-queue
+    ports:
+      - "4020:4020"
+    stdin_open: true
+    tty: true
+
+  matching-service-queue:
+    image: redis:8-alpine
+    container_name: matching-service-queue
+    restart: unless-stopped
+    volumes:
+      - matching-service-queue-data:/data
+
 volumes:
   user-service-db-data:
   question-service-db-data:
+  matching-service-queue-data:
