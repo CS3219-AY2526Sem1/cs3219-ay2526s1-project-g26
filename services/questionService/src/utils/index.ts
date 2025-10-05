@@ -1,9 +1,18 @@
-export const ensureArray = (value: any): any[] => {
-  if (!value) return []
+export const ensureArray = <T = unknown>(
+  value: T | T[] | string | undefined
+): T[] => {
+  if (value == null) return []
+
   if (Array.isArray(value)) return value
+
   if (typeof value === 'string') {
-    const parsed = JSON.parse(value)
-    return Array.isArray(parsed) ? parsed : [parsed]
+    try {
+      const parsed = JSON.parse(value)
+      return Array.isArray(parsed) ? parsed : [parsed]
+    } catch {
+      return [value as unknown as T]
+    }
   }
+
   return [value]
 }

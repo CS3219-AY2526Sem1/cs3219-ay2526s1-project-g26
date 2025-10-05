@@ -42,29 +42,21 @@ router.get('/', authenticate({ shouldBeAdmin: true }), async (req, res) => {
   })
 })
 
-router.post(
-  '/',
-  authenticate({ shouldBeAdmin: true }),
-  async (req, res, next) => {
-    const question = await createQuestion(req.body)
-    res.status(201).json({ success: true, question })
-  }
-)
+router.post('/', authenticate({ shouldBeAdmin: true }), async (req, res) => {
+  const question = await createQuestion(req.body)
+  res.status(201).json({ success: true, question })
+})
 
-router.put(
-  '/:id',
-  authenticate({ shouldBeAdmin: true }),
-  async (req, res, next) => {
-    const id = Number(req.params.id)
-    const question = await updateQuestion(id, req.body)
-    res.json({ success: true, question })
-  }
-)
+router.put('/:id', authenticate({ shouldBeAdmin: true }), async (req, res) => {
+  const id = Number(req.params.id)
+  const question = await updateQuestion(id, req.body)
+  res.json({ success: true, question })
+})
 
 router.delete(
   '/:id',
   authenticate({ shouldBeAdmin: true }),
-  async (req, res, next) => {
+  async (req, res) => {
     const id = Number(req.params.id)
     await deleteQuestion(id)
     res.json({ success: true, message: 'Question deleted' })

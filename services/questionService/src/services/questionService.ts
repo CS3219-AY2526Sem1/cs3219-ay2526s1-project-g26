@@ -80,7 +80,7 @@ export const updateQuestion = async (
     await client.query('BEGIN')
 
     const fields = []
-    const values: any[] = []
+    const values = []
     let idx = 1
 
     if (data.title) {

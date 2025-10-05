@@ -33,12 +33,15 @@ export const authenticate =
       const data = (await res.json()) as SuccessResponse
       req.user = data.user
       next()
-    } catch (err: any) {
-      next(
-        new AppError(
-          err.message ?? 'Authentication failed',
-          err.statusCode ?? 401
-        )
-      )
+    } catch (err) {
+      let statusCode = 401
+      let message = 'Authentication failed'
+
+      if (err instanceof AppError) {
+        message = err.message
+        statusCode = err.statusCode
+      }
+
+      next(new AppError(message, statusCode))
     }
   }
