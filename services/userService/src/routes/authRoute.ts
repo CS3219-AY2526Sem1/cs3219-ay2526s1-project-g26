@@ -25,12 +25,16 @@ router.post('/login', async (req, res, next) => {
   return res.json({ success: true, ...result })
 })
 
-router.post('/verify-token', authenticate, async (req: AuthRequest, res, next) => {
-  const shouldBeAdmin = req.query?.shouldBeAdmin
-  if (shouldBeAdmin === 'true' && req.user?.role != 'admin') {
-    return next(new AppError('You do not have the permission!', 401))
+router.post(
+  '/verify-token',
+  authenticate,
+  async (req: AuthRequest, res, next) => {
+    const shouldBeAdmin = req.query?.shouldBeAdmin
+    if (shouldBeAdmin === 'true' && req.user?.role != 'admin') {
+      return next(new AppError('You do not have the permission!', 401))
+    }
+    return res.json({ success: true, user: req.user })
   }
-  return res.json({ success: true, user: req.user })
-})
+)
 
 export default router
