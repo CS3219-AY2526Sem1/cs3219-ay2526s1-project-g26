@@ -1,28 +1,44 @@
 import { NextFunction, Request, Response } from 'express'
 import { AppError } from '../utils/errors.js'
-import jwt, { JwtPayload } from 'jsonwebtoken'
 import * as Config from '../config/index.js'
+import { User } from '../types/user'
 
-export interface AuthRequest extends Request {
-  user?: JwtPayload
+interface AuthConfig {
+  shouldBeAdmin: boolean
 }
 
-export const authenticate = (
-  req: AuthRequest,
-  _res: Response,
-  next: NextFunction
-) => {
-  const authHeader = req.headers.authorization
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return next(new AppError('Authorization token missing', 401))
-  }
-
-  const token = authHeader.split(' ')[1]
-
-  try {
-    req.user = jwt.verify(token, Config.JWT_SECRET) as JwtPayload
-    next()
-  } catch (err) {
-    next(err)
-  }
+interface SuccessResponse {
+  user: User
+  success: true
 }
+
+export const authenticate =
+  (config?: AuthConfig) =>
+  async (req: Request, _res: Response, next: NextFunction) => {
+    const authHeader = req.headers.authorization
+
+    try {
+      const res = await fetch(
+        `${Config.USER_SERVICE_URL}/auth/verify-token?shouldBeAdmin=${config?.shouldBeAdmin ? 'true' : 'false'}`,
+        {
+          method: 'POST',
+          headers: { authorization: authHeader },
+        }
+      )
+
+      if (!res.ok) {
+        throw new AppError('Unauthorized', res.status)
+      }
+
+      const data = (await res.json()) as SuccessResponse
+      req.user = data.user
+      next()
+    } catch (err: any) {
+      next(
+        new AppError(
+          err.message ?? 'Authentication failed',
+          err.statusCode ?? 401
+        )
+      )
+    }
+  }
