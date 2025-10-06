@@ -13,6 +13,7 @@ import LoadingSkeleton from './components/common/LoadingSkeleton.tsx'
 import NavBarLayout from './layouts/NavBarLayout.tsx'
 import Submissions from './pages/Submissions.tsx'
 import Home from './pages/Home.tsx'
+import Collaboration  from './pages/Collaboration.tsx'
 
 const ProtectedRoutes = () => {
   const dispatch = useDispatch()
@@ -49,6 +50,7 @@ function App() {
           <Route element={<NavBarLayout />}>
             <Route path="/home" element={<Home />} />
             <Route path="/submissions" element={<Submissions />} />
+            <Route path="/collaboration" element={<Collaboration />} />
           </Route>
         </Route>
       </Routes>

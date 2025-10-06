@@ -7,6 +7,10 @@ export const API_ENDPOINTS = {
     REGISTER: '/user/auth/register',
     VERIFY_TOKEN: '/user/auth/verify-token',
   },
+  QUESTION: {
+    MATCH: '/question/match',
+    BY_ID: '/question',
+  },
 } as const
 
 export const HTTP_STATUS = {

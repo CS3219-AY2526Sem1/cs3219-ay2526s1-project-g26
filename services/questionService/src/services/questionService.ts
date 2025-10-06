@@ -33,3 +33,19 @@ export const getMatchingQuestion = async (
   }
   return result.rows[0]
 }
+
+export const getQuestionById = async (id: number): Promise<Question> => {
+  const query = `
+    SELECT q.id, q.title, q.description, d.level AS difficulty, q.constraints, q.examples, q.hints
+    FROM questions q
+    JOIN difficulties d ON q.difficulty_id = d.id
+    WHERE q.id = $1 AND q.is_active = true
+  `
+  const result = await pool.query(query, [id])
+  
+  if (result.rows.length === 0) {
+    throw new AppError('Question not found', 404)
+  }
+  
+  return result.rows[0]
+}

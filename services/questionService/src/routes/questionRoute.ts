@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { getMatchingQuestion } from '../services/questionService.js'
+import { getMatchingQuestion,getQuestionById } from '../services/questionService.js'
 import { authenticate } from '../middleware/auth.js'
 
 const router = Router()
@@ -15,6 +15,12 @@ router.get('/match', authenticate, async (req, res) => {
     difficulty as string,
     categories as string
   )
+  return res.json({ success: true, question })
+})
+
+router.get('/:id', async (req, res) => {
+  const { id } = req.params
+  const question = await getQuestionById(parseInt(id))
   return res.json({ success: true, question })
 })
 
