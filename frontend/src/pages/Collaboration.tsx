@@ -5,7 +5,7 @@ import QuestionPanel from '../components/question/QuestionPanel'
 import { useQuestion } from '../hooks/useQuestion'
 
 const Collaboration = () => {
-  const { question, loading, error, fetchRandomQuestion } = useQuestion()
+  const { question, loading, error, fetchQuestionById } = useQuestion()
   const [leftWidth, setLeftWidth] = useState(() => {
     // 从localStorage读取用户偏好，默认50%
     const saved = localStorage.getItem('collaboration-panel-width')
@@ -14,11 +14,11 @@ const Collaboration = () => {
   const [isDragging, setIsDragging] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
-  // 使用现有的match API加载随机问题
+  // 加载问题（暂时使用固定ID=1）
   useEffect(() => {
-    console.log('Loading random question...')
-    fetchRandomQuestion('Easy') // 加载一个Easy难度的随机问题
-  }, [fetchRandomQuestion])
+    console.log('Loading question with ID: 1...')
+    fetchQuestionById(1)
+  }, [fetchQuestionById])
 
   // 处理鼠标拖动
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
@@ -81,9 +81,9 @@ const Collaboration = () => {
           backgroundColor: 'background.default'
         }}
       >
-        <Typography variant="h6" sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
+        {/* <Typography variant="h6" sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
           Problem {loading && '(Loading...)'} {error && '(Error)'} {question && '(Loaded)'}
-        </Typography>
+        </Typography> */}
         <Box sx={{ flex: 1, overflow: 'hidden', p: 2 }}>
           <QuestionPanel
             question={question || undefined}
@@ -129,9 +129,9 @@ const Collaboration = () => {
           backgroundColor: 'background.default'
         }}
       >
-        <Typography variant="h6" sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
+        {/* <Typography variant="h6" sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
           Code Editor
-        </Typography>
+        </Typography> */}
         <Box sx={{ flex: 1, p: 2 }}>
           <Paper
             elevation={1}

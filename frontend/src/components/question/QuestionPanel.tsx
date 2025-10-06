@@ -192,7 +192,7 @@ const QuestionPanel: React.FC<QuestionPanelProps> = ({
                 <ListItem key={index} sx={{ py: 0.5 }}>
                   <ListItemText
                     primary={
-                      <Typography variant="body2" component="span">
+                      <Typography variant="body1" component="span">
                         • {constraint}
                       </Typography>
                     }
