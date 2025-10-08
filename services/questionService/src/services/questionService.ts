@@ -1,7 +1,7 @@
 import pool from '../database/index.js'
 import { AppError } from '../utils/errors.js'
 import { Question, CreateQuestionInput } from '../models/questionModel.js'
-import { ensureArray } from '../utils'
+import { ensureArray } from '../utils/index.js'
 
 export const getMatchingQuestion = async (
   difficulty: string,
