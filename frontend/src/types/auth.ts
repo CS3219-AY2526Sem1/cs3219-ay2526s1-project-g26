@@ -35,3 +35,17 @@ export interface RegisterResponse {
   message?: string
   user?: UserSlice
 }
+
+export interface UpdateProfileData {
+  id: string
+  email: string
+  full_name: string
+  password: string
+}
+
+export interface UpdateProfileResponse {
+  success: boolean
+  token?: string
+  user?: UserSlice
+  message?: string
+}

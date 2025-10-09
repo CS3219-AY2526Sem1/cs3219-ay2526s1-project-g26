@@ -13,6 +13,7 @@ import LoadingSkeleton from './components/common/LoadingSkeleton.tsx'
 import NavBarLayout from './layouts/NavBarLayout.tsx'
 import Submissions from './pages/Submissions.tsx'
 import Home from './pages/Home.tsx'
+import UpdateProfile from './pages/UpdateProfile.tsx'
 
 const ProtectedRoutes = () => {
   const dispatch = useDispatch()
@@ -51,6 +52,7 @@ function App() {
             <Route path="/submissions" element={<Submissions />} />
           </Route>
         </Route>
+        <Route path="/update-profile" element={<UpdateProfile />} />
       </Routes>
     </Router>
   )

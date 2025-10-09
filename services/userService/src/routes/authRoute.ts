@@ -11,8 +11,8 @@ router.post('/register', async (req, res, next) => {
     return next(new AppError('Email and password are required', 400))
   }
 
-  const user = await createUser(email, password, full_name)
-  return res.json({ success: true, user })
+  const result = await createUser(email, password, full_name)
+  return res.json({ success: true, ...result })
 })
 
 router.post('/login', async (req, res, next) => {

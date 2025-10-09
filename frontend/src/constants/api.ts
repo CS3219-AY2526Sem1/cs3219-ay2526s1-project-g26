@@ -7,6 +7,9 @@ export const API_ENDPOINTS = {
     REGISTER: '/user/auth/register',
     VERIFY_TOKEN: '/user/auth/verify-token',
   },
+  PROFILE: {
+    UPDATE: '/user/profile/update',
+  },
 } as const
 
 export const HTTP_STATUS = {
