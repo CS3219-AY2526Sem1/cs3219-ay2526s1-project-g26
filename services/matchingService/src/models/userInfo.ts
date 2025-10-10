@@ -7,19 +7,23 @@ export interface UserInfo {
 }
 
 // Returns UserInfo if given json data has the correct user fields
-export function getUserInfo(data: any): UserInfo {
+export function getUserInfo(data: unknown): UserInfo {
+  // unknown forces you to check types
   if (
-    typeof data.id === 'string' &&
-    Array.isArray(data.topics) &&
-    Array.isArray(data.difficulty)
+    typeof data === 'object' &&
+    data !== null &&
+    'id' in data &&
+    'topics' in data &&
+    'difficulty' in data &&
+    typeof (data as any).id === 'string' &&
+    Array.isArray((data as any).topics) &&
+    Array.isArray((data as any).difficulty)
   ) {
-    const user: UserInfo = {
-      id: data.id,
-      topics: data.topics,
-      difficulty: data.difficulty,
+    return {
+      id: (data as any).id,
+      topics: (data as any).topics,
+      difficulty: (data as any).difficulty,
     }
-    return user
-  } else {
-    throw new Error('Invalid user data')
   }
+  throw new Error('Invalid user data')
 }
