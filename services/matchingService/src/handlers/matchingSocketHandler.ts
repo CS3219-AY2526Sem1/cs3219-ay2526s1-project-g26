@@ -1,6 +1,7 @@
 import { Server, Socket } from 'socket.io'
 import { joinMatchHandler } from './joinMatchHandler'
 import { cancelMatchHandler } from './cancelMatchHandler'
+import { getUserInfo } from '../models/userInfo'
 
 export function matchingSocketHandler(io: Server): void {
   io.on('connection', (socket: Socket) => {
@@ -8,12 +9,14 @@ export function matchingSocketHandler(io: Server): void {
 
     // Join match handler
     socket.on('joinMatch', async (data) => {
-      await joinMatchHandler(io, socket, data)
+      const userinfo = getUserInfo(data)
+      await joinMatchHandler(io, socket, userinfo)
     })
 
     // Cancel match handler
     socket.on('cancelMatch', async (data) => {
-      await cancelMatchHandler(io, socket, data)
+      const userinfo = getUserInfo(data)
+      await cancelMatchHandler(io, socket, userinfo)
     })
 
     // Disconnect handler

@@ -1,13 +1,14 @@
 import { Server, Socket } from 'socket.io'
 import { UserManager } from '../database/userManager'
+import { UserInfo } from '../models/userInfo'
 
 export async function cancelMatchHandler(
   io: Server,
   socket: Socket,
-  data: any
+  userinfo: UserInfo
 ): Promise<void> {
   console.log('cancelMatch event received')
-  const userId = data.id
+  const userId = userinfo.id
   try {
     await UserManager.deleteUser(userId)
     io.to(socket.id).emit('matchCancelled')

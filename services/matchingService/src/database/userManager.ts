@@ -1,16 +1,16 @@
+import { UserInfo } from '../models/userInfo'
 import redisClient from './redis'
 
 // Stores the information of all users who are currently waiting for a match
 export class UserManager {
   // Store complete user profile
-  static async storeUser(
-    userId: string,
-    userFields: Record<string, string>
-  ): Promise<void> {
-    await redisClient.hSet(`user:${userId}`, userFields)
+  static async storeUser(userId: string, userFields: UserInfo): Promise<void> {
+    await redisClient.hSet(`user:${userId}`, {
+      topics: JSON.stringify(userFields.topics),
+      difficulty: JSON.stringify(userFields.difficulty),
+    })
   }
 
-  // Get specific user field
   static async getSocketId(userId: string): Promise<string | null> {
     return await redisClient.hGet(`user:${userId}`, 'socketId')
   }

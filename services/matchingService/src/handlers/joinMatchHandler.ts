@@ -1,4 +1,5 @@
 import { Server, Socket } from 'socket.io'
+import { UserInfo } from '../models/userInfo'
 
 const stubQuestion = {
   id: 1,
@@ -7,8 +8,10 @@ const stubQuestion = {
   difficulty: 'hard',
 }
 
-const otherUser = {
-  id: 123,
+const otherUser: UserInfo = {
+  id: '123',
+  topics: ['Graph', 'Trees'],
+  difficulty: ['medium', 'hard'],
 }
 
 let isMatch = false // Toggles between true and false for every joinMatch event received
@@ -16,10 +19,10 @@ let isMatch = false // Toggles between true and false for every joinMatch event 
 export async function joinMatchHandler(
   io: Server,
   socket: Socket,
-  data: any
+  userinfo: UserInfo
 ): Promise<void> {
   console.log('joinMatch event received')
-  const userId = data.id
+  const userId = userinfo.id
   console.log(isMatch)
   try {
     if (isMatch) {
