@@ -26,6 +26,7 @@
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.1",
     "redis": "^5.8.3",
+    "socket.io": "^4.8.1",
     "uuid": "^13.0.0",
     "winston": "^3.17.0"
   },

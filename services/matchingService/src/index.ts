@@ -6,12 +6,16 @@ import express from 'express';
 import cors from 'cors'
 import { PORT } from './config/index.js'
 import { getLogger } from './utils/logger.js';
-import matchingRoute from "./routes/matchingRoute.js"
 import morgan from 'morgan';
 import errorHandler from './middleware/errorHandler.js';
+import { createServer } from 'node:http';
+import { Server } from 'socket.io';
+import { matchingSocketHandler } from './handlers/matchingSocketHandler.js';
 
 const logger = getLogger('app')
 const app = express()
+const server = createServer(app);
+const io = new Server(server);
 
 app.use(
   morgan('tiny', {
@@ -22,10 +26,10 @@ app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-app.use('/', matchingRoute)
+matchingSocketHandler(io)
 
 app.use(errorHandler)
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Running on Port ${PORT}`)
 }); 
