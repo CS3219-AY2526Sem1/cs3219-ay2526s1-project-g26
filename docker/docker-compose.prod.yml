@@ -29,8 +29,8 @@ services:
       - NODE_ENV=production
       - PORT=4000
       - DATABASE_URL=postgres://postgres:postgres@user-service-db:5432/users_db
-      - JWT_SECRET=489da4f24460ca1d316d593693f1cab4
-      - JWT_EXPIRES_IN=14d
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN}
     ports:
       - "4000:4000"
 
@@ -54,7 +54,7 @@ services:
       - NODE_ENV=production
       - PORT=4010
       - DATABASE_URL=postgres://postgres:postgres@question-service-db:5432/questions_db
-      - JWT_SECRET=489da4f24460ca1d316d593693f1cab4
+      - USER_SERVICE_URL=${USER_SERVICE_URL}
     ports:
       - "4010:4010"
 

@@ -85,7 +85,7 @@ services:
       - NODE_ENV=development
       - PORT=4010
       - DATABASE_URL=postgresql://postgres:postgres@question-service-db:5432/questions_db
-      - JWT_SECRET=4fa01f2f08d88986b2cc1e0c3d35ae63
+      - USER_SERVICE_URL=http://user-service:4000
     depends_on:
       - question-service-db
     ports:
