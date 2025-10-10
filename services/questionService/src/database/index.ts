@@ -1,11 +1,18 @@
-import { Pool } from 'pg'
-import * as Config from '../config/index.js'
+import { MongoClient, Db } from 'mongodb'
+import { DATABASE_URL } from '../config'
 
-const pool = new Pool({
-  connectionString: Config.DATABASE_URL,
-  max: 20,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
-})
+let db: Db
 
-export default pool
+export const connectDB = async (): Promise<void> => {
+  const client = new MongoClient(DATABASE_URL)
+  await client.connect()
+  db = client.db()
+  console.log('Connected to MongoDB')
+}
+
+export const getDb = (): Db => {
+  if (!db) {
+    throw new Error('Call connectDB before getDb')
+  }
+  return db
+}

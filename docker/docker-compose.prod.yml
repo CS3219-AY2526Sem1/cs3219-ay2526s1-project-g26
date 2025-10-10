@@ -33,6 +33,8 @@ services:
       - JWT_EXPIRES_IN=${JWT_EXPIRES_IN}
     ports:
       - "4000:4000"
+    depends_on:
+      - user_service-db
 
   user-service-db:
     image: postgres:16-alpine
@@ -53,23 +55,21 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=4010
-      - DATABASE_URL=postgres://postgres:postgres@question-service-db:5432/questions_db
+      - DATABASE_URL=mongodb://question-service-db:27017/questions_db
       - USER_SERVICE_URL=${USER_SERVICE_URL}
     ports:
       - "4010:4010"
+    depends_on:
+      - question_service-db
 
   question-service-db:
-    image: postgres:16-alpine
-    container_name: question_service_postgres_prod
+    image: mongo:8.0
+    container_name: question_service_mongo_prod
     restart: unless-stopped
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: questions_db
     volumes:
-      - question-service-pgdata_prod:/var/lib/postgresql/data
-      - ./database/init/questionservice:/docker-entrypoint-initdb.d
+      - question-service-mongodata_prod:/data/db
+      - ../services/questionService/src/database/init:/docker-entrypoint-initdb.d
 
 volumes:
   user-service-pgdata_prod:
-  question-service-pgdata_prod:
+  question-service-mongodata_prod:

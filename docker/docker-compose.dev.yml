@@ -84,7 +84,7 @@ services:
     environment:
       - NODE_ENV=development
       - PORT=4010
-      - DATABASE_URL=postgresql://postgres:postgres@question-service-db:5432/questions_db
+      - DATABASE_URL=mongodb://question-service-db:27017/questions_db
       - USER_SERVICE_URL=http://user-service:4000
     depends_on:
       - question-service-db
@@ -94,16 +94,12 @@ services:
     tty: true
 
   question-service-db:
-    image: postgres:16-alpine
+    image: mongo:8.0
     container_name: question-service-db
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=questions_db
     ports:
-      - "4011:5432"
+      - "4011:27017"
     volumes:
-      - question-service-db-data:/var/lib/postgresql/data
+      - question-service-db-data:/data/db
       - ../services/questionService/src/database/init:/docker-entrypoint-initdb.d
 
   question-service-question-generator:
