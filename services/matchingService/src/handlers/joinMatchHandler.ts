@@ -1,19 +1,40 @@
-import { Server, Socket } from "socket.io";
-import { UserManager } from "../database/userManager";
+import { Server, Socket } from 'socket.io'
 
-export async function joinMatchHandler(io: Server, socket: Socket, data: any): Promise<void> {
-    console.log("joinMatch event received");
-    const userId = data.id
-    try {
-        await UserManager.storeUser(userId, {
-            socketId: socket.id
-        });
-        io.to(socket.id).emit("waitingForMatch");
-    } catch (error) {
-        if (await UserManager.userExist(userId)) {
-            UserManager.deleteUser(userId);
-        }
-        console.error("Join match error: ", error);
-        io.to(socket.id).emit("error", {message: "Failed to join match"});
+const stubQuestion = {
+  id: 1,
+  title: 'stub Question',
+  description: 'yes',
+  difficulty: 'hard',
+}
+
+const otherUser = {
+  id: 123,
+}
+
+let isMatch = false // Toggles between true and false for every joinMatch event received
+
+export async function joinMatchHandler(
+  io: Server,
+  socket: Socket,
+  data: any
+): Promise<void> {
+  console.log('joinMatch event received')
+  const userId = data.id
+  console.log(isMatch)
+  try {
+    if (isMatch) {
+      const response = {
+        user1: userId,
+        user2: otherUser.id,
+        question: stubQuestion,
+      }
+      io.to(socket.id).emit('matchFound', response)
+    } else {
+      io.to(socket.id).emit('waitingForMatch')
     }
+    isMatch = !isMatch
+  } catch (error) {
+    console.error('Join match error: ', error)
+    io.to(socket.id).emit('error', { message: 'Failed to join match' })
+  }
 }
