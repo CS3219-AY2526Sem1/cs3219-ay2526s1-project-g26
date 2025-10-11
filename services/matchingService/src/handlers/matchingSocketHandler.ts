@@ -1,7 +1,7 @@
 import { Server, Socket } from 'socket.io'
-import { joinMatchHandler } from './joinMatchHandler'
-import { cancelMatchHandler } from './cancelMatchHandler'
-import { getUserInfo } from '../models/userInfo'
+import { joinMatchHandler } from './joinMatchHandler.js'
+import { cancelMatchHandler } from './cancelMatchHandler.js'
+import { getUserInfo } from '../models/userInfo.js'
 
 export function matchingSocketHandler(io: Server): void {
   io.on('connection', (socket: Socket) => {

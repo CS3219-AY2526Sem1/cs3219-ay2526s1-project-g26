@@ -126,7 +126,6 @@ services:
       - NODE_ENV=development
       - PORT=4020
       - DATABASE_URL=redis://matching-service-queue:6379
-      - JWT_SECRET=4fa01f2f08d88986b2cc1e0c3d35ae63
     depends_on:
       - matching-service-queue
     ports:
