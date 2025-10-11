@@ -5,4 +5,5 @@ export const TABS = [
     label: 'Submissions',
     id: 'submissions',
   },
+  { pathname: '/match', label: 'Match', id: 'match' },
 ]

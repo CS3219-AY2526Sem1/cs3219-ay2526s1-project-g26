@@ -14,6 +14,7 @@ import NavBarLayout from './layouts/NavBarLayout.tsx'
 import SubmissionsOverview from './pages/SubmissionsOverview.tsx'
 import Home from './pages/Home.tsx'
 import UpdateProfile from './pages/UpdateProfile.tsx'
+import Matching from './pages/Matching.tsx'
 
 const NotificationSnackbar = lazy(
   () => import('./components/common/NotificationSnackbar.tsx')
@@ -45,6 +46,7 @@ const ProtectedRoutes = () => {
 
 function App() {
   return (
+<<<<<<< HEAD
     <>
       <Router>
         <Routes>
@@ -56,6 +58,18 @@ function App() {
               <Route path="/home" element={<Home />} />
               <Route path="/submissions" element={<SubmissionsOverview />} />
             </Route>
+=======
+    <Router>
+      <Routes>
+        <Route path="/" element={<Navigate to={'home'} />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route element={<ProtectedRoutes />}>
+          <Route element={<NavBarLayout />}>
+            <Route path="/home" element={<Home />} />
+            <Route path="/submissions" element={<Submissions />} />
+            <Route path="/matching" element={<Matching />} />
+>>>>>>> 46079b8 (Add Matching Page)
           </Route>
           <Route path="/update-profile" element={<UpdateProfile />} />
         </Routes>
