@@ -1,4 +1,5 @@
-import React, { useDispatch } from 'react-redux'
+import React from 'react'
+import { useDispatch } from 'react-redux'
 import { useForm, Controller, SubmitHandler } from 'react-hook-form'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -32,7 +33,6 @@ const UpdateProfile = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(true)
-  const [userData, setUserData] = useState<UserSlice | null>(null)
 
   const {
     control,
@@ -50,6 +50,7 @@ const UpdateProfile = () => {
     },
   })
 
+  // Not placed under Signup and Home in App.tsx to avoid duplicate work
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -60,8 +61,6 @@ const UpdateProfile = () => {
           // navigate('/login')
           return
         }
-        setUserData(result.user)
-        console.log(result.user)
 
         reset({
           full_name: result.user.full_name || '',
@@ -83,7 +82,7 @@ const UpdateProfile = () => {
   const onSubmit: SubmitHandler<RegisterFormDataClient> = async (data) => {
     try {
       const profileData: UpdateProfileData = {
-        id: userData?.id ?? '',
+        token: localStorage.getItem('authToken') || '',
         email: data.email,
         full_name: data.full_name,
         password: data.password,
@@ -91,8 +90,6 @@ const UpdateProfile = () => {
       const result = await profileService.update(profileData)
       if (result.success) {
         localStorage.setItem('authToken', result.token as string)
-        // Update user data state with new information
-        setUserData(result.user ?? null)
         dispatch(loginSuccess(result.user as UserSlice))
         navigate('/home')
       }

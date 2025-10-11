@@ -37,7 +37,7 @@ export interface RegisterResponse {
 }
 
 export interface UpdateProfileData {
-  id: string
+  token: string
   email: string
   full_name: string
   password: string

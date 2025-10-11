@@ -38,6 +38,10 @@ export const updateUserProfile = async (
       [email, password_hash, full_name, id]
     )
 
+    if (!result) {
+      throw new AppError('User not found', 404)
+    }
+
     const payload = {
       id: result.rows[0].id,
       email: result.rows[0].email,
