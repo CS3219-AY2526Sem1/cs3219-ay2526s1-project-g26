@@ -54,7 +54,7 @@ function App() {
           <Route element={<ProtectedRoutes />}>
             <Route element={<NavBarLayout />}>
               <Route path="/home" element={<Home />} />
-              <Route path="/submissions" element={<Submissions />} />
+              <Route path="/submissions" element={<SubmissionsOverview />} />
             </Route>
           </Route>
           <Route path="/update-profile" element={<UpdateProfile />} />
