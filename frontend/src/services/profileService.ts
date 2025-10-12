@@ -1,16 +1,20 @@
 import axiosInstance from '../utils/axios.ts'
 import { API_ENDPOINTS } from '../constants/api'
-import { UpdateProfileData, UpdateProfileResponse } from '../types/auth.ts'
+import {
+  UpdateProfileData,
+  UserSlice,
+  GetProfileResponse,
+} from '../types/auth.ts'
 
 export const profileService = {
-  update: async (
-    credentials: UpdateProfileData
-  ): Promise<UpdateProfileResponse> => {
-    const response = await axiosInstance.put<UpdateProfileResponse>(
-      API_ENDPOINTS.PROFILE.UPDATE,
-      credentials
+  getUserProfile: async (): Promise<Omit<UserSlice, 'role'>> => {
+    const response = await axiosInstance.get<GetProfileResponse>(
+      API_ENDPOINTS.PROFILE.GET
     )
-    return response.data
+    return response.data.user
+  },
+  update: async (credentials: UpdateProfileData): Promise<void> => {
+    await axiosInstance.put<void>(API_ENDPOINTS.PROFILE.UPDATE, credentials)
   },
 }
 

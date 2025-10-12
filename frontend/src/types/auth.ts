@@ -25,10 +25,6 @@ export interface RegisterFormData {
   full_name: string
 }
 
-export interface RegisterFormDataClient extends RegisterFormData {
-  confirmPassword: string
-}
-
 export interface RegisterResponse {
   success: boolean
   token?: string
@@ -37,15 +33,19 @@ export interface RegisterResponse {
 }
 
 export interface UpdateProfileData {
-  token: string
   email: string
   full_name: string
   password: string
 }
 
-export interface UpdateProfileResponse {
+export interface GetProfileResponse {
   success: boolean
-  token?: string
-  user?: UserSlice
-  message?: string
+  user: Omit<UserSlice, 'role'>
+}
+
+export interface UpdateProfileForm {
+  full_name: string
+  email: string
+  password?: string | undefined
+  confirmPassword: string | undefined
 }

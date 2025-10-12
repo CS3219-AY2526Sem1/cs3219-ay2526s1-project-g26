@@ -1,10 +1,9 @@
 import React from 'react'
-import { useDispatch } from 'react-redux'
-import { useForm, Controller, SubmitHandler } from 'react-hook-form'
+import { useForm, Controller, SubmitHandler, Resolver } from 'react-hook-form'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import {
   Box,
   Card,
@@ -18,19 +17,13 @@ import {
   Link,
 } from '@mui/material'
 import { isAxiosError } from 'axios'
-import { authService } from '../services/authService'
 import { profileService } from '../services/profileService'
 import LoadingSkeleton from '../components/common/LoadingSkeleton.tsx'
-import { loginSuccess } from '../store/slices/userSlice'
-import {
-  RegisterFormDataClient,
-  UpdateProfileData,
-  UserSlice,
-} from '../types/auth'
+import { UpdateProfileData, UpdateProfileForm } from '../types/auth'
 import userSchema from '../utils/userDetailsValidation'
+import useAsyncEffect from '../hooks/useAsyncEffect.ts'
 
 const UpdateProfile = () => {
-  const dispatch = useDispatch()
   const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(true)
 
@@ -40,8 +33,8 @@ const UpdateProfile = () => {
     formState: { errors, isSubmitting },
     setError,
     reset,
-  } = useForm<RegisterFormDataClient>({
-    resolver: yupResolver(userSchema),
+  } = useForm<UpdateProfileForm>({
+    resolver: yupResolver(userSchema) as Resolver<UpdateProfileForm>,
     defaultValues: {
       full_name: '',
       email: '',
@@ -51,48 +44,32 @@ const UpdateProfile = () => {
   })
 
   // Not placed under Signup and Home in App.tsx to avoid duplicate work
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        setIsLoading(true)
-        const result = await authService.verifyToken()
+  useAsyncEffect(async () => {
+    try {
+      setIsLoading(true)
+      const result = await profileService.getUserProfile()
 
-        if (!result || !result.user) {
-          // navigate('/login')
-          return
-        }
-
-        reset({
-          full_name: result.user.full_name || '',
-          email: result.user.email || '',
-          password: '',
-          confirmPassword: '',
-        })
-      } catch (error) {
-        console.error('Error fetching user data:', error)
-        navigate('/login')
-      } finally {
-        setIsLoading(false)
-      }
+      reset({
+        full_name: result.full_name || '',
+        email: result.email || '',
+        password: '',
+        confirmPassword: '',
+      })
+    } catch (_error) {
+      /** empty */
+    } finally {
+      setIsLoading(false)
     }
-
-    fetchUserData()
   }, [navigate, reset])
 
-  const onSubmit: SubmitHandler<RegisterFormDataClient> = async (data) => {
+  const onSubmit: SubmitHandler<UpdateProfileForm> = async (data) => {
     try {
       const profileData: UpdateProfileData = {
-        token: localStorage.getItem('authToken') || '',
         email: data.email,
         full_name: data.full_name,
-        password: data.password,
+        password: data.password || '',
       }
-      const result = await profileService.update(profileData)
-      if (result.success) {
-        localStorage.setItem('authToken', result.token as string)
-        dispatch(loginSuccess(result.user as UserSlice))
-        navigate('/home')
-      }
+      await profileService.update(profileData)
     } catch (err) {
       if (isAxiosError(err)) {
         setError('root.serverError', {
@@ -103,7 +80,6 @@ const UpdateProfile = () => {
       } else if (err instanceof yup.ValidationError) {
         // just catch the error here, nothing needs to be done
       }
-      console.log(err)
     }
   }
 
