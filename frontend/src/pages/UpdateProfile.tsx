@@ -1,44 +1,43 @@
 import React from 'react'
-import { useDispatch } from 'react-redux'
-import { useForm, Controller, SubmitHandler } from 'react-hook-form'
+import { useForm, Controller, SubmitHandler, Resolver } from 'react-hook-form'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
+import { useState } from 'react'
 import {
   Box,
   Card,
   CardContent,
-  TextField,
   Typography,
+  TextField,
   Button,
-  Link,
+  Stack,
   Alert,
   CircularProgress,
-  Stack,
+  Link,
 } from '@mui/material'
-
-import { authService } from '../services/authService'
-import {
-  RegisterFormDataClient,
-  RegisterResponse,
-  UserSlice,
-} from '../types/auth'
 import { isAxiosError } from 'axios'
+import { profileService } from '../services/profileService'
+import LoadingSkeleton from '../components/common/LoadingSkeleton.tsx'
+import { UpdateProfileData, UpdateProfileForm } from '../types/auth'
+import userSchema from '../utils/userDetailsValidation'
+import useAsyncEffect from '../hooks/useAsyncEffect.ts'
+import { useDispatch } from 'react-redux'
+import { setOpen as setNotificationSnackbarOpen } from '../store/slices/notificationSnackbarSlice.ts'
 
-import { loginSuccess } from '../store/slices/userSlice.ts'
-import userSchema from '../utils/userDetailsValidation.ts'
-
-const SignUp = () => {
+const UpdateProfile = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const [isLoading, setIsLoading] = useState(true)
 
   const {
     control,
     handleSubmit,
     formState: { errors, isSubmitting },
     setError,
-  } = useForm<RegisterFormDataClient>({
-    resolver: yupResolver(userSchema),
+    reset,
+  } = useForm<UpdateProfileForm>({
+    resolver: yupResolver(userSchema) as Resolver<UpdateProfileForm>,
     defaultValues: {
       full_name: '',
       email: '',
@@ -47,28 +46,54 @@ const SignUp = () => {
     },
   })
 
-  const onSubmit: SubmitHandler<RegisterFormDataClient> = async (data) => {
+  // Not placed under Signup and Home in App.tsx to avoid duplicate work
+  useAsyncEffect(async () => {
     try {
-      const { confirmPassword: _, ...registerData } = data
+      setIsLoading(true)
+      const result = await profileService.getUserProfile()
 
-      const result: RegisterResponse = await authService.register(registerData)
-      console.log(result)
-      localStorage.setItem('authToken', result.token as string)
-      dispatch(loginSuccess(result.user as UserSlice))
-      navigate('/home')
+      reset({
+        full_name: result.full_name || '',
+        email: result.email || '',
+        password: '',
+        confirmPassword: '',
+      })
+    } catch (_error) {
+      /** empty */
+    } finally {
+      setIsLoading(false)
+    }
+  }, [navigate, reset])
+
+  const onSubmit: SubmitHandler<UpdateProfileForm> = async (data) => {
+    try {
+      const profileData: UpdateProfileData = {
+        email: data.email,
+        full_name: data.full_name,
+        password: data.password || '',
+      }
+      await profileService.update(profileData)
+      dispatch(
+        setNotificationSnackbarOpen({
+          severity: 'success',
+          message: 'Profile updated successfully!',
+        })
+      )
     } catch (err) {
       if (isAxiosError(err)) {
         setError('root.serverError', {
           type: 'server',
           message:
-            err.response?.data?.message ||
-            'Registration failed. Please try again.',
+            err.response?.data?.message || 'Update failed. Please try again.',
         })
       } else if (err instanceof yup.ValidationError) {
         // just catch the error here, nothing needs to be done
       }
-      console.log(err)
     }
+  }
+
+  if (isLoading) {
+    return <LoadingSkeleton />
   }
 
   return (
@@ -97,10 +122,10 @@ const SignUp = () => {
               gutterBottom
               color="text.primary"
             >
-              Create Account
+              Edit Account Details
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Join us today and get started
+              Update your account information below
             </Typography>
           </Box>
 
@@ -172,7 +197,7 @@ const SignUp = () => {
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    label="Password"
+                    label="New Password"
                     type="password"
                     size="small"
                     required
@@ -196,7 +221,7 @@ const SignUp = () => {
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    label="Confirm Password"
+                    label="Confirm New Password"
                     type="password"
                     size="small"
                     required
@@ -228,20 +253,20 @@ const SignUp = () => {
                 }}
                 startIcon={isSubmitting ? <CircularProgress size={20} /> : null}
               >
-                {isSubmitting ? 'Creating Account...' : 'Create Account'}
+                {isSubmitting ? 'Updating Account...' : 'Update Account'}
               </Button>
             </Stack>
 
             <Box textAlign="center" mt={3}>
               <Typography variant="body2" color="text.secondary">
-                Already have an account?{' '}
+                Cancel changes?{' '}
                 <Link
                   component={RouterLink}
-                  to="/login"
+                  to="/home"
                   underline="hover"
                   fontWeight="medium"
                 >
-                  Sign in
+                  Go back
                 </Link>
               </Typography>
             </Box>
@@ -252,4 +277,4 @@ const SignUp = () => {
   )
 }
 
-export default SignUp
+export default UpdateProfile

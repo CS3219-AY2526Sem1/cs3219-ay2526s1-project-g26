@@ -10,7 +10,7 @@ export const createUser = async (
   password: string,
   full_name?: string,
   role: UserRole = 'user'
-): Promise<User> => {
+): Promise<RegisterResponse> => {
   const password_hash = await bcrypt.hash(password, 10)
 
   try {
@@ -38,7 +38,17 @@ export const createUser = async (
       [email, password_hash, full_name, role]
     )
 
-    return result.rows[0]
+    const payload = {
+      id: result.rows[0].id,
+      email: result.rows[0].email,
+      role: result.rows[0].role,
+      full_name: result.rows[0].full_name,
+    }
+    const token = jwt.sign(payload, Config.JWT_SECRET, {
+      expiresIn: Config.JWT_EXPIRES_IN,
+    } as SignOptions)
+
+    return { token, user: result.rows[0] }
 
     // TODO: fix the following
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -53,6 +63,11 @@ export const createUser = async (
     }
     throw new AppError(err.message, 500)
   }
+}
+
+interface RegisterResponse {
+  token: string
+  user: User
 }
 
 interface LoginResponse {
