@@ -5,12 +5,7 @@ export const submissionsService = {
   fetchSubmissions: async (
     page: number,
     limit: number
-<<<<<<< HEAD
   ): Promise<SubmissionDataSummary[]> => {
-=======
-  ):
-  Promise<SubmissionDataSummary[]> => {
->>>>>>> 20a970d6b74a2b5073228f028189b6f29b6d5e42
     // to be replace with API call later
     // that also returns total number of submissions
     // and perhaps handling if none is found
@@ -33,13 +28,8 @@ export const submissionsService = {
     }
 
     const response = await axiosInstance.get<SubmissionDataSummary[]>(url, {
-<<<<<<< HEAD
       params,
     })
-=======
-       params,
-       });
->>>>>>> 20a970d6b74a2b5073228f028189b6f29b6d5e42
     return response.data
   },
 }
