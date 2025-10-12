@@ -92,7 +92,6 @@ export const SubmissionsOverview = () => {
     }
 
     fetchSubmissions()
-<<<<<<< HEAD
   }, [rowsPerPage, currentPage])
 
   const handleChangePage = (
@@ -146,55 +145,6 @@ export const SubmissionsOverview = () => {
     ) => {
       onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1))
     }
-=======
-  }, [currentPage])
-
-  const handleChangePage = (
-    event: React.MouseEvent<HTMLButtonElement> | null,
-    newPage: number,
-  ) => {
-    setCurrentPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setCurrentPage(0);
-  };
-
-  interface TablePaginationActionsProps {
-    count: number;
-    page: number;
-    rowsPerPage: number;
-    onPageChange: (
-      event: React.MouseEvent<HTMLButtonElement>,
-      newPage: number,
-    ) => void;
-  }
-
-  function TablePaginationActions(props: TablePaginationActionsProps) {
-    const theme = useTheme();
-    const { count, page, rowsPerPage, onPageChange } = props;
-
-    const handleFirstPageButtonClick = (
-      event: React.MouseEvent<HTMLButtonElement>,
-    ) => {
-      onPageChange(event, 0);
-    };
-
-    const handleBackButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-      onPageChange(event, page - 1);
-    };
-
-    const handleNextButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-      onPageChange(event, page + 1);
-    };
-
-    const handleLastPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-      onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
-    };
->>>>>>> 20a970d6b74a2b5073228f028189b6f29b6d5e42
 
     return (
       <Box sx={{ flexShrink: 0, ml: 2.5 }}>
@@ -210,30 +160,22 @@ export const SubmissionsOverview = () => {
           disabled={page === 0}
           aria-label="previous page"
         >
-<<<<<<< HEAD
           {theme.direction === 'rtl' ? (
             <KeyboardArrowRight />
           ) : (
             <KeyboardArrowLeft />
           )}
-=======
-          {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
->>>>>>> 20a970d6b74a2b5073228f028189b6f29b6d5e42
         </IconButton>
         <IconButton
           onClick={handleNextButtonClick}
           disabled={page >= Math.ceil(count / rowsPerPage) - 1}
           aria-label="next page"
         >
-<<<<<<< HEAD
           {theme.direction === 'rtl' ? (
             <KeyboardArrowLeft />
           ) : (
             <KeyboardArrowRight />
           )}
-=======
-          {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
->>>>>>> 20a970d6b74a2b5073228f028189b6f29b6d5e42
         </IconButton>
         <IconButton
           onClick={handleLastPageButtonClick}
@@ -243,24 +185,15 @@ export const SubmissionsOverview = () => {
           {theme.direction === 'rtl' ? <FirstPage /> : <LastPage />}
         </IconButton>
       </Box>
-<<<<<<< HEAD
     )
-=======
-    );
->>>>>>> 20a970d6b74a2b5073228f028189b6f29b6d5e42
   }
 
   return (
     <Container maxWidth="lg">
       <Box sx={{ py: 4 }}>
-<<<<<<< HEAD
         {loading ? (
           <LoadingSkeleton />
         ) : (
-=======
-        {loading ? <LoadingSkeleton /> :
-
->>>>>>> 20a970d6b74a2b5073228f028189b6f29b6d5e42
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} size="small">
               <TableHead>
@@ -282,34 +215,21 @@ export const SubmissionsOverview = () => {
                     <TableCell component="th" scope="row">
                       {submission.title}
                     </TableCell>
-<<<<<<< HEAD
                     <TableCell align="left">
                       {submission.submission_time}
                     </TableCell>
                     <TableCell align="left">
                       {submission.overall_status}
                     </TableCell>
-=======
-                    <TableCell align="left">{submission.submission_time}</TableCell>
-                    <TableCell align="left">{submission.overall_status}</TableCell>
->>>>>>> 20a970d6b74a2b5073228f028189b6f29b6d5e42
                     <TableCell align="left">{submission.difficulty}</TableCell>
                     <TableCell align="left">{submission.language}</TableCell>
                     <TableCell align="left">
                       <Button
                         variant="contained"
-<<<<<<< HEAD
                         onClick={() => {
                           navigate(`/submissions/${submission.submission_id}`)
                         }}
                       >
-=======
-                        onClick={
-                          () => {
-                            navigate(`/submissions/${submission.submission_id}`)
-                          }
-                        }>
->>>>>>> 20a970d6b74a2b5073228f028189b6f29b6d5e42
                         View Details
                       </Button>
                     </TableCell>
@@ -319,11 +239,7 @@ export const SubmissionsOverview = () => {
               <TableFooter>
                 <TableRow>
                   <TablePagination
-<<<<<<< HEAD
                     rowsPerPageOptions={[5, 10, 25]}
-=======
-                    rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
->>>>>>> 20a970d6b74a2b5073228f028189b6f29b6d5e42
                     colSpan={3}
                     count={pageCount}
                     rowsPerPage={rowsPerPage}
@@ -344,18 +260,10 @@ export const SubmissionsOverview = () => {
               </TableFooter>
             </Table>
           </TableContainer>
-<<<<<<< HEAD
         )}
-=======
-        }
->>>>>>> 20a970d6b74a2b5073228f028189b6f29b6d5e42
       </Box>
     </Container>
   )
 }
 
-<<<<<<< HEAD
 export default SubmissionsOverview
-=======
-export default SubmissionsOverview
->>>>>>> 20a970d6b74a2b5073228f028189b6f29b6d5e42
