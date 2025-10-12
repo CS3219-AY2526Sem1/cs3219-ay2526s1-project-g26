@@ -36,10 +36,23 @@ export const getMatchingQuestion = async (
 
 export const getQuestionById = async (id: number): Promise<Question> => {
   const query = `
-    SELECT q.id, q.title, q.description, d.level AS difficulty, q.constraints, q.examples, q.hints
+    SELECT 
+      q.id, 
+      q.title, 
+      q.description, 
+      d.level AS difficulty, 
+      q.constraints, 
+      q.examples, 
+      q.hints, 
+      q.input, 
+      q.output,
+      ARRAY_AGG(c.name) FILTER (WHERE c.name IS NOT NULL) AS categories
     FROM questions q
     JOIN difficulties d ON q.difficulty_id = d.id
+    LEFT JOIN question_categories qc ON q.id = qc.question_id
+    LEFT JOIN categories c ON qc.category_id = c.id
     WHERE q.id = $1 AND q.is_active = true
+    GROUP BY q.id, q.title, q.description, d.level, q.constraints, q.examples, q.hints, q.input, q.output
   `
   const result = await pool.query(query, [id])
   

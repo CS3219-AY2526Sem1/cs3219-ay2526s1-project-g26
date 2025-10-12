@@ -43,6 +43,7 @@ function useAsyncEffect(
     return () => {
       cancelled = true
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps)
 }
 

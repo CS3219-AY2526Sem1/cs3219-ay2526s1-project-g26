@@ -13,7 +13,7 @@ import LoadingSkeleton from './components/common/LoadingSkeleton.tsx'
 import NavBarLayout from './layouts/NavBarLayout.tsx'
 import Submissions from './pages/Submissions.tsx'
 import Home from './pages/Home.tsx'
-import Collaboration  from './pages/Collaboration.tsx'
+import Collaboration from './pages/Collaboration.tsx'
 
 const ProtectedRoutes = () => {
   const dispatch = useDispatch()

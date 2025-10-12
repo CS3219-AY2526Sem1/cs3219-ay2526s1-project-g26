@@ -17,12 +17,13 @@ export const useQuestion = (): UseQuestionReturn => {
   const fetchQuestionById = useCallback(async (id: number) => {
     setLoading(true)
     setError(null)
-    
+
     try {
       const fetchedQuestion = await questionService.getQuestionById(id)
       setQuestion(fetchedQuestion)
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch question'
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to fetch question'
       setError(errorMessage)
       console.error('Error fetching question:', err)
     } finally {

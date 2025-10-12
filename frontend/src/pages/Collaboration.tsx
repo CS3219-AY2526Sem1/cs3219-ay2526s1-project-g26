@@ -7,45 +7,49 @@ import { useQuestion } from '../hooks/useQuestion'
 const Collaboration = () => {
   const { question, loading, error, fetchQuestionById } = useQuestion()
   const [leftWidth, setLeftWidth] = useState(() => {
-    // 从localStorage读取用户偏好，默认50%
+    // 从localStorage, default width 50%
     const saved = localStorage.getItem('collaboration-panel-width')
     return saved ? parseFloat(saved) : 50
   })
   const [isDragging, setIsDragging] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
-  // 加载问题（暂时使用固定ID=1）
+  // load question (temporarily using fixed ID=1)
   useEffect(() => {
-    console.log('Loading question with ID: 1...')
-    fetchQuestionById(1)
+    console.log('Loading question with ID: 8...')
+    fetchQuestionById(8)
   }, [fetchQuestionById])
 
-  // 处理鼠标拖动
+  // Handle mouse drag
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault()
     setIsDragging(true)
   }, [])
 
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!isDragging || !containerRef.current) return
-    
-    const container = containerRef.current
-    const containerRect = container.getBoundingClientRect()
-    const newLeftWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100
-    
-    // 限制最小和最大宽度（20% - 80%）
-    const clampedWidth = Math.max(20, Math.min(80, newLeftWidth))
-    setLeftWidth(clampedWidth)
-    
-    // 保存到localStorage
-    localStorage.setItem('collaboration-panel-width', clampedWidth.toString())
-  }, [isDragging])
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (!isDragging || !containerRef.current) return
+
+      const container = containerRef.current
+      const containerRect = container.getBoundingClientRect()
+      const newLeftWidth =
+        ((e.clientX - containerRect.left) / containerRect.width) * 100
+
+      // minimum and maximum (20% - 80%)
+      const clampedWidth = Math.max(20, Math.min(80, newLeftWidth))
+      setLeftWidth(clampedWidth)
+
+      // safe to localStorage
+      localStorage.setItem('collaboration-panel-width', clampedWidth.toString())
+    },
+    [isDragging]
+  )
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(false)
   }, [])
 
-  // 添加全局鼠标事件
+  // Add/remove global mouse event listeners
   useEffect(() => {
     if (isDragging) {
       document.addEventListener('mousemove', handleMouseMove)
@@ -63,22 +67,22 @@ const Collaboration = () => {
   }, [isDragging, handleMouseMove, handleMouseUp])
 
   return (
-    <Box 
+    <Box
       ref={containerRef}
-      sx={{ 
+      sx={{
         display: 'flex',
         height: '100vh',
-        overflow: 'hidden'
+        overflow: 'hidden',
       }}
     >
-      {/* 左侧：问题面板 */}
-      <Box 
-        sx={{ 
+      {/* left: question panel */}
+      <Box
+        sx={{
           width: `${leftWidth}%`,
           minWidth: '300px',
           display: 'flex',
           flexDirection: 'column',
-          backgroundColor: 'background.default'
+          backgroundColor: 'background.default',
         }}
       >
         {/* <Typography variant="h6" sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
@@ -93,7 +97,7 @@ const Collaboration = () => {
         </Box>
       </Box>
 
-      {/* 可拖动的分隔条 */}
+      {/* draggable separator */}
       <Box
         onMouseDown={handleMouseDown}
         sx={{
@@ -107,26 +111,26 @@ const Collaboration = () => {
           '&:hover': {
             backgroundColor: 'primary.light',
           },
-          position: 'relative'
+          position: 'relative',
         }}
       >
-        <DragIndicator 
-          sx={{ 
+        <DragIndicator
+          sx={{
             color: 'text.secondary',
             fontSize: '16px',
-            rotate: '90deg'
-          }} 
+            rotate: '90deg',
+          }}
         />
       </Box>
 
-      {/* 右侧：代码编辑器区域 */}
-      <Box 
-        sx={{ 
+      {/* right: code editor area */}
+      <Box
+        sx={{
           width: `${100 - leftWidth}%`,
           minWidth: '300px',
           display: 'flex',
           flexDirection: 'column',
-          backgroundColor: 'background.default'
+          backgroundColor: 'background.default',
         }}
       >
         {/* <Typography variant="h6" sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>

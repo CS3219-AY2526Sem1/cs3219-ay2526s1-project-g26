@@ -46,7 +46,7 @@ const Navbar = () => {
         )
       )
     }
-  }, [activeTab])
+  }, [activeTab, dispatch])
 
   const handleTabChange = (_: React.SyntheticEvent, newTabId: string) => {
     const newActiveTab = TABS.find((tab) => tab.id === newTabId)
