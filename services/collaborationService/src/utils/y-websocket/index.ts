@@ -73,6 +73,7 @@ export const docs = new Map<string, WSSharedDoc>()
 
 const messageSync = 0
 const messageAwareness = 1
+const messageEventSwitchLanguage = 4
 
 /**
  * @param {Uint8Array} update
@@ -223,14 +224,19 @@ const messageListener = (
           send(doc, conn, encoding.toUint8Array(encoder))
         }
         break
-      case messageAwareness: {
+      case messageAwareness:
         awarenessProtocol.applyAwarenessUpdate(
           doc.awareness,
           decoding.readVarUint8Array(decoder),
           conn
         )
         break
-      }
+
+      case messageEventSwitchLanguage:
+        doc.conns.forEach((_: Set<number>, socket: WebSocket) => {
+          if (socket === conn) return
+          socket.send(message)
+        })
     }
   } catch (err) {
     logger.error(err)

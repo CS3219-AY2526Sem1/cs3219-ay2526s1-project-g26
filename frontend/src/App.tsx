@@ -13,7 +13,7 @@ import LoadingSkeleton from './components/common/LoadingSkeleton.tsx'
 import NavBarLayout from './layouts/NavBarLayout.tsx'
 import Submissions from './pages/Submissions.tsx'
 import Home from './pages/Home.tsx'
-import CollaborationEditor from './components/CollaborationEditor.tsx'
+import CollaborationRightPanel from './components/collaboration_space/right_panel'
 
 const ProtectedRoutes = () => {
   const dispatch = useDispatch()
@@ -43,7 +43,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<CollaborationEditor roomId={'12'} />} />
+        <Route path="/" element={<CollaborationRightPanel />} />
         {/*<Route path="/" element={<Navigate to={'home'} />} />*/}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />

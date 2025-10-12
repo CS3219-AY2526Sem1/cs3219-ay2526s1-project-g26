@@ -1,4 +1,9 @@
 module.exports = {
+  env: {
+    browser: true,
+    amd: true,
+    node: true,
+  },
   parser: '@typescript-eslint/parser',
   extends: [
     'eslint:recommended',

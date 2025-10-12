@@ -6,6 +6,7 @@ import { store } from './store'
 import CssBaseline from '@mui/material/CssBaseline'
 
 const rootElement = document.getElementById('root') as HTMLElement
+rootElement.style.height = '100vh'
 
 if (rootElement) {
   const root = ReactDOM.createRoot(rootElement)
