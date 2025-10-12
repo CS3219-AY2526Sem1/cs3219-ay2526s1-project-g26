@@ -22,8 +22,11 @@ import LoadingSkeleton from '../components/common/LoadingSkeleton.tsx'
 import { UpdateProfileData, UpdateProfileForm } from '../types/auth'
 import userSchema from '../utils/userDetailsValidation'
 import useAsyncEffect from '../hooks/useAsyncEffect.ts'
+import { useDispatch } from 'react-redux'
+import { setOpen as setNotificationSnackbarOpen } from '../store/slices/notificationSnackbarSlice.ts'
 
 const UpdateProfile = () => {
+  const dispatch = useDispatch()
   const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(true)
 
@@ -70,6 +73,12 @@ const UpdateProfile = () => {
         password: data.password || '',
       }
       await profileService.update(profileData)
+      dispatch(
+        setNotificationSnackbarOpen({
+          severity: 'success',
+          message: 'Profile updated successfully!',
+        })
+      )
     } catch (err) {
       if (isAxiosError(err)) {
         setError('root.serverError', {
