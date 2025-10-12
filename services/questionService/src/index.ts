@@ -9,9 +9,11 @@ import { getLogger } from './utils/logger.js'
 import questionRoute from './routes/questionRoute.js'
 import errorHandler from './middleware/errorHandler.js'
 import { PORT } from './config/index.js'
+import { connectDB } from './database/index.js'
 
 const logger = getLogger('app')
 const app = express()
+connectDB()
 
 app.use(
   morgan('tiny', {
