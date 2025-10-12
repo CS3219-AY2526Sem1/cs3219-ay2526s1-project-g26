@@ -2,6 +2,7 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
+import { authenticate } from './middleware/auth.js'
 import express, { Request, Response } from 'express'
 import cors from 'cors'
 import morgan from 'morgan'
@@ -24,7 +25,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 app.use('/auth', authRoute)
-app.use('/profile', profileRoute)
+app.use('/profile', authenticate, profileRoute)
 
 app.get('/', (_req: Request, res: Response) => {
   res.send('Hello from Express + TypeScript!')
