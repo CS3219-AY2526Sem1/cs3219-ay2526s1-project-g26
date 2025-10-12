@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { AppError } from '../utils/errors.js'
 import * as Config from '../config/index.js'
-import { User } from '../types/user'
+import { User } from '../types/user.js'
 
 interface AuthConfig {
   shouldBeAdmin: boolean
