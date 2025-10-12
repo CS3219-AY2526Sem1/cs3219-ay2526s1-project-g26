@@ -8,7 +8,8 @@ export const API_ENDPOINTS = {
     VERIFY_TOKEN: '/user/auth/verify-token',
   },
   PROFILE: {
-    UPDATE: '/user/profile/update',
+    GET: '/user/profile/me',
+    UPDATE: '/user/profile',
   },
 } as const
 

@@ -12,24 +12,37 @@ const userSchema = yup.object({
     .required('Email is required'),
   password: yup
     .string()
-    .min(8, 'Password must be at least 8 characters')
     .test(
-      'password-strength',
-      'Password must contain at least 1 uppercase, lowercase, number, and special character',
+      'password-requirements',
+      'Password must be at least 8 characters and contain an uppercase, lowercase, number, and special character',
       (value) => {
+        if (!value) {
+          return true
+        }
+        // If a password IS provided, it must meet all criteria.
         const hasUpperCase = /[A-Z]/.test(value)
         const hasLowerCase = /[a-z]/.test(value)
         const hasNumber = /[0-9]/.test(value)
-        // Space not included in special characters!
-        const hasASCIISpecial = /[!-,:-@[-`{-~]/.test(value)
-        return hasUpperCase && hasLowerCase && hasNumber && hasASCIISpecial
+        const hasASCIISpecial = /[!-,:-@[-`{-~]/.test(value) // Space not included
+        const hasMinLength = value.length >= 8
+
+        return (
+          hasUpperCase &&
+          hasLowerCase &&
+          hasNumber &&
+          hasASCIISpecial &&
+          hasMinLength
+        )
       }
-    )
-    .required('Password is required'),
-  confirmPassword: yup
-    .string()
-    .oneOf([yup.ref('password')], 'Passwords must match')
-    .required('Please confirm your password'),
+    ),
+  confirmPassword: yup.string().when('password', {
+    is: (password: string | undefined) => password && password.length > 0,
+    then: (schema) =>
+      schema
+        .oneOf([yup.ref('password')], 'Passwords must match')
+        .required('Please confirm your password'),
+    otherwise: (schema) => schema.notRequired(),
+  }),
 })
 
 export default userSchema

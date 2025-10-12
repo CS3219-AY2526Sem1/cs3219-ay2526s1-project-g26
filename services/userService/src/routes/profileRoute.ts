@@ -1,33 +1,28 @@
 import express from 'express'
 import { AppError } from '../utils/errors.js'
-import { updateUserProfile } from '../services/profileService'
-import { decodeToken } from '../services/authService.js'
+import {
+  updateUserProfile,
+  getUserProfile,
+} from '../services/profileService.js'
+import { type AuthRequest } from '../middleware/auth.js'
 
 const router = express.Router()
 
-export default router
-
-router.put('/update', async (req, res, next) => {
-  const { token, email, password, full_name } = req.body
-
-  const verifiedToken = await decodeToken(token)
-  if (!verifiedToken) {
-    return next(
-      new AppError(
-        'Invalid token. User must be logged in to edit their profile',
-        401
-      )
-    )
-  }
-  if (!email || !password) {
-    return next(new AppError('Email and password are required', 400))
-  }
-
-  const result = await updateUserProfile(
-    verifiedToken.id,
-    email,
-    password,
-    full_name
-  )
-  return res.json({ success: true, ...result })
+router.get('/me', async (req: AuthRequest, res) => {
+  const profile = await getUserProfile(req!.user?.id)
+  return res.json({ success: true, user: profile })
 })
+
+router.put('/', async (req: AuthRequest, res, next) => {
+  const { email, password, full_name } = req.body
+  if (!email) {
+    return next(new AppError('Email must be provided', 400))
+  } else if (!full_name) {
+    return next(new AppError('Full name must be provided', 400))
+  }
+
+  await updateUserProfile(req!.user?.id, email, password, full_name)
+  return res.status(201).json({ success: true })
+})
+
+export default router
