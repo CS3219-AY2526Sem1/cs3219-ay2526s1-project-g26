@@ -11,7 +11,7 @@ import { RootState } from './store'
 import { Navigate, Outlet } from 'react-router-dom'
 import LoadingSkeleton from './components/common/LoadingSkeleton.tsx'
 import NavBarLayout from './layouts/NavBarLayout.tsx'
-import Submissions from './pages/Submissions.tsx'
+import SubmissionsOverview from './pages/SubmissionsOverview.tsx'
 import Home from './pages/Home.tsx'
 
 const ProtectedRoutes = () => {
@@ -48,7 +48,7 @@ function App() {
         <Route element={<ProtectedRoutes />}>
           <Route element={<NavBarLayout />}>
             <Route path="/home" element={<Home />} />
-            <Route path="/submissions" element={<Submissions />} />
+            <Route path="/submissions" element={<SubmissionsOverview />} />
           </Route>
         </Route>
       </Routes>
