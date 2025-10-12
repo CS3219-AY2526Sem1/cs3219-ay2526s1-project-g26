@@ -173,9 +173,9 @@ export const SubmissionsOverview = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {submissions.map((submission, index) => (
+                {submissions.map(submission => (
                   <TableRow
-                    key={index}
+                    key={submission.submission_id}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                   >
                     <TableCell component="th" scope="row">
