@@ -7,7 +7,7 @@ import { authenticate } from '../middleware/auth.js'
 
 const router = Router()
 
-router.get('/match', authenticate(), async (req, res) => {
+router.get('/match', authenticate, async (req, res) => {
   const { difficulty, categories } = req.query
 
   if (!difficulty) {
