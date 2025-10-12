@@ -13,6 +13,13 @@ export const API_ENDPOINTS = {
   },
 } as const
 
+export const WEBSOCKET_BASE_URL =
+  process.env.REACT_APP_WEBSOCKET_BASE_URL || 'ws://localhost'
+
+export const WEBSOCKET_URL = {
+  COLLABORATION: '/collaboration',
+}
+
 export const HTTP_STATUS = {
   OK: 200,
   CREATED: 201,

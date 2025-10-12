@@ -12,6 +12,7 @@ services:
       - frontend
       - user-service
       - question-service
+      - collaboration-service
 
   frontend:
     build:
@@ -25,6 +26,7 @@ services:
       - /app/node_modules
     environment:
       - REACT_APP_API_BASE_URL=http://localhost/api
+      - REACT_APP_WEBSOCKET_BASE_URL=ws://localhost/ws
     stdin_open: true
     tty: true
 
@@ -139,6 +141,25 @@ services:
     restart: unless-stopped
     volumes:
       - matching-service-queue-data:/data
+
+  # Collaboration Service
+  collaboration-service:
+    build:
+      context: ../services/collaborationService
+      dockerfile: Dockerfile.dev
+    container_name: collaboration-service
+    volumes:
+      - ../services/collaborationService:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - HOST=0.0.0.0
+      - PORT=4030
+      - USER_SERVICE_URL=http://user-service:4000
+    ports:
+      - "4030:4030"
+    stdin_open: true
+    tty: true
 
 volumes:
   user-service-db-data:
