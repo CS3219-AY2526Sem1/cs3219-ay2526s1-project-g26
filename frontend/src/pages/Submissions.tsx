@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react"
 import { useNavigate } from 'react-router-dom'
 import {
   Box,
@@ -13,56 +13,55 @@ import {
   TableRow,
   TableCell,
   Button,
-} from "@mui/material";
-import LoadingSkeleton from "../components/common/LoadingSkeleton";
-import { submissionsService } from "../services/submissionsService";
-import { SubmissionDataSummary } from "../types/submissions";
+} from "@mui/material"
+import LoadingSkeleton from "../components/common/LoadingSkeleton"
+import { submissionsService } from "../services/submissionsService"
+import { SubmissionDataSummary } from "../types/submissions"
 
 const Submissions: React.FC = () => {
-  const [posts, setPosts] = useState<SubmissionDataSummary[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [pageCount, setPageCount] = useState<number>(0);
-  const [currentPage, setCurrentPage] = useState<number>(1); // MUI Pagination starts from 1
-  const postsPerPage = 10;
+  const [posts, setPosts] = useState<SubmissionDataSummary[]>([])
+  const [loading, setLoading] = useState<boolean>(false)
+  const [pageCount, setPageCount] = useState<number>(0)
+  const [currentPage, setCurrentPage] = useState<number>(1) // MUI Pagination starts from 1
+  const postsPerPage = 10
 
   useEffect(() => {
     const fetchPosts = async (): Promise<void> => {
-      setLoading(true);
+      setLoading(true)
 
       try {
         // MUI Pagination is 1-indexed, but our API is 0-indexed
         const result = await submissionsService.fetchSubmissions(
           currentPage - 1,
           postsPerPage
-        );
+        )
 
         // Placeholder until backend is done
         // As more info is needed to calculate this properly
-        setPageCount(3); 
+        setPageCount(3) 
 
-        setPosts(result);
+        setPosts(result)
       } catch (error) {
-        console.error("Error fetching posts:", error);
+        console.error("Error fetching posts:", error)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchPosts();
-  }, [currentPage]);
+    fetchPosts()
+  }, [currentPage])
 
-  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number): void => {
-    setCurrentPage(value);
-  };
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    value: number
+  ): void => {
+    setCurrentPage(value)
+  }
 
   return (
     <Container maxWidth="lg">
       <Box sx={{ py: 4 }}>
-        {loading ? (
-          <LoadingSkeleton />
-        ) : (
-          <PostList posts={posts} />
-        )}
+        {loading ? <LoadingSkeleton /> : <PostList posts={posts} />}
 
         {pageCount > 1 && (
           <Stack spacing={2} alignItems="center" sx={{ mt: 4 }}>
@@ -79,11 +78,11 @@ const Submissions: React.FC = () => {
         )}
       </Box>
     </Container>
-  );
-};
+  )
+}
 
 const PostList: React.FC<{ posts: SubmissionDataSummary[] }> = ({ posts }) => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   
   return (
     <TableContainer component={Paper}>
@@ -112,10 +111,11 @@ const PostList: React.FC<{ posts: SubmissionDataSummary[] }> = ({ posts }) => {
               <TableCell align="left">{post.difficulty}</TableCell>
               <TableCell align="left">{post.language}</TableCell>
               <TableCell align="left">
-                <Button variant="contained" 
+                <Button 
+                variant="contained" 
                 onClick={
                   () => {
-                    navigate(`/submissions/${post.submission_id}`);
+                    navigate(`/submissions/${post.submission_id}`)
                   }
                 }>
                   View Details
@@ -126,7 +126,7 @@ const PostList: React.FC<{ posts: SubmissionDataSummary[] }> = ({ posts }) => {
         </TableBody>
       </Table>
     </TableContainer>
-  );
-};
+  )
+}
 
-export default Submissions;
+export default Submissions
