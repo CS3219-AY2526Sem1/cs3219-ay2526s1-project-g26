@@ -10,6 +10,20 @@ import { type Document, ObjectId, type UpdateFilter, WithoutId } from 'mongodb'
 
 const getQuestionCollection = () => getDb().collection<Question>('questions')
 
+/**
+ * Finds the best matching question from the database based on difficulty and categories.
+ *
+ * This function calculates a similarity score for each question in the collection based on the provided criteria.
+ * The score is weighted: 40% for a matching difficulty and 60% for matching categories.
+ * The category match score is calculated as `(intersection of categories) / (number of user-provided categories)`.
+ * It then identifies all questions with the highest score and randomly selects one to return.
+ * This ensures that if multiple questions are an equally good match, the user receives a varied experience.
+ *
+ * @param difficulty - The desired difficulty level ('easy', 'medium', 'hard').
+ * @param categories - A comma-separated string of desired categories (e.g., 'array,string,hash-table').
+ * @returns A promise that resolves to the question object that best matches the criteria, containing a subset of fields.
+ * @throws {AppError} Throws an error if the questions collection is empty and no question can be returned.
+ */
 export const getMatchingQuestion = async (
   difficulty: string,
   categories: string
