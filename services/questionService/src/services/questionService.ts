@@ -55,10 +55,10 @@ export const getQuestionById = async (id: number): Promise<Question> => {
     GROUP BY q.id, q.title, q.description, d.level, q.constraints, q.examples, q.hints, q.input, q.output
   `
   const result = await pool.query(query, [id])
-  
+
   if (result.rows.length === 0) {
     throw new AppError('Question not found', 404)
   }
-  
+
   return result.rows[0]
 }

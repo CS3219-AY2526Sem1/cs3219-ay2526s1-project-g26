@@ -1,10 +1,13 @@
 import { Router } from 'express'
-import { getMatchingQuestion,getQuestionById } from '../services/questionService.js'
+import {
+  getMatchingQuestion,
+  getQuestionById,
+} from '../services/questionService.js'
 import { authenticate } from '../middleware/auth.js'
 
 const router = Router()
 
-router.get('/match', authenticate, async (req, res) => {
+router.get('/match', authenticate(), async (req, res) => {
   const { difficulty, categories } = req.query
 
   if (!difficulty) {
