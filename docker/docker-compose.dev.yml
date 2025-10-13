@@ -12,6 +12,7 @@ services:
       - frontend
       - user-service
       - question-service
+      - collaboration-service
 
   frontend:
     build:
@@ -25,6 +26,7 @@ services:
       - /app/node_modules
     environment:
       - REACT_APP_API_BASE_URL=http://localhost/api
+      - REACT_APP_WEBSOCKET_BASE_URL=ws://localhost/ws
     stdin_open: true
     tty: true
 
@@ -84,7 +86,7 @@ services:
     environment:
       - NODE_ENV=development
       - PORT=4010
-      - DATABASE_URL=postgresql://postgres:postgres@question-service-db:5432/questions_db
+      - DATABASE_URL=mongodb://question-service-db:27017/questions_db
       - USER_SERVICE_URL=http://user-service:4000
     depends_on:
       - question-service-db
@@ -94,16 +96,12 @@ services:
     tty: true
 
   question-service-db:
-    image: postgres:16-alpine
+    image: mongo:8.0
     container_name: question-service-db
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=questions_db
     ports:
-      - "4011:5432"
+      - "4011:27017"
     volumes:
-      - question-service-db-data:/var/lib/postgresql/data
+      - question-service-db-data:/data/db
       - ../services/questionService/src/database/init:/docker-entrypoint-initdb.d
 
   question-service-question-generator:
@@ -139,6 +137,25 @@ services:
     restart: unless-stopped
     volumes:
       - matching-service-queue-data:/data
+
+  # Collaboration Service
+  collaboration-service:
+    build:
+      context: ../services/collaborationService
+      dockerfile: Dockerfile.dev
+    container_name: collaboration-service
+    volumes:
+      - ../services/collaborationService:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - HOST=0.0.0.0
+      - PORT=4030
+      - USER_SERVICE_URL=http://user-service:4000
+    ports:
+      - "4030:4030"
+    stdin_open: true
+    tty: true
 
 volumes:
   user-service-db-data:

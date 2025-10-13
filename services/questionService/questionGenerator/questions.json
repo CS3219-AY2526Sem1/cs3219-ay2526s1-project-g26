@@ -2,8 +2,8 @@
   {
     "title": "Two Sum",
     "description": "Given an array of integers `nums` of length `n`, and an integer `target`, return the smallest indices of the two numbers such that they add up to target.\n\nYou may not use the same element twice.",
-    "difficulty_id": 1,
-    "categories": [1, 9, 10],
+    "difficulty": "easy",
+    "categories": ["array", "hash-table", "greedy"],
     "input": "The first line contains two integers `n` and `target`. The second line contains `n` integers giving the elements in `nums`.",
     "output": "Two integers that are the smallest indices. Output `-1 -1` if there no answer.",
     "examples": [
@@ -19,8 +19,8 @@
   {
     "title": "Kth Largest Element in an Array",
     "description": "Given an integer array `nums` of length `n`, and an integer `k`, return the `kth` largest element in the array.",
-    "difficulty_id": 2,
-    "categories": [1, 6],
+    "difficulty": "medium",
+    "categories": ["array", "sorting"],
     "input": "The first line contains two integers `n` and `k`. The second line contains `n` integers giving the elements in `nums`.",
     "output": "An integer that is the `kth` largest element in the array.",
     "examples": [
@@ -34,8 +34,8 @@
   {
     "title": "Longest Palindrome Substring",
     "description": "Given a string `s`, return the longest palindrome substring in `s`.\n\nA string is a palindrome when it reads the same backward as forward.\n\nIf there are multiple answers, return the substring with the smallest indices.",
-    "difficulty_id": 2,
-    "categories": [2, 7],
+    "difficulty": "medium",
+    "categories": ["string", "dynamic-programming"],
     "input": "A single string `s`.",
     "output": "A single string that is the longest palindrome substring.",
     "examples": [
@@ -55,8 +55,8 @@
   {
     "title": "Search Insert Position",
     "description": "Given a sorted array of distinct integers and a target value, return the index if the target is found. If not, return the index where it would be if it were inserted in order.",
-    "difficulty_id": 1,
-    "categories": [1, 8],
+    "difficulty": "easy",
+    "categories": ["array", "binary-search"],
     "input": "The first line contains two integers `n` and `target`. The second line contains `n` integers giving the elements in `nums`.",
     "output": "An integer - index that would be inserted.",
     "examples": [
@@ -72,8 +72,8 @@
   {
     "title": "Jump Game",
     "description": "You are given an integer array `nums` of size `n`. You are initially positioned at the **first index**, and each element in the array represents your maximum jump length at that position.\n\nDetermine whether or not you can reach the last index.",
-    "difficulty_id": 2,
-    "categories": [1, 7, 10],
+    "difficulty": "medium",
+    "categories": ["array", "dynamic-programming", "greedy"],
     "input": "The first line contains an integer `n` indicating the length of the array `nums`. The next line contains `n` integers, that are elements of `num`.",
     "output": "Output `YES` if the position is reachable, else output `NO`.",
     "examples": [
@@ -87,8 +87,8 @@
   {
     "title": "Number of islands",
     "description": "Given an `m x n` 2D binary grid which represents a map `1`s (land) and `0`s (water), return the number of islands.\n\nAn island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically. You may assume all four edges of the grid are all surrounded by water. ",
-    "difficulty_id": 2,
-    "categories": [1, 5],
+    "difficulty": "medium",
+    "categories": ["array", "graph"],
     "input": "The first line contains two integers `m` and `n`. For the next `m` lines, each line contains `n` integers where each integer is either `0` or `1`.",
     "output": "A single integer that is the number of islands.",
     "examples": [
@@ -108,8 +108,8 @@
   {
     "title": "Trapping Rain Water",
     "description": "Given `n` non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it can trap after raining.",
-    "difficulty_id": 3,
-    "categories": [1, 7],
+    "difficulty": "hard",
+    "categories": ["array", "dynamic-programming"],
     "input": "The first line contains an integer `n`. The next line contains `n` non-negative integers.",
     "output": "A single integer that is the amount of water it can trap after raining.",
     "examples": [
@@ -123,8 +123,8 @@
   {
     "title": "Exam Manipulation",
     "description": "A group of students is taking a True/False exam. Each question is worth one point. You, as their teacher, want to make your students look as good as possible—so you cheat! (I know, you would never actually do that.) To cheat, you manipulate the answer key so that the lowest score in the class is as high as possible.\n\nWhat is the best possible lowest score you can achieve?",
-    "difficulty_id": 2,
-    "categories": [1],
+    "difficulty": "medium",
+    "categories": ["array"],
     "input": "The first line contains two integers `n` and `k`, where `n` is the number of students and `k` is the number of True/False questions on the exam.\n\nEach of the next `n` lines contains a string of length `k`, consisting only of upper-case T and upper-case F. This string represents the answers that a student submitted, in the order the questions were given.",
     "output": "A single integer, the best possible lowest score in the class.",
     "examples": [
