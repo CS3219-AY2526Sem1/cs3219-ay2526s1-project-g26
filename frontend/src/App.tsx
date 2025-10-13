@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { lazy, useState } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Login from './pages/Login'
 import SignUp from './pages/SignUp'
@@ -11,9 +11,14 @@ import { RootState } from './store'
 import { Navigate, Outlet } from 'react-router-dom'
 import LoadingSkeleton from './components/common/LoadingSkeleton.tsx'
 import NavBarLayout from './layouts/NavBarLayout.tsx'
-import Submissions from './pages/Submissions.tsx'
+import SubmissionsOverview from './pages/SubmissionsOverview.tsx'
 import Home from './pages/Home.tsx'
+import UpdateProfile from './pages/UpdateProfile.tsx'
 import Collaboration from './pages/Collaboration.tsx'
+
+const NotificationSnackbar = lazy(
+  () => import('./components/common/NotificationSnackbar.tsx')
+)
 
 const ProtectedRoutes = () => {
   const dispatch = useDispatch()
@@ -41,20 +46,24 @@ const ProtectedRoutes = () => {
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Navigate to={'home'} />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route element={<ProtectedRoutes />}>
-          <Route element={<NavBarLayout />}>
-            <Route path="/home" element={<Home />} />
-            <Route path="/submissions" element={<Submissions />} />
-            <Route path="/collaboration" element={<Collaboration />} />
+    <>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Navigate to={'home'} />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route element={<ProtectedRoutes />}>
+            <Route element={<NavBarLayout />}>
+              <Route path="/home" element={<Home />} />
+              <Route path="/submissions" element={<SubmissionsOverview />} />
+              <Route path="/collaboration" element={<Collaboration />} />
+            </Route>
           </Route>
-        </Route>
-      </Routes>
-    </Router>
+          <Route path="/update-profile" element={<UpdateProfile />} />
+        </Routes>
+      </Router>
+      <NotificationSnackbar />
+    </>
   )
 }
 

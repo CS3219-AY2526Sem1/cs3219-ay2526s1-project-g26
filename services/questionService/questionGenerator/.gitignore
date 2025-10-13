@@ -42,4 +42,5 @@ test_case_output_generator/outputs
 
 sql/
 outputs/
+questions_output.json
 questions.jsonl

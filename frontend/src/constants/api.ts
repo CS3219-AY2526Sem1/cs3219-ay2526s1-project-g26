@@ -7,11 +7,22 @@ export const API_ENDPOINTS = {
     REGISTER: '/user/auth/register',
     VERIFY_TOKEN: '/user/auth/verify-token',
   },
+  PROFILE: {
+    GET: '/user/profile/me',
+    UPDATE: '/user/profile',
+  },
   QUESTION: {
     MATCH: '/question/match',
     BY_ID: '/question',
   },
 } as const
+
+export const WEBSOCKET_BASE_URL =
+  process.env.REACT_APP_WEBSOCKET_BASE_URL || 'ws://localhost'
+
+export const WEBSOCKET_URL = {
+  COLLABORATION: '/collaboration',
+}
 
 export const HTTP_STATUS = {
   OK: 200,

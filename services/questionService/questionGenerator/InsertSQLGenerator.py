@@ -2,6 +2,7 @@ import json
 import os
 import shutil
 import subprocess
+from typing import List
 
 from pydantic import BaseModel
 
@@ -9,6 +10,7 @@ from pydantic import BaseModel
 class TestCase(BaseModel):
     input: str
     output: str
+    is_hidden: bool = False
 
 
 class Question(BaseModel):
@@ -16,23 +18,24 @@ class Question(BaseModel):
     input: str
     output: str
     description: str
-    difficulty_id: int
-    categories: list[int]
-    examples: list[TestCase]
-    constraints: list[str]
-    hints: list[str]
+    difficulty: str
+    categories: List[str]
+    examples: List[TestCase]
+    constraints: List[str]
+    hints: List[str]
+    test_cases: List[TestCase]
 
 
-class InsertSQLGenerator:
+class InsertJSONGenerator:
     base_dir = os.path.dirname(os.path.realpath(__file__))
     solutions_output_dir = os.path.join(base_dir, "solutions", "output")
     inputs_dir = os.path.join(base_dir, "inputs")
     outputs_dir = os.path.join(base_dir, "outputs")
-    sql_dir = os.path.join(base_dir, "sql")
-    questions_jsonl_file_path = os.path.join(base_dir, "questions.jsonl")
+    questions_json_file_path = os.path.join(base_dir, "questions.json")
+    output_json_file_path = os.path.join(base_dir, "questions_output.json")
 
     def _get_formatted_filename(self, title: str):
-        return title.strip().lower().replace(' ', '_')
+        return title.strip().lower().replace(" ", "_")
 
     def generate_outputs(self):
         if not os.path.exists(self.outputs_dir):
@@ -40,25 +43,43 @@ class InsertSQLGenerator:
 
         for title in os.listdir(self.solutions_output_dir):
             input_file_path = os.path.join(self.inputs_dir, f"{title}.in")
-            input_file = open(input_file_path, "r")
             output_file_path = os.path.join(self.outputs_dir, f"{title}.out")
-            output_file = open(output_file_path, "w")
-            inputs = ""
-            for input_line in input_file:
-                if input_line != "\n":
-                    inputs += input_line
-                else:
+
+            with open(input_file_path, "r") as input_file, open(
+                output_file_path, "w"
+            ) as output_file:
+                inputs = ""
+                for input_line in input_file:
+                    if input_line.strip() != "":
+                        inputs += input_line
+                    else:
+                        solution_file_path = os.path.join(
+                            self.solutions_output_dir, title
+                        )
+                        result = subprocess.run(
+                            [solution_file_path],
+                            input=inputs,
+                            text=True,
+                            capture_output=True,
+                        )
+                        output = result.stdout
+                        if result.stderr:
+                            print(result.stderr)
+                        output_file.write(output)
+                        inputs = ""
+
+                if inputs:
                     solution_file_path = os.path.join(self.solutions_output_dir, title)
                     result = subprocess.run(
-                        [solution_file_path], input=inputs, text=True, capture_output=True
+                        [solution_file_path],
+                        input=inputs,
+                        text=True,
+                        capture_output=True,
                     )
                     output = result.stdout
                     if result.stderr:
                         print(result.stderr)
                     output_file.write(output)
-                    inputs = ""
-            input_file.close()
-            output_file.close()
 
     def clean_existing_outputs(self):
         def _clear_folder(folder_path):
@@ -73,7 +94,7 @@ class InsertSQLGenerator:
                     except Exception as e:
                         print(e)
 
-        dir_to_be_cleaned = [self.sql_dir, self.outputs_dir, self.solutions_output_dir]
+        dir_to_be_cleaned = [self.outputs_dir, self.solutions_output_dir]
         for dir in dir_to_be_cleaned:
             _clear_folder(dir)
 
@@ -84,100 +105,55 @@ class InsertSQLGenerator:
             cwd=solutions_dir,
         )
 
-    def convert_question_json_to_jsonl(self):
-        input_file_path = os.path.join(self.base_dir, "questions.json")
-        input_file = open(input_file_path, "r")
-        questions = json.load(input_file)
-        input_file.close()
-        with open(self.questions_jsonl_file_path, "w") as f:
-            for question in questions:
-                f.write(json.dumps(question) + "\n")
+    def generate_json(self):
+        with open(self.questions_json_file_path, "r") as f:
+            questions_data = json.load(f)
 
-    def _insert_question_sql(self, question: Question, index: int):
-        output_insert_questions_sql_path = os.path.join(
-            self.sql_dir, "3_insert_questions.sql"
-        )
-        with open(output_insert_questions_sql_path, "a") as f:
-            f.write(
-                f"""INSERT INTO questions(id, title, description, difficulty_id, input, output, constraints, examples, hints) VALUES ({index}, '{question.title}', '{question.description}', {question.difficulty_id}, '{question.input}', '{question.output}', ARRAY {question.constraints}::TEXT[], '{json.dumps([{"input": ex.input, "output": ex.output} for ex in question.examples])}', ARRAY {question.hints}::TEXT[]);\n"""
+        questions = []
+        for q_data in questions_data:
+            formatted_title = self._get_formatted_filename(q_data["title"])
+            inputs_file_path = os.path.join(self.inputs_dir, f"{formatted_title}.in")
+            outputs_file_path = os.path.join(self.outputs_dir, f"{formatted_title}.out")
+
+            with open(inputs_file_path, "r") as f:
+                inputs = f.read().strip().split("\n\n")
+            with open(outputs_file_path, "r") as f:
+                outputs = f.read().strip().split("\n")
+
+            example_inputs = {ex["input"] for ex in q_data["examples"]}
+
+            test_cases = []
+            for i, input_str in enumerate(inputs):
+                output_str = outputs[i] if i < len(outputs) else ""
+                is_hidden = input_str not in example_inputs
+                test_cases.append(
+                    TestCase(input=input_str, output=output_str, is_hidden=is_hidden)
+                )
+
+            question = Question(
+                title=q_data["title"],
+                input=q_data["input"],
+                output=q_data["output"],
+                description=q_data["description"],
+                difficulty=q_data["difficulty"],
+                categories=q_data["categories"],
+                examples=[TestCase(**ex) for ex in q_data["examples"]],
+                constraints=q_data["constraints"],
+                hints=q_data["hints"],
+                test_cases=test_cases,
             )
+            questions.append(question.model_dump())
 
-    def _insert_test_cases_sql(self, question: Question, index: int):
-        """
-        To make sure that the output SQL statement is one-liner.
-
-        see:
-            https://github.com/CS3219-AY2526Sem1/cs3219-ay2526s1-project-g26/pull/23#discussion_r2396827203
-        """
-        def _format_sql_output_line(line):
-            return line.strip().replace("\n", "\\n")
-
-        formatted_title = self._get_formatted_filename(question.title)
-        inputs_file_path = os.path.join(self.inputs_dir, f"{formatted_title}.in")
-        outputs_file_path = os.path.join(self.outputs_dir, f"{formatted_title}.out")
-
-        private_test_cases = []
-        input = ""
-        inputs_file = open(inputs_file_path, "r")
-        outputs_file = open(outputs_file_path, "r")
-        for input_line in inputs_file:
-            if input_line == "\n":
-                output = _format_sql_output_line(outputs_file.readline())
-                input = _format_sql_output_line(input)
-                private_test_cases.append(f"({index},E'{input}','{output}')")
-                input = ""
-            input += input_line
-
-        inputs_file.close()
-        outputs_file.close()
-
-        public_test_cases = []
-        for public_test_case in question.examples:
-            output = _format_sql_output_line(public_test_case.output)
-            input = _format_sql_output_line(public_test_case.input)
-            public_test_cases.append(f"({index},E'{input}','{output}', FALSE)")
-
-        output_insert_sql_path = os.path.join(self.sql_dir, "5_insert_test_cases.sql")
-        with open(output_insert_sql_path, "a") as f:
-            f.write(
-                f"INSERT INTO test_cases(question_id, input, expected_output) VALUES {','.join(private_test_cases)};\n"
-            )
-            f.write(
-                f"INSERT INTO test_cases(question_id, input, expected_output, is_hidden) VALUES {','.join(public_test_cases)};\n"
-            )
-
-    def _insert_question_categories_sql(self, question: Question, index: int):
-        output_insert_question_categories_sql_path = os.path.join(self.sql_dir, "4_insert_question_categories.sql"
-                                                                  )
-        s = []
-        for category_id in question.categories:
-            s.append(f"({index},{category_id})")
-        with open(output_insert_question_categories_sql_path, "a") as f:
-            f.write(
-                f"""INSERT INTO question_categories(question_id, category_id) VALUES {','.join(s)};\n"""
-            )
-
-    def generate_sql_scripts(self):
-        if not os.path.exists(self.sql_dir):
-            os.makedirs(self.sql_dir, exist_ok=True)
-        questions_json_file = open(self.questions_jsonl_file_path, "r")
-        index = 1
-        for question_json_string in questions_json_file:
-            question = Question.model_validate_json(question_json_string)
-            self._insert_question_sql(question, index)
-            self._insert_test_cases_sql(question, index)
-            self._insert_question_categories_sql(question, index)
-            index += 1
-        questions_json_file.close()
+        with open(self.output_json_file_path, "w") as f:
+            json.dump(questions, f, indent=2)
 
     def run(self):
         self.clean_existing_outputs()
         self.compile_all_solution_files()
-        self.convert_question_json_to_jsonl()
         self.generate_outputs()
-        self.generate_sql_scripts()
+        self.generate_json()
 
 
 if __name__ == "__main__":
-    generator = InsertSQLGenerator()
+    generator = InsertJSONGenerator()
     generator.run()
