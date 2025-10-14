@@ -59,7 +59,11 @@ export const authService = {
     return response.data
   },
 
-  resetPassword: async ({ email, code, newPassword }: ResetPasswordForm): Promise<ForgotPasswordResponse> => {
+  resetPassword: async ({
+    email,
+    code,
+    newPassword,
+  }: ResetPasswordForm): Promise<ForgotPasswordResponse> => {
     const response = await axiosInstance.post<ForgotPasswordResponse>(
       API_ENDPOINTS.AUTH.RESET_PASSWORD,
       { email, code, newPassword }
@@ -67,6 +71,5 @@ export const authService = {
     return response.data
   },
 }
-
 
 export default authService

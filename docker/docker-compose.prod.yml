@@ -9,8 +9,8 @@ services:
       - ./nginx.prod.conf:/etc/nginx/conf.d/default.conf:ro
       - ./.htpasswd:/etc/nginx/.htpasswd:ro
     ports:
-      - "80:80"
-      - "3005:3005"
+      - '80:80'
+      - '3005:3005'
     depends_on:
       - user-service
       - question-service
@@ -34,7 +34,7 @@ services:
       - JWT_SECRET=489da4f24460ca1d316d593693f1cab4
       - JWT_EXPIRES_IN=14d
     ports:
-      - "4000:4000"
+      - '4000:4000'
 
   user-service-db:
     image: postgres:16-alpine
@@ -58,7 +58,7 @@ services:
       - DATABASE_URL=postgres://postgres:postgres@question-service-db:5432/questions_db
       - JWT_SECRET=489da4f24460ca1d316d593693f1cab4
     ports:
-      - "4010:4010"
+      - '4010:4010'
 
   question-service-db:
     image: postgres:16-alpine

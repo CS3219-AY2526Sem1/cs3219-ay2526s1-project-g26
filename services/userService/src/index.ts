@@ -14,12 +14,13 @@ import { PORT } from './config/index.js'
 const logger = getLogger('app')
 const app = express()
 
+app.use(cors())
 app.use(
   morgan('tiny', {
     stream: { write: logger.http.bind(logger) },
   })
 )
-app.use(cors())
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 

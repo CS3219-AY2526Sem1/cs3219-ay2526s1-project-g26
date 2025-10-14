@@ -6,7 +6,7 @@ services:
     image: nginx:stable-alpine
     container_name: nginx-dev
     ports:
-      - "80:80"
+      - '80:80'
     volumes:
       - ./nginx/nginx.dev.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
@@ -20,7 +20,7 @@ services:
       dockerfile: Dockerfile.dev
     container_name: frontend
     ports:
-      - "3000:3000"
+      - '3000:3000'
     volumes:
       - ../frontend:/app
       - /app/node_modules
@@ -35,7 +35,7 @@ services:
       dockerfile: Dockerfile
     container_name: docs
     ports:
-      - "3005:3000"
+      - '3005:3000'
     volumes:
       - ../docs:/app
 
@@ -48,6 +48,8 @@ services:
     volumes:
       - ../services/userService:/app
       - /app/node_modules
+    env_file:
+      - ../services/.env
     environment:
       - PORT=4000
       - DATABASE_URL=postgresql://postgres:postgres@user-service-db:5432/users_db
@@ -56,7 +58,7 @@ services:
     depends_on:
       - user-service-db
     ports:
-      - "4000:4000"
+      - '4000:4000'
     stdin_open: true
     tty: true
 
@@ -68,7 +70,7 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=users_db
     ports:
-      - "4001:5432"
+      - '4001:5432'
     volumes:
       - user-service-db-data:/var/lib/postgresql/data
       - ../services/userService/src/database/init:/docker-entrypoint-initdb.d
@@ -90,7 +92,7 @@ services:
     depends_on:
       - question-service-db
     ports:
-      - "4010:4010"
+      - '4010:4010'
     stdin_open: true
     tty: true
 
@@ -102,7 +104,7 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=questions_db
     ports:
-      - "4011:5432"
+      - '4011:5432'
     volumes:
       - question-service-db-data:/var/lib/postgresql/data
       - ../services/questionService/src/database/init:/docker-entrypoint-initdb.d

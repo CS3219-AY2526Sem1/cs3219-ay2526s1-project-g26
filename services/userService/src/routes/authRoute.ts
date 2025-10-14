@@ -1,6 +1,11 @@
 import { Router } from 'express'
 import { AppError } from '../utils/errors.js'
-import { loginUser, createUser , requestPasswordReset, resetPassword} from '../services/authService.js'
+import {
+  loginUser,
+  createUser,
+  requestPasswordReset,
+  resetPassword,
+} from '../services/authService.js'
 import { authenticate, AuthRequest } from '../middleware/auth.js'
 
 const router = Router()
@@ -28,8 +33,6 @@ router.post('/login', async (req, res, next) => {
 router.post('/verify-token', authenticate, async (req: AuthRequest, res) => {
   return res.json({ success: true, user: req.user })
 })
-
-
 
 router.post('/forgot-password', async (req, res, next) => {
   const { email } = req.body

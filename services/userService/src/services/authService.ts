@@ -4,7 +4,8 @@ import pool from '../database/index.js'
 import { AppError } from '../utils/errors.js'
 import jwt, { JwtPayload, SignOptions } from 'jsonwebtoken'
 import * as Config from '../config/index.js'
-
+import crypto from 'crypto'
+import { sendEmail } from '../utils/email.js'
 export const createUser = async (
   email: string,
   password: string,
@@ -83,8 +84,41 @@ export const decodeToken = (token: string): JwtPayload => {
 }
 
 export const requestPasswordReset = async (email: string): Promise<boolean> => {
-  const result = await pool.query('SELECT id FROM users WHERE email = $1', [email])
-  return result.rows.length > 0
+  // 1. 检查用户是否存在
+  const userResult = await pool.query('SELECT id FROM users WHERE email = $1', [
+    email,
+  ])
+  if (userResult.rows.length === 0) {
+    // 邮箱不存在也返回 true，防止泄露用户信息
+    return true
+  }
+
+  const userId = userResult.rows[0].id
+
+  // 2. 生成随机 6 位数字 OTP
+  const otp = Math.floor(100000 + Math.random() * 900000).toString()
+
+  // 3. 对 OTP 进行哈希处理（防止数据库泄露时暴露验证码）
+  const otpHash = await bcrypt.hash(otp, 10)
+
+  // 4. 设置过期时间（10分钟）
+  const expiresAt = new Date(Date.now() + 10 * 60 * 1000)
+
+  // 5. 插入数据库
+  await pool.query(
+    `INSERT INTO password_reset_tokens (user_id, token_hash, expires_at)
+     VALUES ($1, $2, $3)`,
+    [userId, otpHash, expiresAt]
+  )
+
+  // 6. 发送邮件（使用 nodemailer）
+  await sendEmail(
+    email,
+    'Password Reset Code',
+    `Your OTP code is: ${otp}. It will expire in 10 minutes.`
+  )
+
+  return true
 }
 
 export const resetPassword = async (
@@ -92,15 +126,57 @@ export const resetPassword = async (
   code: string,
   newPassword: string
 ): Promise<boolean> => {
-  // temporarily the OTP is fixed 1234
-  if (code !== '1234') {
-    return false
+  // 1. 找到对应用户
+  const userResult = await pool.query('SELECT id FROM users WHERE email = $1', [
+    email,
+  ])
+  if (userResult.rows.length === 0) {
+    throw new AppError('Invalid email', 400)
+  }
+  const userId = userResult.rows[0].id
+
+  // 2. 查找最近的未使用且未过期的 OTP
+  const tokenResult = await pool.query(
+    `SELECT id, token_hash, expires_at, used
+     FROM password_reset_tokens
+     WHERE user_id = $1
+     ORDER BY created_at DESC
+     LIMIT 1`,
+    [userId]
+  )
+
+  if (tokenResult.rows.length === 0) {
+    throw new AppError('No reset code found or expired', 400)
   }
 
-  const hashed = await bcrypt.hash(newPassword, 10)
-  const result = await pool.query(
-    'UPDATE users SET password_hash = $1 WHERE email = $2',
-    [hashed, email]
+  const tokenRow = tokenResult.rows[0]
+
+  if (tokenRow.used) {
+    throw new AppError('This code has already been used', 400)
+  }
+
+  if (new Date(tokenRow.expires_at) < new Date()) {
+    throw new AppError('This code has expired', 400)
+  }
+
+  // 3. 验证用户输入的 OTP 与数据库中的 hash 是否匹配
+  const isValid = await bcrypt.compare(code, tokenRow.token_hash) // ✅ 新增
+  if (!isValid) {
+    throw new AppError('Invalid reset code', 400)
+  }
+
+  // 4. 更新用户密码
+  const hashedPassword = await bcrypt.hash(newPassword, 10) // ✅ 新增
+  await pool.query('UPDATE users SET password_hash = $1 WHERE id = $2', [
+    hashedPassword,
+    userId,
+  ])
+
+  // 5. 标记该 OTP 已使用
+  await pool.query(
+    'UPDATE password_reset_tokens SET used = TRUE WHERE id = $1',
+    [tokenRow.id]
   )
-  return result.rowCount > 0
+
+  return true
 }
