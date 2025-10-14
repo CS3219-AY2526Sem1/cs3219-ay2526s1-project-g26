@@ -5,8 +5,10 @@ import {
   updateQuestion,
   deleteQuestion,
   getAllQuestions,
+  getQuestionById,
 } from '../services/questionService.js'
 import { authenticate } from '../middleware/auth.js'
+import { AppError } from '../utils/errors'
 
 const router = Router()
 
@@ -21,6 +23,15 @@ router.get('/match', authenticate(), async (req, res) => {
     difficulty as string,
     categories as string
   )
+  return res.json({ success: true, question })
+})
+
+router.get('/:id', authenticate(), async (req, res) => {
+  const id = req.params.id
+  const question = await getQuestionById(id)
+  if (!question) {
+    throw new AppError('Question not found', 404)
+  }
   return res.json({ success: true, question })
 })
 

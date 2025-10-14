@@ -1,20 +1,21 @@
 import { useState, useCallback } from 'react'
-import { questionService, Question } from '../services/questionService'
+import { questionService } from '../services/questionService'
+import { type Question } from '../types/question.ts'
 
 interface UseQuestionReturn {
   question: Question | null
   loading: boolean
   error: string | null
-  fetchQuestionById: (id: number) => Promise<void>
+  fetchQuestionById: (id: string) => Promise<void>
   clearQuestion: () => void
 }
 
-export const useQuestion = (): UseQuestionReturn => {
+export default (): UseQuestionReturn => {
   const [question, setQuestion] = useState<Question | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const fetchQuestionById = useCallback(async (id: number) => {
+  const fetchQuestionById = useCallback(async (id: string) => {
     setLoading(true)
     setError(null)
 

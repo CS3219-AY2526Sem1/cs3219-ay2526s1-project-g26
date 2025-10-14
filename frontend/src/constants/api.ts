@@ -13,7 +13,7 @@ export const API_ENDPOINTS = {
   },
   QUESTION: {
     MATCH: '/question/match',
-    BY_ID: '/question',
+    GET_BY_ID: '/question',
   },
 } as const
 

@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react'
-import { Box, Paper, Typography } from '@mui/material'
+import { Box } from '@mui/material'
 import { DragIndicator } from '@mui/icons-material'
 import QuestionPanel from '../components/question/QuestionPanel'
-import { useQuestion } from '../hooks/useQuestion'
+import { useQuestion } from '../hooks'
+import CollaborationRightPanel from '../components/collaboration_space/right_panel'
 
 const Collaboration = () => {
   const { question, loading, error, fetchQuestionById } = useQuestion()
@@ -17,7 +18,7 @@ const Collaboration = () => {
   // load question (temporarily using fixed ID=1)
   useEffect(() => {
     console.log('Loading question with ID: 8...')
-    fetchQuestionById(8)
+    fetchQuestionById('68e92415d977f66dd64f8810')
   }, [fetchQuestionById])
 
   // Handle mouse drag
@@ -133,27 +134,7 @@ const Collaboration = () => {
           backgroundColor: 'background.default',
         }}
       >
-        {/* <Typography variant="h6" sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
-          Code Editor
-        </Typography> */}
-        <Box sx={{ flex: 1, p: 2 }}>
-          <Paper
-            elevation={1}
-            sx={{
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              border: '1px solid',
-              borderColor: 'divider',
-              borderRadius: 2,
-            }}
-          >
-            <Typography variant="body1" color="text.secondary">
-              Code editor will be implemented here
-            </Typography>
-          </Paper>
-        </Box>
+        <CollaborationRightPanel roomId="12" />
       </Box>
     </Box>
   )

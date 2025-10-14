@@ -1,2 +1,2 @@
 export { default as useAsyncEffect } from './useAsyncEffect.ts'
-export { useQuestion } from './useQuestion.ts'
+export { default as useQuestion } from './useQuestion.ts'
