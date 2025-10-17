@@ -1,67 +1,50 @@
 /* eslint-disable */
 
-db = db.getSiblingDB('questions_db')
+db = db.getSiblingDB('history_db')
 
-db.difficulties.drop()
-db.categories.drop()
-db.questions.drop()
+db.user_submissions.drop()
+db.submissions.drop()
 
-db.createCollection('difficulties')
-db.createCollection('categories')
-db.createCollection('questions')
+db.createCollection('user_submissions')
+db.createCollection('submission_history')
 
-db.difficulties.insertMany([
-  { level: 'easy' },
-  { level: 'medium' },
-  { level: 'hard' },
+db.user_submissions.insertMany([
+  { user_id: 'dc19156e-f669-448d-ae4b-b149fd8b627b', submission_id: '68f1ee58317cc52f4c0b6fe2' },
+  { user_id: 'dc19156e-f669-448d-ae4b-b149fd8b627b', submission_id: '68f1eed1317cc52f4c0b6ff7' },
+  { user_id: 'dc19156e-f669-448d-ae4b-b149fd8b627b', submission_id: '68f1eedb317cc52f4c0b6ffc' },
+  { user_id: 'dc19156e-f669-448d-ae4b-b149fd8b627b', submission_id: '68f1eee6317cc52f4c0b6ffd' },
+  { user_id: 'dc19156e-f669-448d-ae4b-b149fd8b627b', submission_id: '68f1eef0317cc52f4c0b6ffe' },
+  { user_id: 'dc19156e-f669-448d-ae4b-b149fd8b627b', submission_id: '68f1ef0c317cc52f4c0b6fff' },
+  { user_id: 'dc19156e-f669-448d-ae4b-b149fd8b627b', submission_id: '68f1ef18317cc52f4c0b7000' },
+  { user_id: 'dc19156e-f669-448d-ae4b-b149fd8b627b', submission_id: '68f1ef20317cc52f4c0b7003' },
+  { user_id: 'dc19156e-f669-448d-ae4b-b149fd8b627b', submission_id: '68f1ee58317cc52f4c0b6fe3' },
+  { user_id: 'dc19156e-f669-448d-ae4b-b149fd8b627b', submission_id: '68f1eed1317cc52f4c0b6ff8' },
+  { user_id: 'dc19156e-f669-448d-ae4b-b149fd8b627b', submission_id: '68f1eedb317cc52f4c0b6ffd' },
+  { user_id: 'dc19156e-f669-448d-ae4b-b149fd8b627b', submission_id: '68f1eee6317cc52f4c0b6ffe' },
+  { user_id: '1e284a66-4e22-4d97-8e49-375a357e48a2', submission_id: '68f1ee58317cc52f4c0b6fe2' },
+  { user_id: '1e284a66-4e22-4d97-8e49-375a357e48a2', submission_id: '68f1eed1317cc52f4c0b6ff7' },
+  { user_id: '1e284a66-4e22-4d97-8e49-375a357e48a2', submission_id: '68f1eedb317cc52f4c0b6ffc' },
+  { user_id: '1e284a66-4e22-4d97-8e49-375a357e48a2', submission_id: '68f1eee6317cc52f4c0b6ffd' },
+  { user_id: '1e284a66-4e22-4d97-8e49-375a357e48a2', submission_id: '68f1eef0317cc52f4c0b6ffe' },
+  { user_id: '1e284a66-4e22-4d97-8e49-375a357e48a2', submission_id: '68f1ef0c317cc52f4c0b6fff' },
+  { user_id: '1e284a66-4e22-4d97-8e49-375a357e48a2', submission_id: '68f1ef18317cc52f4c0b7000' },
+  { user_id: '1e284a66-4e22-4d97-8e49-375a357e48a2', submission_id: '68f1ef20317cc52f4c0b7003' },
+  { user_id: '1e284a66-4e22-4d97-8e49-375a357e48a2', submission_id: '68f1ee58317cc52f4c0b6fe3' },
+  { user_id: '1e284a66-4e22-4d97-8e49-375a357e48a2', submission_id: '68f1eed1317cc52f4c0b6ff8' },
+  { user_id: '1e284a66-4e22-4d97-8e49-375a357e48a2', submission_id: '68f1eedb317cc52f4c0b6ffd' },
+  { user_id: '1e284a66-4e22-4d97-8e49-375a357e48a2', submission_id: '68f1eee6317cc52f4c0b6ffe' }
 ])
 
-db.categories.insertMany([
-  {
-    name: 'array',
-    description: 'Problems involving array manipulation and operations',
-  },
-  {
-    name: 'string',
-    description: 'Problems related to string processing and manipulation',
-  },
-  {
-    name: 'linked-list',
-    description: 'Problems involving linked list data structures',
-  },
-  {
-    name: 'tree',
-    description: 'Tree data structure problems including BST and traversal',
-  },
-  {
-    name: 'graph',
-    description: 'Graph theory problems including traversal and algorithms',
-  },
-  { name: 'sorting', description: 'Problems focused on sorting algorithms' },
-  {
-    name: 'dynamic-programming',
-    description: 'Dynamic programming and memoization problems',
-  },
-  {
-    name: 'binary-search',
-    description: 'Problems solved using binary search technique',
-  },
-  {
-    name: 'hash-table',
-    description: 'Problems utilizing hash tables and dictionaries',
-  },
-  { name: 'greedy', description: 'Greedy algorithm problems' },
-])
 
-const questions = JSON.parse(
-  fs.readFileSync('/docker-entrypoint-initdb.d/questions_output.json', 'utf8')
+const submissions = JSON.parse(
+  fs.readFileSync('/docker-entrypoint-initdb.d/submissions_output.json', 'utf8')
 )
 
-if (questions && questions.length > 0) {
-  db.questions.insertMany(questions)
-  print(questions.length + ' questions have been successfully inserted.')
+if (submissions && submissions.length > 0) {
+  db.submissions.insertMany(submissions)
+  print(submissions.length + ' submissions have been successfully inserted.')
 } else {
-  print('No questions found in output.json or the file is empty.')
+  print('No submissions found in submissions_output.json or the file is empty.')
 }
 
 print('MongoDB initialization complete.')

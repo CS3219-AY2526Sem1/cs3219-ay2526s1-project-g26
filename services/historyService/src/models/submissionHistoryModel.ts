@@ -1,39 +1,34 @@
 import { type ObjectId } from 'mongodb'
 
-export interface TestCase {
-  input: string
-  output: string
-  is_hidden: boolean
+export type ResultLabel = 'In Progress' | 'Accepted'
+| 'Wrong Answer' | 'Time Limit Exceeded'
+| 'Memory Limit Exceeded' | 'Runtime Error'
+| 'Compilation Error'
+
+export interface ResultInformation {
+  result: ResultLabel
+  max_memory_used: number // in MB
+  time_taken: number // in ms
+  additional_info?: string
 }
 
-export interface Question {
-  _id: string | ObjectId
-  title: string
-  description: string
+export interface Submission {
+  _id: string | ObjectId // ObjectId includes timestamp info already
+  question_title: string
+
+  code: string
   difficulty: string
-  input?: string
-  output?: string
-  constraints?: string[]
-  examples?: Array<{
-    input: string
-    output: string
-  }>
-  hints?: string[]
-  categories: string[]
-  test_cases: TestCase[]
-  is_active: boolean
+  language: string
+  overall_result: ResultInformation
+  test_case_results: ResultInformation[]
 }
 
-export interface CreateQuestionInput {
-  title: string
-  description: string
-  difficulty: string
-  constraints?: string
-  examples: string
-  hints?: string
-  categories: string
-  test_cases?: string
-  is_active?: boolean
+export interface UserSubmission {
+  user_id: string
+  submission_id: string | ObjectId
 }
 
-export type MatchedQuestion = Omit<Question, 'testCases' | 'is_active'>
+export interface SubmissionHistoryResponse {
+  submissions: Submission[]
+  total: number
+}

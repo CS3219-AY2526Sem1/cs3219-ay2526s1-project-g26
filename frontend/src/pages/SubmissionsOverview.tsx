@@ -25,6 +25,7 @@ import { useTheme } from '@mui/material/styles'
 import LoadingSkeleton from '../components/common/LoadingSkeleton'
 import { submissionsService } from '../services/submissionsService'
 import { SubmissionDataSummary } from '../types/submissions'
+import authService from '../services/authService'
 
 export const SubmissionsOverview = () => {
   const [submissions, setSubmissions] = useState<SubmissionDataSummary[]>([])
@@ -39,7 +40,10 @@ export const SubmissionsOverview = () => {
       setLoading(true)
 
       try {
+        const userId = (await authService.verifyToken()).user?.id
+        
         const rows = await submissionsService.fetchSubmissions(
+          userId,
           currentPage,
           rowsPerPage
         )

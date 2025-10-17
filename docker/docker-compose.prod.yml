@@ -77,7 +77,7 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=4040
-      - DATABASE_URL=mongodb://history-service-db:27017/questions_db
+      - DATABASE_URL=mongodb://history-service-db:27017/history_db
       - USER_SERVICE_URL=${USER_SERVICE_URL}
     ports:
       - "4040:4040"
