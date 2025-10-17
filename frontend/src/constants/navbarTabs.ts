@@ -6,10 +6,14 @@ export const TABS = [
     label: 'Submissions',
     id: 'submissions',
   },
+<<<<<<< HEAD
 
   {
     pathname: '/match',
     label: 'Match',
     id: 'match',
   },
+=======
+  { pathname: '/collaboration', label: 'Collaboration', id: 'collaboration' },
+>>>>>>> develop
 ]

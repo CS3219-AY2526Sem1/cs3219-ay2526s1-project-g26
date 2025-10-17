@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { Ref, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -28,7 +28,11 @@ import { setActiveTab } from '../../store/slices/navbarSlice.ts'
 import authService from '../../services/authService.ts'
 import { logout } from '../../store/slices/userSlice.ts'
 
-const Navbar = () => {
+interface NavbarProps {
+  ref?: Ref<HTMLElement>
+}
+
+const Navbar = (props: NavbarProps) => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { user } = useSelector((state: RootState) => state.user)
@@ -46,7 +50,7 @@ const Navbar = () => {
         )
       )
     }
-  }, [activeTab])
+  }, [activeTab, dispatch])
 
   const handleTabChange = (_: React.SyntheticEvent, newTabId: string) => {
     const newActiveTab = TABS.find((tab) => tab.id === newTabId)
@@ -74,7 +78,7 @@ const Navbar = () => {
   }
 
   return (
-    <AppBar position="static" color="primary" elevation={1}>
+    <AppBar position="static" color="primary" elevation={1} ref={props.ref}>
       <Toolbar sx={{ minHeight: '64px', px: 2 }}>
         <Typography
           variant="h6"

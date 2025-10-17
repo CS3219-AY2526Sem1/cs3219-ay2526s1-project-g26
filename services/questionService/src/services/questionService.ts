@@ -122,6 +122,19 @@ export const getMatchingQuestion = async (
   return questions[0]
 }
 
+export const getQuestionById = async (id: string): Promise<Question | null> => {
+  const question = await getQuestionCollection().findOne(
+    {
+      _id: new ObjectId(id),
+    },
+    { projection: { test_cases: 0, is_active: 0 } }
+  )
+  if (!question) {
+    throw new AppError('Question not found', 404)
+  }
+  return question
+}
+
 export const getAllQuestions = async (
   limit: number,
   offset: number
@@ -181,9 +194,9 @@ export const createQuestion = async (
 ): Promise<Question> => {
   const newQuestion: WithoutId<Question> = {
     ...data,
-    constraints: ensureArray(data.constraints),
-    examples: ensureArray(data.examples),
-    hints: ensureArray(data.hints),
+    constraints: ensureArray(data.constraints!),
+    examples: ensureArray(data.examples!),
+    hints: ensureArray(data.hints!),
     categories: ensureArray(data.categories),
     is_active: data.is_active ?? true,
   }

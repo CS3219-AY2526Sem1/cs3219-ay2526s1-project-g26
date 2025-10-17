@@ -11,8 +11,13 @@ export interface Question {
   title: string
   description: string
   difficulty: string
+  input?: string
+  output?: string
   constraints?: string[]
-  examples?: object[]
+  examples?: Array<{
+    input: string
+    output: string
+  }>
   hints?: string[]
   categories: string[]
   test_cases: TestCase[]
@@ -23,11 +28,11 @@ export interface CreateQuestionInput {
   title: string
   description: string
   difficulty: string
-  constraints?: string[]
-  examples: object[]
-  hints?: string[]
-  categories: string[]
-  test_cases: TestCase[]
+  constraints?: string
+  examples: string
+  hints?: string
+  categories: string
+  test_cases?: string
   is_active?: boolean
 }
 

@@ -11,6 +11,10 @@ export const API_ENDPOINTS = {
     GET: '/user/profile/me',
     UPDATE: '/user/profile',
   },
+  QUESTION: {
+    MATCH: '/question/match',
+    GET_BY_ID: '/question',
+  },
 } as const
 
 export const WEBSOCKET_BASE_URL =
