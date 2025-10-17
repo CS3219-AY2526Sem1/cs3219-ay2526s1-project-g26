@@ -13,12 +13,8 @@ import LoadingSkeleton from './components/common/LoadingSkeleton.tsx'
 import NavBarLayout from './layouts/NavBarLayout.tsx'
 import SubmissionsOverview from './pages/SubmissionsOverview.tsx'
 import Home from './pages/Home.tsx'
-<<<<<<< HEAD
 import UpdateProfile from './pages/UpdateProfile.tsx'
-import Matching from './pages/Matching.tsx'
-=======
 import Match from './pages/Match.tsx'
->>>>>>> 0fe1a11 (Add frontend)
 
 const NotificationSnackbar = lazy(
   () => import('./components/common/NotificationSnackbar.tsx')
@@ -50,7 +46,6 @@ const ProtectedRoutes = () => {
 
 function App() {
   return (
-<<<<<<< HEAD
     <>
       <Router>
         <Routes>
@@ -61,23 +56,8 @@ function App() {
             <Route element={<NavBarLayout />}>
               <Route path="/home" element={<Home />} />
               <Route path="/submissions" element={<SubmissionsOverview />} />
+              <Route path="/match" element={<Match />} />
             </Route>
-=======
-    <Router>
-      <Routes>
-        <Route path="/" element={<Navigate to={'home'} />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route element={<ProtectedRoutes />}>
-          <Route element={<NavBarLayout />}>
-            <Route path="/home" element={<Home />} />
-            <Route path="/submissions" element={<Submissions />} />
-<<<<<<< HEAD
-            <Route path="/matching" element={<Matching />} />
->>>>>>> 46079b8 (Add Matching Page)
-=======
-            <Route path="/match" element={<Match />} />
->>>>>>> 0fe1a11 (Add frontend)
           </Route>
           <Route path="/update-profile" element={<UpdateProfile />} />
         </Routes>

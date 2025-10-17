@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-const Matching = () => {
-  // eslint-disable-next-line react/react-in-jsx-scope
-  return <>This is home page</>
-}
-
-export default Matching
-=======
 import {
   Alert,
   Box,
@@ -16,8 +8,13 @@ import {
   Stack,
   Typography,
 } from '@mui/material'
-import { check } from 'prettier'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { RootState } from '../store'
+// import { socket } from '../socket'
+import { io } from 'socket.io-client'
+import { Topics } from '../components/match/topics'
+import { Difficulty } from '../components/match/difficulty'
 
 const topicsList = [
   'Arrays & Hashing',
@@ -38,10 +35,13 @@ const topicsList = [
 
 const difficultyList = ['Easy', 'Medium', 'Hard']
 
-const alert =
+const sessionDurationAlert =
   'Collaborative session will last 30 minutes for Easy, 45 minutes for Medium and 60 minutes for Hard'
 
+const socket = io("http://localhost:4020")
+
 const Match = () => {
+
   const [checkedTopics, setCheckedTopics] = useState<string[]>([])
   const [checkedDifficulties, setCheckedDifficulties] = useState<string[]>([])
 
@@ -82,11 +82,13 @@ const Match = () => {
       <br></br>
       <Stack spacing={2}>
         <Topics
+          topicsList={topicsList}
           checkedTopics={checkedTopics}
           toggleTopic={handleCheckTopic}
           toggleAllTopic={handleCheckAllTopics}
         />
         <Difficulty 
+          difficultyList={difficultyList}
           checkedDifficulties={checkedDifficulties}
           toggleDifficulty={handleCheckDifficulty}
           toggleAllDifficulty={handleCheckAllDifficulties}
@@ -97,124 +99,8 @@ const Match = () => {
   )
 }
 
-const Topics = ({
-  checkedTopics,
-  toggleTopic,
-  toggleAllTopic,
-}: {
-  checkedTopics: string[]
-  toggleTopic: (isChecked: boolean, topic: string) => void
-  toggleAllTopic: (isChecked: boolean) => void
-}) => {
-  const allSelected = checkedTopics.length === topicsList.length
-  const partiallySelected = checkedTopics.length > 0 && checkedTopics.length < topicsList.length
-
-  return (
-    <Box>
-      <Stack direction="row" spacing={4} alignItems="center" sx={{ mb: 2 }}>
-        <Typography variant="h5" sx={{ gridColumn: '1' }}>
-          Topics
-        </Typography>
-        <FormControlLabel
-          sx={{ gridColumn: '2' }}
-          control={
-            <Checkbox
-              defaultChecked={false}
-              checked={allSelected}
-              indeterminate={partiallySelected}
-              size="small"
-              onChange={(e) => toggleAllTopic(e.target.checked)}
-            />
-          }
-          label="Select All"
-        />
-      </Stack>
-
-      <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gridTemplateRows: 'repeat(6, 1fr)',
-          gridAutoFlow: 'row',
-          gap: 0.8,
-          overflowY: 'auto',
-          height: '40vh',
-        }}
-      >
-        {topicsList.map((topic) => (
-          <FormControlLabel
-            key={topic}
-            control={
-              <Checkbox
-                defaultChecked={false}
-                checked={checkedTopics.includes(topic)}
-                size="small"
-                onChange={(e) => toggleTopic(e.target.checked, topic)}
-              />
-            }
-            label={topic}
-          />
-        ))}
-      </Box>
-    </Box>
-  )
-}
-
-const Difficulty = ({
-  checkedDifficulties,
-  toggleDifficulty,
-  toggleAllDifficulty
-}: {
-  checkedDifficulties : string[],
-  toggleDifficulty: (isChecked: boolean, difficulty: string) => void,
-  toggleAllDifficulty: (isChecked: boolean) => void
-}) => {
-  const allSelected = checkedDifficulties.length === difficultyList.length
-  const partiallySelected = checkedDifficulties.length > 0 && checkedDifficulties.length < difficultyList.length
-
-  return (
-    <Box>
-      <Stack direction="row" spacing={4} alignItems={'center'}>
-        <Typography variant="h5" sx={{ gridColumn: '1' }}>
-          Difficulty
-        </Typography>
-        <FormControlLabel
-          sx={{ gridColumn: '2' }}
-          control={<Checkbox defaultChecked={false} checked={allSelected} indeterminate={partiallySelected} size="small" onChange={(e) => toggleAllDifficulty(e.target.checked)}/>}
-          label={'Select All'}
-        />
-      </Stack>
-
-      <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gridTemplateRows: '1',
-          gridAutoFlow: 'row',
-          gap: 0.8,
-          height: '10vh',
-        }}
-      >
-        {difficultyList.map((difficulty) => (
-          <FormControlLabel
-            key={difficulty}
-            control={
-              <Checkbox
-                defaultChecked={false}
-                checked={checkedDifficulties.includes(difficulty)}
-                size="small"
-                onChange={(e) => toggleDifficulty(e.target.checked, difficulty)}
-              />
-            }
-            label={difficulty}
-          />
-        ))}
-      </Box>
-    </Box>
-  )
-}
-
 const Submission = ({checkedTopics, checkedDifficulties}:{checkedTopics: string[], checkedDifficulties: string[]}) => {
+  const userId = useSelector((state: RootState) => state.user.user?.id)
   return (
     <Box
       sx={{
@@ -226,13 +112,30 @@ const Submission = ({checkedTopics, checkedDifficulties}:{checkedTopics: string[
       }}
     >
       <Alert sx={{ gridColumn: '1 / 3' }} severity="info">
-        {alert}
+        {sessionDurationAlert}
       </Alert>
+      <Typography sx={{ gridColumn: '3 / 4', placeSelf: 'center end'}} color="red">
+        {/* TODO */}
+      </Typography>
       <Button
         sx={{ gridColumn: '4', placeSelf: 'center end' }}
         variant="contained"
         size="large"
-        onClick={() => console.log(checkedTopics, checkedDifficulties)}
+        onClick={() => {
+          // Input validation (TODO later)
+          // user send checked topics/difficulty to backend
+          // backend respond with room id if successfully matched
+          // user fetch a question from question service
+          // user recv question + room id, sends this to collab service
+          console.log(checkedTopics, checkedDifficulties)
+          socket.emit("joinMatch", {
+            id: userId, 
+            topics: checkedTopics, 
+            difficulty: checkedDifficulties
+          })
+          
+        }}
+  
       >
         Start Matching
       </Button>
@@ -240,5 +143,16 @@ const Submission = ({checkedTopics, checkedDifficulties}:{checkedTopics: string[
   )
 }
 
+// function handleMatchFound({roomId}) {
+//   try {
+//     // Fetch a question from question service
+
+//     socket.emit("startSession", {roomId, question})
+
+//     // Navigate to collab page
+//   } catch (err) {
+//     console.error("Failed to start a match", err)
+//   }
+// }
+
 export default Match
->>>>>>> 0fe1a11 (Add frontend)

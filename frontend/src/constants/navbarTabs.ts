@@ -6,14 +6,10 @@ export const TABS = [
     label: 'Submissions',
     id: 'submissions',
   },
-<<<<<<< HEAD
-  { pathname: '/match', label: 'Match', id: 'match' },
-=======
 
   {
     pathname: '/match',
     label: 'Match',
     id: 'match',
   },
->>>>>>> 0fe1a11 (Add frontend)
 ]
