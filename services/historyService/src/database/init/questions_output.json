@@ -1,0 +1,2188 @@
+[
+  {
+    "title": "Two Sum",
+    "input": "The first line contains two integers `n` and `target`. The second line contains `n` integers giving the elements in `nums`.",
+    "output": "Two integers that are the smallest indices. Output `-1 -1` if there no answer.",
+    "description": "Given an array of integers `nums` of length `n`, and an integer `target`, return the smallest indices of the two numbers such that they add up to target.\n\nYou may not use the same element twice.",
+    "difficulty": "easy",
+    "categories": ["array", "hash-table", "greedy"],
+    "examples": [
+      {
+        "input": "4 9\n2 7 11 15",
+        "output": "0 1",
+        "is_hidden": false
+      },
+      {
+        "input": "3 6\n3 2 4",
+        "output": "1 2",
+        "is_hidden": false
+      }
+    ],
+    "constraints": [],
+    "hints": [
+      "A really brute force way would be to search for all possible pairs of numbers but that would be too slow. Again, it is best to try out brute force solutions just for completeness. It is from these brute force solutions that you can come up with optimizations."
+    ],
+    "test_cases": [
+      {
+        "input": "6 4\n18 3 1 1 15 25",
+        "output": "1 2",
+        "is_hidden": true
+      },
+      {
+        "input": "7 45\n6 23 8 2 12 33 12",
+        "output": "4 5",
+        "is_hidden": true
+      },
+      {
+        "input": "13 32\n22 21 23 12 26 27 30 27 12 19 2 2 27",
+        "output": "6 10",
+        "is_hidden": true
+      },
+      {
+        "input": "15 21\n6 14 18 9 26 21 2 14 5 16 14 26 3 25 10",
+        "output": "2 12",
+        "is_hidden": true
+      },
+      {
+        "input": "4 22\n16 7 21 15",
+        "output": "1 3",
+        "is_hidden": true
+      },
+      {
+        "input": "7 27\n30 3 24 3 2 26 29",
+        "output": "1 2",
+        "is_hidden": true
+      },
+      {
+        "input": "13 3\n16 14 30 2 8 1 8 6 13 6 22 28 20",
+        "output": "3 5",
+        "is_hidden": true
+      },
+      {
+        "input": "11 32\n10 7 20 9 5 20 9 26 24 22 21",
+        "output": "0 9",
+        "is_hidden": true
+      },
+      {
+        "input": "13 22\n29 16 7 4 11 5 10 4 11 22 16 25 27",
+        "output": "4 8",
+        "is_hidden": true
+      },
+      {
+        "input": "15 11\n4 4 8 21 5 30 12 1 2 25 26 16 3 28 14",
+        "output": "2 12",
+        "is_hidden": true
+      },
+      {
+        "input": "13 2\n4 5 1 17 3 20 21 20 5 1 30 5 24",
+        "output": "2 9",
+        "is_hidden": true
+      },
+      {
+        "input": "5 32\n18 26 7 23 14",
+        "output": "0 4",
+        "is_hidden": true
+      },
+      {
+        "input": "15 15\n3 20 19 26 12 13 10 24 25 28 24 14 2 29 14",
+        "output": "0 4",
+        "is_hidden": true
+      },
+      {
+        "input": "4 45\n13 27 43 2",
+        "output": "2 3",
+        "is_hidden": true
+      },
+      {
+        "input": "2 18\n10 8",
+        "output": "0 1",
+        "is_hidden": true
+      },
+      {
+        "input": "4 8\n2 26 20 6",
+        "output": "0 3",
+        "is_hidden": true
+      },
+      {
+        "input": "2 35\n34 1",
+        "output": "0 1",
+        "is_hidden": true
+      },
+      {
+        "input": "3 11\n6 5 23",
+        "output": "0 1",
+        "is_hidden": true
+      },
+      {
+        "input": "13 11\n9 30 22 25 22 22 5 25 13 23 16 6 2",
+        "output": "0 12",
+        "is_hidden": true
+      },
+      {
+        "input": "12 25\n8 1 25 20 8 26 17 10 29 15 5 10",
+        "output": "0 6",
+        "is_hidden": true
+      },
+      {
+        "input": "7 36\n1 25 23 15 13 18 18",
+        "output": "2 4",
+        "is_hidden": true
+      },
+      {
+        "input": "8 16\n13 3 2 4 3 20 13 5",
+        "output": "0 1",
+        "is_hidden": true
+      },
+      {
+        "input": "3 11\n9 9 2",
+        "output": "0 2",
+        "is_hidden": true
+      },
+      {
+        "input": "4 12\n9 4 8 17",
+        "output": "1 2",
+        "is_hidden": true
+      },
+      {
+        "input": "9 3\n25 7 19 10 22 17 8 1 2",
+        "output": "7 8",
+        "is_hidden": true
+      },
+      {
+        "input": "12 11\n8 17 28 4 27 22 12 2 25 13 9 9",
+        "output": "7 10",
+        "is_hidden": true
+      },
+      {
+        "input": "4 15\n14 30 1 7",
+        "output": "0 2",
+        "is_hidden": true
+      },
+      {
+        "input": "14 18\n12 21 26 26 22 24 27 6 26 26 14 6 17 8",
+        "output": "0 7",
+        "is_hidden": true
+      },
+      {
+        "input": "5 5\n9 4 4 4 1",
+        "output": "1 4",
+        "is_hidden": true
+      },
+      {
+        "input": "11 17\n5 24 10 10 24 6 28 28 2 7 5",
+        "output": "2 9",
+        "is_hidden": true
+      },
+      {
+        "input": "15 49\n20 5 32 21 23 21 11 29 3 10 20 17 12 24 8",
+        "output": "0 7",
+        "is_hidden": true
+      },
+      {
+        "input": "7 42\n7 26 2 17 21 14 25",
+        "output": "3 6",
+        "is_hidden": true
+      },
+      {
+        "input": "15 17\n4 18 20 3 8 6 25 29 27 2 2 15 29 23 30",
+        "output": "9 11",
+        "is_hidden": true
+      },
+      {
+        "input": "12 19\n7 22 6 10 15 21 27 26 8 11 4 4",
+        "output": "4 10",
+        "is_hidden": true
+      },
+      {
+        "input": "4 27\n12 25 21 6",
+        "output": "2 3",
+        "is_hidden": true
+      },
+      {
+        "input": "15 2\n29 14 22 3 15 1 1 19 8 12 5 3 17 9 26",
+        "output": "5 6",
+        "is_hidden": true
+      },
+      {
+        "input": "11 33\n18 2 13 2 15 23 11 11 23 10 29",
+        "output": "0 4",
+        "is_hidden": true
+      },
+      {
+        "input": "2 26\n11 15",
+        "output": "0 1",
+        "is_hidden": true
+      },
+      {
+        "input": "9 48\n16 19 32 8 17 23 6 22 25",
+        "output": "0 2",
+        "is_hidden": true
+      },
+      {
+        "input": "8 20\n19 1 11 16 1 4 20 30",
+        "output": "0 1",
+        "is_hidden": true
+      },
+      {
+        "input": "5 9\n3 16 6 3 15",
+        "output": "0 2",
+        "is_hidden": true
+      },
+      {
+        "input": "14 44\n26 4 10 4 9 11 25 28 24 17 20 16 13 27",
+        "output": "7 11",
+        "is_hidden": true
+      },
+      {
+        "input": "6 15\n27 29 1 4 8 11",
+        "output": "3 5",
+        "is_hidden": true
+      },
+      {
+        "input": "9 32\n23 25 7 27 1 5 18 1 16",
+        "output": "1 2",
+        "is_hidden": true
+      },
+      {
+        "input": "14 32\n18 12 14 27 3 22 28 23 17 11 19 18 1 7",
+        "output": "0 2",
+        "is_hidden": true
+      },
+      {
+        "input": "7 16\n3 2 19 14 29 15 2",
+        "output": "1 3",
+        "is_hidden": true
+      },
+      {
+        "input": "15 33\n17 16 5 11 21 6 4 27 29 5 8 22 17 7 18",
+        "output": "0 1",
+        "is_hidden": true
+      },
+      {
+        "input": "7 23\n12 13 27 12 18 30 11",
+        "output": "0 6",
+        "is_hidden": true
+      },
+      {
+        "input": "10 46\n19 25 19 28 43 3 7 2 11 26",
+        "output": "4 5",
+        "is_hidden": true
+      },
+      {
+        "input": "8 32\n11 23 12 10 9 18 26 17",
+        "output": "1 4",
+        "is_hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Kth Largest Element in an Array",
+    "input": "The first line contains two integers `n` and `k`. The second line contains `n` integers giving the elements in `nums`.",
+    "output": "An integer that is the `kth` largest element in the array.",
+    "description": "Given an integer array `nums` of length `n`, and an integer `k`, return the `kth` largest element in the array.",
+    "difficulty": "medium",
+    "categories": ["array", "sorting"],
+    "examples": [
+      {
+        "input": "6 2\n3 2 1 5 6 4",
+        "output": "5",
+        "is_hidden": false
+      },
+      {
+        "input": "9 4\n3 2 3 1 2 4 5 5 6",
+        "output": "4",
+        "is_hidden": false
+      }
+    ],
+    "constraints": [],
+    "hints": [],
+    "test_cases": [
+      {
+        "input": "3 1\n48 44 4",
+        "output": "48",
+        "is_hidden": true
+      },
+      {
+        "input": "11 10\n22 15 9 25 25 2 18 36 11 37 50",
+        "output": "9",
+        "is_hidden": true
+      },
+      {
+        "input": "4 1\n44 11 26 30",
+        "output": "44",
+        "is_hidden": true
+      },
+      {
+        "input": "10 7\n26 7 7 39 36 14 8 13 43 25",
+        "output": "13",
+        "is_hidden": true
+      },
+      {
+        "input": "12 6\n20 19 23 22 44 45 37 42 50 20 18 26",
+        "output": "26",
+        "is_hidden": true
+      },
+      {
+        "input": "9 4\n24 2 7 28 8 23 45 30 27",
+        "output": "27",
+        "is_hidden": true
+      },
+      {
+        "input": "13 6\n18 4 19 3 31 4 33 30 20 16 25 24 22",
+        "output": "22",
+        "is_hidden": true
+      },
+      {
+        "input": "15 3\n26 6 36 44 21 5 34 31 19 39 17 39 48 4 40",
+        "output": "40",
+        "is_hidden": true
+      },
+      {
+        "input": "4 4\n21 8 32 22",
+        "output": "8",
+        "is_hidden": true
+      },
+      {
+        "input": "7 3\n15 8 13 19 18 14 19",
+        "output": "18",
+        "is_hidden": true
+      },
+      {
+        "input": "15 13\n38 50 15 25 24 28 2 14 35 20 2 1 31 31 44",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "2 2\n45 10",
+        "output": "10",
+        "is_hidden": true
+      },
+      {
+        "input": "2 1\n32 5",
+        "output": "32",
+        "is_hidden": true
+      },
+      {
+        "input": "3 1\n48 47 3",
+        "output": "48",
+        "is_hidden": true
+      },
+      {
+        "input": "14 5\n45 50 23 46 1 14 39 5 23 28 30 46 18 30",
+        "output": "39",
+        "is_hidden": true
+      },
+      {
+        "input": "12 5\n41 30 26 15 18 40 29 47 7 17 22 13",
+        "output": "29",
+        "is_hidden": true
+      },
+      {
+        "input": "10 1\n11 7 7 50 29 11 25 32 7 24",
+        "output": "50",
+        "is_hidden": true
+      },
+      {
+        "input": "9 3\n50 24 44 39 35 23 28 47 28",
+        "output": "44",
+        "is_hidden": true
+      },
+      {
+        "input": "14 3\n36 17 33 30 19 6 47 43 10 12 39 27 12 34",
+        "output": "39",
+        "is_hidden": true
+      },
+      {
+        "input": "11 2\n41 46 33 27 47 33 4 32 49 4 26",
+        "output": "47",
+        "is_hidden": true
+      },
+      {
+        "input": "8 2\n44 36 38 35 50 10 43 23",
+        "output": "44",
+        "is_hidden": true
+      },
+      {
+        "input": "8 4\n33 6 40 11 27 14 33 50",
+        "output": "33",
+        "is_hidden": true
+      },
+      {
+        "input": "14 13\n13 20 16 20 12 47 14 50 22 35 24 12 46 18",
+        "output": "12",
+        "is_hidden": true
+      },
+      {
+        "input": "11 5\n47 2 27 41 36 29 24 46 21 29 31",
+        "output": "31",
+        "is_hidden": true
+      },
+      {
+        "input": "8 6\n8 45 21 3 25 45 26 32",
+        "output": "21",
+        "is_hidden": true
+      },
+      {
+        "input": "4 3\n1 20 35 11",
+        "output": "11",
+        "is_hidden": true
+      },
+      {
+        "input": "8 3\n17 19 14 46 27 25 39 20",
+        "output": "27",
+        "is_hidden": true
+      },
+      {
+        "input": "7 4\n7 48 27 30 26 35 19",
+        "output": "27",
+        "is_hidden": true
+      },
+      {
+        "input": "10 5\n27 12 32 15 22 40 37 37 47 28",
+        "output": "32",
+        "is_hidden": true
+      },
+      {
+        "input": "10 9\n22 50 8 12 48 30 49 28 28 20",
+        "output": "12",
+        "is_hidden": true
+      },
+      {
+        "input": "8 2\n17 27 46 5 4 16 9 7",
+        "output": "27",
+        "is_hidden": true
+      },
+      {
+        "input": "9 8\n13 41 12 14 19 47 12 13 43",
+        "output": "12",
+        "is_hidden": true
+      },
+      {
+        "input": "4 1\n16 21 24 22",
+        "output": "24",
+        "is_hidden": true
+      },
+      {
+        "input": "5 2\n3 44 5 45 9",
+        "output": "44",
+        "is_hidden": true
+      },
+      {
+        "input": "15 3\n31 33 5 29 45 49 18 36 39 46 25 25 13 10 9",
+        "output": "45",
+        "is_hidden": true
+      },
+      {
+        "input": "13 3\n27 11 16 3 1 25 47 18 34 27 15 43 29",
+        "output": "34",
+        "is_hidden": true
+      },
+      {
+        "input": "3 1\n29 18 40",
+        "output": "40",
+        "is_hidden": true
+      },
+      {
+        "input": "4 1\n20 41 49 25",
+        "output": "49",
+        "is_hidden": true
+      },
+      {
+        "input": "12 1\n2 18 19 45 31 19 50 42 5 15 1 35",
+        "output": "50",
+        "is_hidden": true
+      },
+      {
+        "input": "9 9\n27 9 4 7 17 34 36 49 34",
+        "output": "4",
+        "is_hidden": true
+      },
+      {
+        "input": "5 5\n14 26 26 42 26",
+        "output": "14",
+        "is_hidden": true
+      },
+      {
+        "input": "2 2\n49 44",
+        "output": "44",
+        "is_hidden": true
+      },
+      {
+        "input": "13 6\n38 28 17 48 5 4 39 11 5 32 33 28 21",
+        "output": "28",
+        "is_hidden": true
+      },
+      {
+        "input": "4 4\n10 39 30 18",
+        "output": "10",
+        "is_hidden": true
+      },
+      {
+        "input": "13 4\n9 26 30 12 36 50 33 39 28 9 44 18 44",
+        "output": "39",
+        "is_hidden": true
+      },
+      {
+        "input": "13 11\n42 10 47 15 21 15 1 7 25 48 49 18 14",
+        "output": "10",
+        "is_hidden": true
+      },
+      {
+        "input": "15 7\n2 23 33 37 8 5 25 7 7 30 26 27 46 18 49",
+        "output": "26",
+        "is_hidden": true
+      },
+      {
+        "input": "12 4\n9 42 48 39 11 17 9 21 1 26 28 37",
+        "output": "37",
+        "is_hidden": true
+      },
+      {
+        "input": "9 9\n14 6 19 34 35 10 37 13 48",
+        "output": "6",
+        "is_hidden": true
+      },
+      {
+        "input": "14 3\n20 43 22 6 12 18 1 40 34 27 32 39 8 40",
+        "output": "40",
+        "is_hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Longest Palindrome Substring",
+    "input": "A single string `s`.",
+    "output": "A single string that is the longest palindrome substring.",
+    "description": "Given a string `s`, return the longest palindrome substring in `s`.\n\nA string is a palindrome when it reads the same backward as forward.\n\nIf there are multiple answers, return the substring with the smallest indices.",
+    "difficulty": "medium",
+    "categories": ["string", "dynamic-programming"],
+    "examples": [
+      {
+        "input": "babad",
+        "output": "bab",
+        "is_hidden": false
+      },
+      {
+        "input": "cbbd",
+        "output": "bb",
+        "is_hidden": false
+      }
+    ],
+    "constraints": ["`s` contains only digits and English letters."],
+    "hints": [],
+    "test_cases": [
+      {
+        "input": "babad",
+        "output": "bab",
+        "is_hidden": false
+      },
+      {
+        "input": "cbbd",
+        "output": "bb",
+        "is_hidden": false
+      },
+      {
+        "input": "racecarxyz",
+        "output": "racecar",
+        "is_hidden": true
+      },
+      {
+        "input": "noonatmidnight",
+        "output": "noon",
+        "is_hidden": true
+      },
+      {
+        "input": "forgeeksskeegfor",
+        "output": "geeksskeeg",
+        "is_hidden": true
+      },
+      {
+        "input": "abacdfgdcaba",
+        "output": "aba",
+        "is_hidden": true
+      },
+      {
+        "input": "abcbaabc",
+        "output": "cbaabc",
+        "is_hidden": true
+      },
+      {
+        "input": "abcdedcba",
+        "output": "abcdedcba",
+        "is_hidden": true
+      },
+      {
+        "input": "xyzzyxabc",
+        "output": "xyzzyx",
+        "is_hidden": true
+      },
+      {
+        "input": "levelup",
+        "output": "level",
+        "is_hidden": true
+      },
+      {
+        "input": "abaxyzzyxf",
+        "output": "xyzzyx",
+        "is_hidden": true
+      },
+      {
+        "input": "abcdcbae",
+        "output": "abcdcba",
+        "is_hidden": true
+      },
+      {
+        "input": "madamimadam",
+        "output": "madamimadam",
+        "is_hidden": true
+      },
+      {
+        "input": "referendum",
+        "output": "refer",
+        "is_hidden": true
+      },
+      {
+        "input": "palindromemordnilap",
+        "output": "palindromemordnilap",
+        "is_hidden": true
+      },
+      {
+        "input": "rotatorwheel",
+        "output": "rotator",
+        "is_hidden": true
+      },
+      {
+        "input": "deifiedroad",
+        "output": "deified",
+        "is_hidden": true
+      },
+      {
+        "input": "civicduty",
+        "output": "civic",
+        "is_hidden": true
+      },
+      {
+        "input": "redderbike",
+        "output": "redder",
+        "is_hidden": true
+      },
+      {
+        "input": "reviverplan",
+        "output": "reviver",
+        "is_hidden": true
+      },
+      {
+        "input": "tenetlong",
+        "output": "tenet",
+        "is_hidden": true
+      },
+      {
+        "input": "wowthatscool",
+        "output": "wow",
+        "is_hidden": true
+      },
+      {
+        "input": "kayaktrip",
+        "output": "kayak",
+        "is_hidden": true
+      },
+      {
+        "input": "noonlight",
+        "output": "noon",
+        "is_hidden": true
+      },
+      {
+        "input": "momentswithmom",
+        "output": "mom",
+        "is_hidden": true
+      },
+      {
+        "input": "dadbod",
+        "output": "dad",
+        "is_hidden": true
+      },
+      {
+        "input": "statsreport",
+        "output": "stats",
+        "is_hidden": true
+      },
+      {
+        "input": "peepthrough",
+        "output": "peep",
+        "is_hidden": true
+      },
+      {
+        "input": "gigglepalindrome",
+        "output": "gig",
+        "is_hidden": true
+      },
+      {
+        "input": "eyecontact",
+        "output": "eye",
+        "is_hidden": true
+      },
+      {
+        "input": "popculture",
+        "output": "pop",
+        "is_hidden": true
+      },
+      {
+        "input": "malayalamword",
+        "output": "malayalam",
+        "is_hidden": true
+      },
+      {
+        "input": "aibohphobia",
+        "output": "aibohphobia",
+        "is_hidden": true
+      },
+      {
+        "input": "annaandherfriends",
+        "output": "anna",
+        "is_hidden": true
+      },
+      {
+        "input": "racecarandtruck",
+        "output": "racecar",
+        "is_hidden": true
+      },
+      {
+        "input": "madamtaxi",
+        "output": "madam",
+        "is_hidden": true
+      },
+      {
+        "input": "momanddad",
+        "output": "mom",
+        "is_hidden": true
+      },
+      {
+        "input": "abbaabba",
+        "output": "abbaabba",
+        "is_hidden": true
+      },
+      {
+        "input": "abbaabcddcba",
+        "output": "abcddcba",
+        "is_hidden": true
+      },
+      {
+        "input": "abcdxyzzyxdcba",
+        "output": "abcdxyzzyxdcba",
+        "is_hidden": true
+      },
+      {
+        "input": "tracedetecart",
+        "output": "ede",
+        "is_hidden": true
+      },
+      {
+        "input": "aaabaaa",
+        "output": "aaabaaa",
+        "is_hidden": true
+      },
+      {
+        "input": "aabbccbbaa",
+        "output": "aabbccbbaa",
+        "is_hidden": true
+      },
+      {
+        "input": "bbaccab",
+        "output": "baccab",
+        "is_hidden": true
+      },
+      {
+        "input": "opqrsrsrqpo",
+        "output": "opqrsrsrqpo",
+        "is_hidden": true
+      },
+      {
+        "input": "abcddcbae",
+        "output": "abcddcba",
+        "is_hidden": true
+      },
+      {
+        "input": "noonononoon",
+        "output": "noonononoon",
+        "is_hidden": true
+      },
+      {
+        "input": "tattarrattat",
+        "output": "tattarrattat",
+        "is_hidden": true
+      },
+      {
+        "input": "abcddcbax",
+        "output": "abcddcba",
+        "is_hidden": true
+      },
+      {
+        "input": "redividerxyz",
+        "output": "redivider",
+        "is_hidden": true
+      },
+      {
+        "input": "wowamazingwow",
+        "output": "wow",
+        "is_hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Search Insert Position",
+    "input": "The first line contains two integers `n` and `target`. The second line contains `n` integers giving the elements in `nums`.",
+    "output": "An integer - index that would be inserted.",
+    "description": "Given a sorted array of distinct integers and a target value, return the index if the target is found. If not, return the index where it would be if it were inserted in order.",
+    "difficulty": "easy",
+    "categories": ["array", "binary-search"],
+    "examples": [
+      {
+        "input": "4 5\n1 3 5 6",
+        "output": "2",
+        "is_hidden": false
+      },
+      {
+        "input": "4 2\n1 3 5 6",
+        "output": "1",
+        "is_hidden": false
+      }
+    ],
+    "constraints": [
+      "`nums` contains **distinct** values and are sorted in **ascending** order."
+    ],
+    "hints": [],
+    "test_cases": [
+      {
+        "input": "5 3\n1 2 4 5 6",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "4 7\n1 3 5 6",
+        "output": "4",
+        "is_hidden": true
+      },
+      {
+        "input": "6 4\n1 2 3 5 6 7",
+        "output": "3",
+        "is_hidden": true
+      },
+      {
+        "input": "3 0\n1 2 3",
+        "output": "0",
+        "is_hidden": true
+      },
+      {
+        "input": "7 8\n1 2 3 4 5 6 7",
+        "output": "7",
+        "is_hidden": true
+      },
+      {
+        "input": "5 10\n1 2 3 4 5",
+        "output": "5",
+        "is_hidden": true
+      },
+      {
+        "input": "4 2\n1 3 5 7",
+        "output": "1",
+        "is_hidden": true
+      },
+      {
+        "input": "6 9\n2 4 6 8 10 12",
+        "output": "4",
+        "is_hidden": true
+      },
+      {
+        "input": "5 5\n1 3 5 7 9",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "3 6\n2 4 8",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "4 1\n2 3 5 6",
+        "output": "0",
+        "is_hidden": true
+      },
+      {
+        "input": "6 11\n1 3 5 7 9 10",
+        "output": "6",
+        "is_hidden": true
+      },
+      {
+        "input": "5 8\n1 2 4 6 7",
+        "output": "5",
+        "is_hidden": true
+      },
+      {
+        "input": "4 4\n1 2 4 5",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "7 3\n0 1 2 4 5 6 7",
+        "output": "3",
+        "is_hidden": true
+      },
+      {
+        "input": "8 15\n1 2 4 6 8 10 12 14",
+        "output": "8",
+        "is_hidden": true
+      },
+      {
+        "input": "3 3\n1 2 4",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "4 6\n2 4 5 7",
+        "output": "3",
+        "is_hidden": true
+      },
+      {
+        "input": "6 7\n1 3 5 6 8 10",
+        "output": "4",
+        "is_hidden": true
+      },
+      {
+        "input": "5 0\n2 4 6 8 10",
+        "output": "0",
+        "is_hidden": true
+      },
+      {
+        "input": "5 11\n1 3 5 9 10",
+        "output": "5",
+        "is_hidden": true
+      },
+      {
+        "input": "6 13\n2 4 6 8 10 12",
+        "output": "6",
+        "is_hidden": true
+      },
+      {
+        "input": "7 7\n1 3 5 6 7 9 11",
+        "output": "4",
+        "is_hidden": true
+      },
+      {
+        "input": "3 1\n2 3 4",
+        "output": "0",
+        "is_hidden": true
+      },
+      {
+        "input": "4 9\n1 5 6 8",
+        "output": "4",
+        "is_hidden": true
+      },
+      {
+        "input": "6 2\n1 3 5 7 9 11",
+        "output": "1",
+        "is_hidden": true
+      },
+      {
+        "input": "5 6\n2 4 6 8 10",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "4 8\n1 3 6 7",
+        "output": "4",
+        "is_hidden": true
+      },
+      {
+        "input": "3 5\n2 4 6",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "7 12\n1 2 3 5 7 9 11",
+        "output": "7",
+        "is_hidden": true
+      },
+      {
+        "input": "6 0\n3 5 7 9 11 13",
+        "output": "0",
+        "is_hidden": true
+      },
+      {
+        "input": "5 4\n1 2 3 6 7",
+        "output": "3",
+        "is_hidden": true
+      },
+      {
+        "input": "4 3\n1 2 5 6",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "7 6\n1 2 3 5 7 8 10",
+        "output": "4",
+        "is_hidden": true
+      },
+      {
+        "input": "3 7\n2 4 6",
+        "output": "3",
+        "is_hidden": true
+      },
+      {
+        "input": "6 14\n1 3 5 7 9 13",
+        "output": "6",
+        "is_hidden": true
+      },
+      {
+        "input": "5 9\n1 2 4 6 8",
+        "output": "5",
+        "is_hidden": true
+      },
+      {
+        "input": "4 10\n1 2 3 9",
+        "output": "4",
+        "is_hidden": true
+      },
+      {
+        "input": "6 1\n2 4 6 8 10 12",
+        "output": "0",
+        "is_hidden": true
+      },
+      {
+        "input": "5 7\n1 3 5 6 8",
+        "output": "4",
+        "is_hidden": true
+      },
+      {
+        "input": "7 2\n3 4 5 6 7 8 9",
+        "output": "0",
+        "is_hidden": true
+      },
+      {
+        "input": "6 5\n1 2 3 4 6 7",
+        "output": "4",
+        "is_hidden": true
+      },
+      {
+        "input": "4 12\n2 4 6 10",
+        "output": "4",
+        "is_hidden": true
+      },
+      {
+        "input": "3 2\n1 3 5",
+        "output": "1",
+        "is_hidden": true
+      },
+      {
+        "input": "5 6\n1 3 5 7 9",
+        "output": "3",
+        "is_hidden": true
+      },
+      {
+        "input": "4 11\n2 4 6 9",
+        "output": "4",
+        "is_hidden": true
+      },
+      {
+        "input": "6 3\n1 2 4 5 7 8",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "5 13\n1 4 6 9 11",
+        "output": "5",
+        "is_hidden": true
+      },
+      {
+        "input": "7 0\n2 3 5 7 9 11 13",
+        "output": "0",
+        "is_hidden": true
+      },
+      {
+        "input": "3 10\n1 5 9",
+        "output": "3",
+        "is_hidden": true
+      },
+      {
+        "input": "4 14\n1 3 5 12",
+        "output": "4",
+        "is_hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Jump Game",
+    "input": "The first line contains an integer `n` indicating the length of the array `nums`. The next line contains `n` integers, that are elements of `num`.",
+    "output": "Output `YES` if the position is reachable, else output `NO`.",
+    "description": "You are given an integer array `nums` of size `n`. You are initially positioned at the **first index**, and each element in the array represents your maximum jump length at that position.\n\nDetermine whether or not you can reach the last index.",
+    "difficulty": "medium",
+    "categories": ["array", "dynamic-programming", "greedy"],
+    "examples": [
+      {
+        "input": "5\n2 3 1 1 4",
+        "output": "YES",
+        "is_hidden": false
+      },
+      {
+        "input": "5\n3 2 1 0 4",
+        "output": "NO",
+        "is_hidden": false
+      }
+    ],
+    "constraints": [],
+    "hints": [],
+    "test_cases": [
+      {
+        "input": "5\n2 3 2 1 4",
+        "output": "YES",
+        "is_hidden": true
+      },
+      {
+        "input": "5\n3 2 1 0 3",
+        "output": "NO",
+        "is_hidden": true
+      },
+      {
+        "input": "6\n2 0 2 0 1 0",
+        "output": "YES",
+        "is_hidden": true
+      },
+      {
+        "input": "4\n1 2 0 1",
+        "output": "YES",
+        "is_hidden": true
+      },
+      {
+        "input": "6\n1 1 1 1 1 1",
+        "output": "YES",
+        "is_hidden": true
+      },
+      {
+        "input": "3\n2 0 0",
+        "output": "YES",
+        "is_hidden": true
+      },
+      {
+        "input": "5\n0 1 2 3 4",
+        "output": "NO",
+        "is_hidden": true
+      },
+      {
+        "input": "6\n3 2 1 0 4 5",
+        "output": "NO",
+        "is_hidden": true
+      },
+      {
+        "input": "7\n4 2 0 0 2 0 1",
+        "output": "YES",
+        "is_hidden": true
+      },
+      {
+        "input": "4\n2 3 1 1",
+        "output": "YES",
+        "is_hidden": true
+      },
+      {
+        "input": "5\n1 1 0 0 0",
+        "output": "NO",
+        "is_hidden": true
+      },
+      {
+        "input": "6\n2 3 1 1 0 4",
+        "output": "NO",
+        "is_hidden": true
+      },
+      {
+        "input": "8\n5 4 0 0 1 0 2 0",
+        "output": "NO",
+        "is_hidden": true
+      },
+      {
+        "input": "5\n2 0 0 1 1",
+        "output": "NO",
+        "is_hidden": true
+      },
+      {
+        "input": "5\n1 2 3 4 5",
+        "output": "YES",
+        "is_hidden": true
+      },
+      {
+        "input": "3\n0 1 2",
+        "output": "NO",
+        "is_hidden": true
+      },
+      {
+        "input": "6\n3 0 0 0 0 1",
+        "output": "NO",
+        "is_hidden": true
+      },
+      {
+        "input": "7\n2 3 1 1 0 2 0",
+        "output": "NO",
+        "is_hidden": true
+      },
+      {
+        "input": "4\n0 2 3 1",
+        "output": "NO",
+        "is_hidden": true
+      },
+      {
+        "input": "5\n1 1 1 0 1",
+        "output": "NO",
+        "is_hidden": true
+      },
+      {
+        "input": "6\n2 2 0 0 1 0",
+        "output": "NO",
+        "is_hidden": true
+      },
+      {
+        "input": "7\n3 1 1 1 0 0 1",
+        "output": "NO",
+        "is_hidden": true
+      },
+      {
+        "input": "5\n2 3 0 1 4",
+        "output": "YES",
+        "is_hidden": true
+      },
+      {
+        "input": "4\n1 0 1 1",
+        "output": "NO",
+        "is_hidden": true
+      },
+      {
+        "input": "3\n2 1 0",
+        "output": "YES",
+        "is_hidden": true
+      },
+      {
+        "input": "5\n3 1 2 0 4",
+        "output": "YES",
+        "is_hidden": true
+      },
+      {
+        "input": "6\n1 2 0 0 1 0",
+        "output": "NO",
+        "is_hidden": true
+      },
+      {
+        "input": "4\n3 2 1 0",
+        "output": "YES",
+        "is_hidden": true
+      },
+      {
+        "input": "5\n2 0 2 0 0",
+        "output": "YES",
+        "is_hidden": true
+      },
+      {
+        "input": "7\n5 4 3 2 1 0 0",
+        "output": "NO",
+        "is_hidden": true
+      },
+      {
+        "input": "5\n1 1 0 0 1",
+        "output": "NO",
+        "is_hidden": true
+      },
+      {
+        "input": "6\n3 2 1 0 0 0",
+        "output": "NO",
+        "is_hidden": true
+      },
+      {
+        "input": "4\n1 1 1 0",
+        "output": "YES",
+        "is_hidden": true
+      },
+      {
+        "input": "6\n2 0 0 1 1 0",
+        "output": "NO",
+        "is_hidden": true
+      },
+      {
+        "input": "5\n2 4 2 0 0",
+        "output": "YES",
+        "is_hidden": true
+      },
+      {
+        "input": "3\n1 1 1",
+        "output": "YES",
+        "is_hidden": true
+      },
+      {
+        "input": "6\n3 0 0 0 0 0",
+        "output": "NO",
+        "is_hidden": true
+      },
+      {
+        "input": "5\n1 2 0 1 0",
+        "output": "YES",
+        "is_hidden": true
+      },
+      {
+        "input": "4\n1 1 0 1",
+        "output": "NO",
+        "is_hidden": true
+      },
+      {
+        "input": "6\n2 1 0 1 0 1",
+        "output": "NO",
+        "is_hidden": true
+      },
+      {
+        "input": "7\n2 3 1 1 4 0 0",
+        "output": "YES",
+        "is_hidden": true
+      },
+      {
+        "input": "5\n3 2 1 0 0",
+        "output": "NO",
+        "is_hidden": true
+      },
+      {
+        "input": "4\n0 2 1 0",
+        "output": "NO",
+        "is_hidden": true
+      },
+      {
+        "input": "6\n2 2 1 0 0 1",
+        "output": "NO",
+        "is_hidden": true
+      },
+      {
+        "input": "3\n2 0 1",
+        "output": "YES",
+        "is_hidden": true
+      },
+      {
+        "input": "5\n2 0 1 0 1",
+        "output": "NO",
+        "is_hidden": true
+      },
+      {
+        "input": "6\n3 0 1 0 0 1",
+        "output": "NO",
+        "is_hidden": true
+      },
+      {
+        "input": "5\n1 1 1 1 0",
+        "output": "YES",
+        "is_hidden": true
+      },
+      {
+        "input": "4\n0 0 0 0",
+        "output": "NO",
+        "is_hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Number of islands",
+    "input": "The first line contains two integers `m` and `n`. For the next `m` lines, each line contains `n` integers where each integer is either `0` or `1`.",
+    "output": "A single integer that is the number of islands.",
+    "description": "Given an `m x n` 2D binary grid which represents a map `1`s (land) and `0`s (water), return the number of islands.\n\nAn island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically. You may assume all four edges of the grid are all surrounded by water. ",
+    "difficulty": "medium",
+    "categories": ["array", "graph"],
+    "examples": [
+      {
+        "input": "4 5\n1 1 1 1 0\n1 1 0 1 0\n1 1 0 0 0\n0 0 0 0 0",
+        "output": "1",
+        "is_hidden": false
+      },
+      {
+        "input": "4 5\n1 1 0 0 0 \n1 1 0 0 0\n0 0 1 0 0\n0 0 0 1 1",
+        "output": "3",
+        "is_hidden": false
+      }
+    ],
+    "constraints": [],
+    "hints": [],
+    "test_cases": [
+      {
+        "input": "3 3\n1 1 0\n0 1 0\n1 0 1",
+        "output": "3",
+        "is_hidden": true
+      },
+      {
+        "input": "4 5\n0 1 0 0 1\n1 1 0 0 0\n0 0 1 0 1\n0 0 0 1 1",
+        "output": "4",
+        "is_hidden": true
+      },
+      {
+        "input": "2 2\n1 0\n0 1",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "3 4\n1 0 1 0\n0 1 0 1\n1 0 1 0",
+        "output": "6",
+        "is_hidden": true
+      },
+      {
+        "input": "5 5\n1 1 0 0 0\n1 1 0 0 1\n0 0 0 1 1\n0 0 0 1 0\n1 0 1 0 1",
+        "output": "5",
+        "is_hidden": true
+      },
+      {
+        "input": "3 3\n1 0 1\n0 1 0\n1 0 1",
+        "output": "5",
+        "is_hidden": true
+      },
+      {
+        "input": "4 4\n1 1 0 0\n0 1 1 0\n0 0 1 1\n1 0 0 0",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "3 5\n1 1 1 0 0\n1 0 0 0 1\n0 0 1 1 1",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "2 3\n1 1 1\n1 0 1",
+        "output": "1",
+        "is_hidden": true
+      },
+      {
+        "input": "4 4\n1 0 0 1\n0 1 1 0\n1 0 1 0\n0 1 0 1",
+        "output": "6",
+        "is_hidden": true
+      },
+      {
+        "input": "3 3\n0 0 0\n0 1 0\n0 0 0",
+        "output": "1",
+        "is_hidden": true
+      },
+      {
+        "input": "2 2\n1 1\n1 1",
+        "output": "1",
+        "is_hidden": true
+      },
+      {
+        "input": "2 2\n0 0\n0 0",
+        "output": "0",
+        "is_hidden": true
+      },
+      {
+        "input": "4 5\n1 1 1 1 1\n0 0 0 0 0\n1 1 1 1 1\n0 0 0 0 0",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "3 3\n1 0 1\n0 1 0\n1 0 1",
+        "output": "5",
+        "is_hidden": true
+      },
+      {
+        "input": "5 5\n1 0 1 0 1\n0 1 0 1 0\n1 0 1 0 1\n0 1 0 1 0\n1 0 1 0 1",
+        "output": "13",
+        "is_hidden": true
+      },
+      {
+        "input": "3 4\n1 1 0 0\n1 0 1 0\n0 0 0 1",
+        "output": "3",
+        "is_hidden": true
+      },
+      {
+        "input": "3 3\n1 1 1\n1 1 1\n1 1 1",
+        "output": "1",
+        "is_hidden": true
+      },
+      {
+        "input": "4 4\n0 1 0 0\n1 1 0 1\n0 0 1 1\n1 0 0 0",
+        "output": "3",
+        "is_hidden": true
+      },
+      {
+        "input": "3 4\n1 0 1 0\n1 0 1 0\n1 0 1 0",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "2 5\n1 1 0 0 0\n0 1 1 1 0",
+        "output": "1",
+        "is_hidden": true
+      },
+      {
+        "input": "4 4\n1 0 0 1\n0 1 1 0\n1 0 1 1\n0 0 0 1",
+        "output": "4",
+        "is_hidden": true
+      },
+      {
+        "input": "3 3\n1 0 1\n0 1 0\n1 0 0",
+        "output": "4",
+        "is_hidden": true
+      },
+      {
+        "input": "2 4\n1 1 0 0\n0 1 1 1",
+        "output": "1",
+        "is_hidden": true
+      },
+      {
+        "input": "5 5\n1 0 0 0 1\n0 1 0 1 0\n0 0 1 0 0\n1 0 0 1 0\n0 1 0 0 1",
+        "output": "9",
+        "is_hidden": true
+      },
+      {
+        "input": "2 2\n1 0\n1 1",
+        "output": "1",
+        "is_hidden": true
+      },
+      {
+        "input": "3 5\n0 1 0 1 0\n1 1 1 1 1\n0 1 0 1 0",
+        "output": "1",
+        "is_hidden": true
+      },
+      {
+        "input": "4 3\n1 0 1\n0 1 0\n1 0 1\n0 1 0",
+        "output": "6",
+        "is_hidden": true
+      },
+      {
+        "input": "4 4\n1 1 1 1\n1 0 0 1\n1 0 0 1\n1 1 1 1",
+        "output": "1",
+        "is_hidden": true
+      },
+      {
+        "input": "3 4\n1 1 1 0\n1 0 0 1\n0 1 1 1",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "4 4\n1 0 1 0\n0 1 0 1\n1 0 1 0\n0 1 0 1",
+        "output": "8",
+        "is_hidden": true
+      },
+      {
+        "input": "3 3\n1 1 1\n0 0 0\n1 1 1",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "2 3\n1 0 1\n1 1 1",
+        "output": "1",
+        "is_hidden": true
+      },
+      {
+        "input": "4 5\n0 1 0 1 0\n1 0 1 0 1\n0 1 0 1 0\n1 0 1 0 1",
+        "output": "10",
+        "is_hidden": true
+      },
+      {
+        "input": "3 3\n0 0 1\n0 1 0\n1 0 0",
+        "output": "3",
+        "is_hidden": true
+      },
+      {
+        "input": "5 5\n1 1 1 1 1\n1 0 0 0 1\n1 0 1 0 1\n1 0 0 0 1\n1 1 1 1 1",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "2 2\n1 0\n0 0",
+        "output": "1",
+        "is_hidden": true
+      },
+      {
+        "input": "3 4\n1 1 0 0\n0 1 1 1\n1 0 0 0",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "4 4\n1 0 0 0\n0 1 0 0\n0 0 1 0\n0 0 0 1",
+        "output": "4",
+        "is_hidden": true
+      },
+      {
+        "input": "3 5\n1 0 1 0 1\n0 1 0 1 0\n1 0 1 0 1",
+        "output": "8",
+        "is_hidden": true
+      },
+      {
+        "input": "4 5\n1 1 1 1 1\n1 0 0 0 1\n1 0 1 0 1\n1 1 1 1 1",
+        "output": "1",
+        "is_hidden": true
+      },
+      {
+        "input": "3 3\n0 1 0\n1 0 1\n0 1 0",
+        "output": "4",
+        "is_hidden": true
+      },
+      {
+        "input": "2 2\n0 1\n1 0",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "3 3\n1 0 0\n0 1 0\n0 0 1",
+        "output": "3",
+        "is_hidden": true
+      },
+      {
+        "input": "4 4\n1 1 0 0\n0 1 1 0\n0 0 1 1\n1 0 0 1",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "3 3\n0 1 0\n1 0 1\n0 1 0",
+        "output": "4",
+        "is_hidden": true
+      },
+      {
+        "input": "2 3\n1 1 1\n1 1 1",
+        "output": "1",
+        "is_hidden": true
+      },
+      {
+        "input": "3 4\n1 1 0 1\n0 0 1 0\n1 0 0 1",
+        "output": "5",
+        "is_hidden": true
+      },
+      {
+        "input": "5 5\n0 0 1 0 0\n1 1 0 1 1\n0 0 0 0 0\n1 1 0 0 0\n0 0 1 1 1",
+        "output": "5",
+        "is_hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Trapping Rain Water",
+    "input": "The first line contains an integer `n`. The next line contains `n` non-negative integers.",
+    "output": "A single integer that is the amount of water it can trap after raining.",
+    "description": "Given `n` non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it can trap after raining.",
+    "difficulty": "hard",
+    "categories": ["array", "dynamic-programming"],
+    "examples": [
+      {
+        "input": "12\n0 1 0 2 1 0 1 3 2 1 2 1",
+        "output": "6",
+        "is_hidden": false
+      },
+      {
+        "input": "6\n4 2 0 3 2 5",
+        "output": "9",
+        "is_hidden": false
+      }
+    ],
+    "constraints": [],
+    "hints": [],
+    "test_cases": [
+      {
+        "input": "12\n3 1 0 2 1 0 1 2 2 1 2 1",
+        "output": "8",
+        "is_hidden": true
+      },
+      {
+        "input": "6\n1 2 0 0 2 5",
+        "output": "4",
+        "is_hidden": true
+      },
+      {
+        "input": "7\n0 2 0 4 0 3 0",
+        "output": "5",
+        "is_hidden": true
+      },
+      {
+        "input": "5\n2 0 2 0 2",
+        "output": "4",
+        "is_hidden": true
+      },
+      {
+        "input": "8\n3 0 1 3 0 1 2 4",
+        "output": "11",
+        "is_hidden": true
+      },
+      {
+        "input": "6\n1 0 2 1 0 1",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "10\n0 3 0 1 0 2 0 4 0 1",
+        "output": "13",
+        "is_hidden": true
+      },
+      {
+        "input": "7\n5 0 0 0 0 0 5",
+        "output": "25",
+        "is_hidden": true
+      },
+      {
+        "input": "9\n4 2 3 0 3 1 2 1 2",
+        "output": "6",
+        "is_hidden": true
+      },
+      {
+        "input": "11\n0 1 0 2 1 0 1 3 2 1 2",
+        "output": "6",
+        "is_hidden": true
+      },
+      {
+        "input": "6\n3 0 2 0 4 0",
+        "output": "7",
+        "is_hidden": true
+      },
+      {
+        "input": "8\n1 2 1 0 2 1 0 3",
+        "output": "6",
+        "is_hidden": true
+      },
+      {
+        "input": "10\n0 2 0 4 0 2 0 3 0 1",
+        "output": "10",
+        "is_hidden": true
+      },
+      {
+        "input": "5\n2 1 0 1 2",
+        "output": "4",
+        "is_hidden": true
+      },
+      {
+        "input": "7\n3 1 2 0 1 0 3",
+        "output": "11",
+        "is_hidden": true
+      },
+      {
+        "input": "8\n0 0 2 0 4 0 2 0",
+        "output": "4",
+        "is_hidden": true
+      },
+      {
+        "input": "6\n2 0 2 1 0 1",
+        "output": "3",
+        "is_hidden": true
+      },
+      {
+        "input": "9\n3 0 2 0 4 0 2 0 3",
+        "output": "14",
+        "is_hidden": true
+      },
+      {
+        "input": "7\n0 1 0 2 1 0 1",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "6\n1 0 1 0 1 0",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "5\n3 0 0 0 3",
+        "output": "9",
+        "is_hidden": true
+      },
+      {
+        "input": "7\n0 2 0 1 0 2 0",
+        "output": "5",
+        "is_hidden": true
+      },
+      {
+        "input": "8\n4 1 1 0 2 1 3 0",
+        "output": "10",
+        "is_hidden": true
+      },
+      {
+        "input": "6\n2 0 1 0 2 0",
+        "output": "5",
+        "is_hidden": true
+      },
+      {
+        "input": "10\n1 0 2 1 0 1 3 2 1 2",
+        "output": "6",
+        "is_hidden": true
+      },
+      {
+        "input": "7\n1 0 0 2 0 1 0",
+        "output": "3",
+        "is_hidden": true
+      },
+      {
+        "input": "9\n3 0 1 2 0 1 0 3 0",
+        "output": "14",
+        "is_hidden": true
+      },
+      {
+        "input": "5\n0 1 0 2 0",
+        "output": "1",
+        "is_hidden": true
+      },
+      {
+        "input": "6\n1 0 2 0 1 0",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "8\n3 0 1 2 1 0 1 2",
+        "output": "7",
+        "is_hidden": true
+      },
+      {
+        "input": "7\n0 2 1 0 1 3 0",
+        "output": "4",
+        "is_hidden": true
+      },
+      {
+        "input": "6\n0 1 0 2 1 0",
+        "output": "1",
+        "is_hidden": true
+      },
+      {
+        "input": "9\n1 0 3 0 1 2 0 4 0",
+        "output": "10",
+        "is_hidden": true
+      },
+      {
+        "input": "8\n0 2 0 1 0 3 0 2",
+        "output": "7",
+        "is_hidden": true
+      },
+      {
+        "input": "10\n2 0 2 1 3 0 1 0 3 2",
+        "output": "11",
+        "is_hidden": true
+      },
+      {
+        "input": "5\n1 0 2 0 1",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "7\n2 0 0 1 0 0 2",
+        "output": "9",
+        "is_hidden": true
+      },
+      {
+        "input": "8\n3 0 1 0 2 0 1 3",
+        "output": "14",
+        "is_hidden": true
+      },
+      {
+        "input": "9\n2 1 0 1 3 0 1 2 1",
+        "output": "7",
+        "is_hidden": true
+      },
+      {
+        "input": "6\n0 2 0 3 0 1",
+        "output": "3",
+        "is_hidden": true
+      },
+      {
+        "input": "7\n3 0 1 2 0 3 0",
+        "output": "9",
+        "is_hidden": true
+      },
+      {
+        "input": "5\n2 0 1 0 2",
+        "output": "5",
+        "is_hidden": true
+      },
+      {
+        "input": "10\n4 1 1 0 2 0 3 1 2 0",
+        "output": "12",
+        "is_hidden": true
+      },
+      {
+        "input": "8\n1 2 1 0 1 0 2 0",
+        "output": "6",
+        "is_hidden": true
+      },
+      {
+        "input": "6\n0 1 0 1 0 1",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "7\n3 0 1 0 2 0 3",
+        "output": "12",
+        "is_hidden": true
+      },
+      {
+        "input": "9\n0 1 0 2 1 0 1 3 0",
+        "output": "5",
+        "is_hidden": true
+      },
+      {
+        "input": "8\n1 0 2 0 3 0 1 0",
+        "output": "4",
+        "is_hidden": true
+      },
+      {
+        "input": "6\n2 0 2 0 2 0",
+        "output": "4",
+        "is_hidden": true
+      },
+      {
+        "input": "5\n0 2 0 2 0",
+        "output": "2",
+        "is_hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Exam Manipulation",
+    "input": "The first line contains two integers `n` and `k`, where `n` is the number of students and `k` is the number of True/False questions on the exam.\n\nEach of the next `n` lines contains a string of length `k`, consisting only of upper-case T and upper-case F. This string represents the answers that a student submitted, in the order the questions were given.",
+    "output": "A single integer, the best possible lowest score in the class.",
+    "description": "A group of students is taking a True/False exam. Each question is worth one point. You, as their teacher, want to make your students look as good as possible\u2014so you cheat! (I know, you would never actually do that.) To cheat, you manipulate the answer key so that the lowest score in the class is as high as possible.\n\nWhat is the best possible lowest score you can achieve?",
+    "difficulty": "medium",
+    "categories": ["array"],
+    "examples": [
+      {
+        "input": "5 4\nTFTF\nTFFF\nTFTT\nTFFT\nTFTF",
+        "output": "2",
+        "is_hidden": false
+      },
+      {
+        "input": "3 5\nTFTFT\nTFTFT\nTFTFT",
+        "output": "5",
+        "is_hidden": false
+      }
+    ],
+    "constraints": ["1 <= n <= 1000", "1 <= k <= 10"],
+    "hints": [],
+    "test_cases": [
+      {
+        "input": "5 4\nTFTF\nTFFT\nFFTT\nTFFT\nTFTF",
+        "output": "3",
+        "is_hidden": true
+      },
+      {
+        "input": "3 5\nTFTFF\nFFTFT\nTFTTT",
+        "output": "4",
+        "is_hidden": true
+      },
+      {
+        "input": "4 6\nTTTTTT\nFFFFFF\nTFTFTF\nFTFTFT",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "6 5\nTFTFT\nFTFTF\nTFTFT\nFTFTF\nTFTFT\nFTFTF",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "2 3\nTTT\nFFF",
+        "output": "1",
+        "is_hidden": true
+      },
+      {
+        "input": "3 4\nTTTF\nTFTF\nFTTT",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "5 6\nTFTFTF\nFTFTFT\nTTTTTT\nFFFFFF\nTFTFTF",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "4 5\nTFTFT\nFTFTF\nTTTTT\nFFFFF",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "3 6\nTTTTTT\nTFTFTF\nFTFTFT",
+        "output": "3",
+        "is_hidden": true
+      },
+      {
+        "input": "6 4\nTFTF\nTFTF\nTFTF\nFTFT\nFTFT\nFTFT",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "7 5\nTFTFT\nTFTFT\nFTFTF\nFTFTF\nTFTFT\nTFTFT\nFTFTF",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "3 7\nTTTTTTT\nFFFFFFF\nTFTFTFT",
+        "output": "3",
+        "is_hidden": true
+      },
+      {
+        "input": "4 5\nTFTFT\nTFTFT\nTFTFT\nTFTFT",
+        "output": "5",
+        "is_hidden": true
+      },
+      {
+        "input": "2 6\nTFTFTF\nFTFTFT",
+        "output": "3",
+        "is_hidden": true
+      },
+      {
+        "input": "5 5\nTTTTT\nTFTFT\nFTFTF\nTTTTT\nFTFTF",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "3 4\nTFTF\nFTFT\nTFTF",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "6 3\nTTT\nTFT\nFTF\nFTT\nTFT\nFFF",
+        "output": "1",
+        "is_hidden": true
+      },
+      {
+        "input": "4 7\nTFTFTFT\nFTFTFTF\nTFTFTFT\nFTFTFTF",
+        "output": "3",
+        "is_hidden": true
+      },
+      {
+        "input": "5 5\nTTFFF\nFTTFT\nFTFTF\nTFTFT\nFFTTT",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "3 6\nTFTFTF\nTFTFTF\nFTFTFT",
+        "output": "3",
+        "is_hidden": true
+      },
+      {
+        "input": "2 8\nTFTFTFTF\nFTFTFTFT",
+        "output": "4",
+        "is_hidden": true
+      },
+      {
+        "input": "6 5\nTTTTT\nFTFTF\nTFTFT\nFTFTF\nTFTFT\nFTFTF",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "4 4\nTFTF\nFTFT\nTFTF\nFTFT",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "5 7\nTFTFTFT\nTFTFTFT\nTFTFTFT\nTFTFTFT\nTFTFTFT",
+        "output": "7",
+        "is_hidden": true
+      },
+      {
+        "input": "2 5\nTTTTT\nFFFFF",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "3 6\nTFTFTF\nTFTFTF\nTFTFTF",
+        "output": "6",
+        "is_hidden": true
+      },
+      {
+        "input": "6 4\nTFTF\nFTFT\nFTFT\nTFTF\nFTFT\nTFTF",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "5 5\nTFTFT\nFTFTF\nTFTFT\nFTFTF\nTFTFT",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "4 6\nTFTFTF\nFTFTFT\nTFTFTF\nFTFTFT",
+        "output": "3",
+        "is_hidden": true
+      },
+      {
+        "input": "3 5\nTFTFT\nFTFTF\nTFTFT",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "2 4\nTTTT\nFFFF",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "4 7\nTFTFTFT\nTFTFTFT\nTFTFTFT\nTFTFTFT",
+        "output": "7",
+        "is_hidden": true
+      },
+      {
+        "input": "5 6\nTFTFTF\nTFTFTF\nTFTFTF\nTFTFTF\nTFTFTF",
+        "output": "6",
+        "is_hidden": true
+      },
+      {
+        "input": "6 5\nFTFTF\nTFTFT\nFTFTF\nTFTFT\nFTFTF\nTFTFT",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "3 5\nFTFTF\nFTFTF\nFTFTF",
+        "output": "5",
+        "is_hidden": true
+      },
+      {
+        "input": "4 6\nFTFTFT\nFTFTFT\nFTFTFT\nFTFTFT",
+        "output": "6",
+        "is_hidden": true
+      },
+      {
+        "input": "2 3\nTFT\nFTF",
+        "output": "1",
+        "is_hidden": true
+      },
+      {
+        "input": "5 4\nTTTT\nTFTF\nFTFT\nFFFF\nTFTF",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "6 5\nFTFTF\nTFTFT\nTFTFT\nFTFTF\nTFTFT\nFTFTF",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "4 4\nTFTF\nTFTF\nTFTF\nTFTF",
+        "output": "4",
+        "is_hidden": true
+      },
+      {
+        "input": "3 7\nFTFTFTF\nTFTFTFT\nFTFTFTF",
+        "output": "3",
+        "is_hidden": true
+      },
+      {
+        "input": "2 5\nFTFTF\nTFTFT",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "5 6\nTTFTFT\nFTFTTF\nTFFTFT\nFTFTFT\nTFTFTF",
+        "output": "3",
+        "is_hidden": true
+      },
+      {
+        "input": "3 4\nTFTF\nFTFT\nTFTF",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "4 6\nTTTTTT\nFFFFFF\nTFTFTF\nFTFTFT",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "2 4\nTFTF\nFTFT",
+        "output": "2",
+        "is_hidden": true
+      },
+      {
+        "input": "6 3\nTFT\nFTF\nTFT\nFTF\nTFT\nFTF",
+        "output": "1",
+        "is_hidden": true
+      },
+      {
+        "input": "5 5\nFTFTF\nFTFTF\nFTFTF\nFTFTF\nFTFTF",
+        "output": "5",
+        "is_hidden": true
+      }
+    ]
+  }
+]

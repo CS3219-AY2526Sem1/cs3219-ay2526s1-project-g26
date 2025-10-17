@@ -13,6 +13,8 @@ services:
       - user-service
       - question-service
       - collaboration-service
+      - history-service
+      # also matching-service?
 
   frontend:
     build:
@@ -156,8 +158,40 @@ services:
       - "4030:4030"
     stdin_open: true
     tty: true
+  
+  # History Service
+  history-service:
+    build:
+      context: ../services/historyService
+      dockerfile: Dockerfile.dev
+    container_name: history-service
+    volumes:
+      - ../services/historyService:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=4040
+      - DATABASE_URL=mongodb://history-service-db:27017/questions_db
+      - USER_SERVICE_URL=http://user-service:4000
+    depends_on:
+      - history-service-db
+    ports:
+      - "4040:4040"
+    stdin_open: true
+    tty: true
+  
+  history-service-db:
+    image: mongo:8.0
+    container_name: history-service-db
+    ports:
+      - "4041:27017"
+    volumes:
+      - history-service-db-data:/data/db
+      - ../services/historyService/src/database/init:/docker-entrypoint-initdb.d
+
 
 volumes:
   user-service-db-data:
   question-service-db-data:
   matching-service-queue-data:
+  history-service-db-data:
