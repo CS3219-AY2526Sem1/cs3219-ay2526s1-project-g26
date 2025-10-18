@@ -70,7 +70,7 @@ services:
       - question-service-mongodata_prod:/data/db
       - ../services/questionService/src/database/init:/docker-entrypoint-initdb.d
 
-  history-service: # note: 
+  history-service:
     image: zengfu0307/peerprep-historyservice:latest
     platform: linux/amd64
     container_name: history_service-prod
