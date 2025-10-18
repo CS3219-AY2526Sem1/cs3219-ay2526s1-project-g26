@@ -40,10 +40,7 @@ export const SubmissionsOverview = () => {
       setLoading(true)
 
       try {
-        const userId = (await authService.verifyToken()).user?.id
-        
-        const rows = await submissionsService.fetchSubmissions(
-          userId,
+        const response = await submissionsService.fetchSubmissions(
           currentPage,
           rowsPerPage
         )
@@ -51,9 +48,10 @@ export const SubmissionsOverview = () => {
         // Placeholder until backend is done
         // As more info is needed to calculate this properly
         // Or deciding to go with -1 instead
-        setPageCount(30)
+        setPageCount(response.total / rowsPerPage)
 
-        setSubmissions(rows)
+        console.log(response.submissions)
+        setSubmissions(response.submissions)
       } catch (error) {
         console.error('Error fetching submission:', error)
       } finally {
@@ -177,7 +175,7 @@ export const SubmissionsOverview = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {submissions.map((submission) => (
+                {submissions.map((submission: SubmissionDataSummary) => (
                   <TableRow
                     key={submission.submission_id}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}

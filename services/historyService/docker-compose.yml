@@ -20,3 +20,5 @@ services:
       - history-service-db-data:/data/db
       - ./src/database/init:/docker-entrypoint-initdb.d
 
+volumes:
+  history_service-db-data:

@@ -6,7 +6,7 @@ db.user_submissions.drop()
 db.submissions.drop()
 
 db.createCollection('user_submissions')
-db.createCollection('submission_history')
+db.createCollection('submissions')
 
 db.user_submissions.insertMany([
   { user_id: 'dc19156e-f669-448d-ae4b-b149fd8b627b', submission_id: '68f1ee58317cc52f4c0b6fe2' },

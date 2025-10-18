@@ -4,7 +4,8 @@ import {
   UserSubmission,
   Submission,
   type ResultInformation,
-  SubmissionHistoryResponse
+  SubmissionHistoryResponse,
+  SubmissionSummary
 } from '../models/submissionHistoryModel.js'
 import { ensureArray } from '../utils/index.js'
 import { type Document, ObjectId, type UpdateFilter, WithoutId } from 'mongodb'
@@ -27,7 +28,7 @@ export const getUserSubmissions = async(userId: string, page: number, perPage: n
     // apparently objectId contains timestamp info, which may be sortable directly
     // https://stackoverflow.com/questions/5125521/uses-for-mongodb-objectid-creation-time
     .sort({ '_id': -1 })
-    .skip((page - 1) * perPage)
+    .skip(page * perPage)
     .limit(perPage)
     .toArray()
   const total = await getUserSubmissionsCollection().countDocuments()
@@ -37,6 +38,21 @@ export const getUserSubmissions = async(userId: string, page: number, perPage: n
     { _id: { $in: userSubmissions.map(submission => submission.submission_id) || [] } },
   )
   .toArray()
+  console.log(userSubmissions)
+  console.log(submissions)
 
-  return { submissions, total }
+  let submissionSummaries: SubmissionSummary[] = []
+  for (const submission of submissions) {
+    let submissionSummary: SubmissionSummary = {
+      submission_id: submission._id.toString(),
+      title: submission.question_title,
+      submission_time: (submission._id as ObjectId).getTimestamp().toISOString(),
+      overall_status: submission.overall_result.result,
+      difficulty: submission.difficulty,
+      language: submission.language,
+    }
+    submissionSummaries.push(submissionSummary)
+  }
+
+  return { submissions: submissionSummaries, total }
 }

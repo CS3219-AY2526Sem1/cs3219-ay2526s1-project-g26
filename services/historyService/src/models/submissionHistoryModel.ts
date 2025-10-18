@@ -23,12 +23,23 @@ export interface Submission {
   test_case_results: ResultInformation[]
 }
 
+export interface SubmissionSummary {
+  submission_id: string
+  title: string
+  submission_time: string
+  overall_status: string
+  difficulty: string
+  language: string
+}
+
 export interface UserSubmission {
   user_id: string
   submission_id: string | ObjectId
 }
 
 export interface SubmissionHistoryResponse {
-  submissions: Submission[]
+  submissions: SubmissionSummary[]
   total: number
 }
+
+

@@ -9,7 +9,7 @@ const router = Router()
 
 
 router.get('/submissions/:page/:per_page', authenticate(), async (req, res) => {
-  const id = req.params.user!.id
+  const id = req.user!.id
   const pages = parseInt(req.params.page)
   const perPage = parseInt(req.params.per_page)
 
@@ -20,7 +20,7 @@ router.get('/submissions/:page/:per_page', authenticate(), async (req, res) => {
   return res.json({ success: true, submissions })
 })
 
-router.get('/submission/:submission_id', authenticate(), async (req, res) => {
+router.get('/submissions/:submission_id', authenticate(), async (req, res) => {
 
 })
 
