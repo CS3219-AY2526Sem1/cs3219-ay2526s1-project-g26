@@ -16,7 +16,7 @@ router.get('/submissions/:page/:per_page', authenticate(), async (req, res) => {
 
   const submissions = await getUserSubmissions(id, pages, perPage)
   if (!submissions) {
-    throw new AppError('Submissons not found', 404)
+    throw new AppError('Submissions not found', 404)
   }
   return res.json({ success: true, submissions })
 })
