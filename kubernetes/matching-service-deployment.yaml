@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: matching-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: matching-service
+  template:
+    metadata:
+      labels:
+        app: matching-service
+    spec:
+      containers:
+        - name: matching-service
+          image: $GCP_REGION/$PROJECT_ID/$REPO_NAME/matching-service:$SHORT_SHA
+          ports:
+            - containerPort: 4020
+          envFrom:
+            - secretRef:
+                name: matching-service-secret

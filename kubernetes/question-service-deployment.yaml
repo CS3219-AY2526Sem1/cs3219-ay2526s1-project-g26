@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: question-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: question-service
+  template:
+    metadata:
+      labels:
+        app: question-service
+    spec:
+      containers:
+        - name: question-service
+          image: $GCP_REGION/$PROJECT_ID/$REPO_NAME/question-service:$SHORT_SHA
+          ports:
+            - containerPort: 4010
+          envFrom:
+            - secretRef:
+                name: question-service-secret

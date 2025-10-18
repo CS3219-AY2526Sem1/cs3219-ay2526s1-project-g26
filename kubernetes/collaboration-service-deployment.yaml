@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: collaboration-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: collaboration-service
+  template:
+    metadata:
+      labels:
+        app: collaboration-service
+    spec:
+      containers:
+        - name: collaboration-service
+          image: $GCP_REGION/$PROJECT_ID/$REPO_NAME/collaboration-service:$SHORT_SHA
+          ports:
+            - containerPort: 4030
+          envFrom:
+            - secretRef:
+                name: collaboration-service-secret
