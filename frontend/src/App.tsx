@@ -14,11 +14,8 @@ import NavBarLayout from './layouts/NavBarLayout.tsx'
 import SubmissionsOverview from './pages/SubmissionsOverview.tsx'
 import Home from './pages/Home.tsx'
 import UpdateProfile from './pages/UpdateProfile.tsx'
-<<<<<<< HEAD
 import Match from './pages/Match.tsx'
-=======
 import CollaborationPanel from './pages/CollaborationPanel.tsx'
->>>>>>> develop
 
 const NotificationSnackbar = lazy(
   () => import('./components/common/NotificationSnackbar.tsx')
@@ -60,11 +57,8 @@ function App() {
             <Route element={<NavBarLayout />}>
               <Route path="/home" element={<Home />} />
               <Route path="/submissions" element={<SubmissionsOverview />} />
-<<<<<<< HEAD
               <Route path="/match" element={<Match />} />
-=======
               <Route path="/collaboration" element={<CollaborationPanel />} />
->>>>>>> develop
             </Route>
           </Route>
           <Route path="/update-profile" element={<UpdateProfile />} />

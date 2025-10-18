@@ -1,18 +1,26 @@
-import { Box, Stack, Typography, FormControlLabel, Checkbox } from "@mui/material"
+import {
+  Box,
+  Stack,
+  Typography,
+  FormControlLabel,
+  Checkbox,
+} from '@mui/material'
 
 export const Difficulty = ({
   difficultyList,
   checkedDifficulties,
   toggleDifficulty,
-  toggleAllDifficulty
+  toggleAllDifficulty,
 }: {
   difficultyList: string[]
-  checkedDifficulties : string[]
+  checkedDifficulties: string[]
   toggleDifficulty: (isChecked: boolean, difficulty: string) => void
   toggleAllDifficulty: (isChecked: boolean) => void
 }) => {
   const allSelected = checkedDifficulties.length === difficultyList.length
-  const partiallySelected = checkedDifficulties.length > 0 && checkedDifficulties.length < difficultyList.length
+  const partiallySelected =
+    checkedDifficulties.length > 0 &&
+    checkedDifficulties.length < difficultyList.length
 
   return (
     <Box>
@@ -22,7 +30,14 @@ export const Difficulty = ({
         </Typography>
         <FormControlLabel
           sx={{ gridColumn: '2' }}
-          control={<Checkbox checked={allSelected} indeterminate={partiallySelected} size="small" onChange={(e) => toggleAllDifficulty(e.target.checked)}/>}
+          control={
+            <Checkbox
+              checked={allSelected}
+              indeterminate={partiallySelected}
+              size="small"
+              onChange={(e) => toggleAllDifficulty(e.target.checked)}
+            />
+          }
           label={'Select All'}
         />
       </Stack>
@@ -47,7 +62,7 @@ export const Difficulty = ({
                 onChange={(e) => toggleDifficulty(e.target.checked, difficulty)}
               />
             }
-            label={difficulty}
+            label={difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
           />
         ))}
       </Box>

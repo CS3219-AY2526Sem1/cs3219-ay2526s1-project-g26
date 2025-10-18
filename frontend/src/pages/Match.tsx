@@ -1,49 +1,61 @@
-import {
-  Alert,
-  Box,
-  Button,
-  Checkbox,
-  Container,
-  FormControlLabel,
-  Stack,
-  Typography,
-} from '@mui/material'
+import { Container, Stack } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
-import { RootState } from '../store'
-// import { socket } from '../socket'
 import { io } from 'socket.io-client'
 import { Topics } from '../components/match/topics'
 import { Difficulty } from '../components/match/difficulty'
+import { Submission } from '../components/match/submission'
+import axiosInstance from '../utils/axios'
+import { API_ENDPOINTS } from '../constants/api'
 
-const topicsList = [
-  'Arrays & Hashing',
-  'Two Pointers',
-  'Stack',
-  'Binary Search',
-  'Sliding Window',
-  'Linked List',
-  'Trees',
-  'Tries',
-  'Backtracking',
-  'Heap / Priority Queue',
-  'Intervals',
-  'Greedy',
-  'Graph',
-  'Dynamic Programming',
-]
+// const topicsList = [
+//   'Arrays & Hashing',
+//   'Two Pointers',
+//   'Stack',
+//   'Binary Search',
+//   'Sliding Window',
+//   'Linked List',
+//   'Trees',
+//   'Tries',
+//   'Backtracking',
+//   'Heap / Priority Queue',
+//   'Intervals',
+//   'Greedy',
+//   'Graph',
+//   'Dynamic Programming',
+// ]
 
-const difficultyList = ['Easy', 'Medium', 'Hard']
+// const difficultyList = ['Easy', 'Medium', 'Hard']
 
-const sessionDurationAlert =
-  'Collaborative session will last 30 minutes for Easy, 45 minutes for Medium and 60 minutes for Hard'
+type MatchState = 'IDLE' | 'ERROR' | 'WAITING' | 'MATCHED'
 
-const socket = io("http://localhost:4020")
+const socket = io('http://localhost:4020')
 
 const Match = () => {
-
+  const [matchState, setMatchState] = useState<MatchState>('IDLE')
+  const [topicsList, setTopicsList] = useState<string[]>([])
+  const [difficultyList, setDifficultyList] = useState<string[]>([])
   const [checkedTopics, setCheckedTopics] = useState<string[]>([])
   const [checkedDifficulties, setCheckedDifficulties] = useState<string[]>([])
+
+  useEffect(() => {
+    let isMounted = true
+
+    const fetchOptions = async () => {
+      try {
+        const res = await axiosInstance.get(API_ENDPOINTS.QUESTION.GET_OPTIONS)
+        if (!isMounted) return
+        setTopicsList(res.data.categories || [])
+        setDifficultyList(res.data.difficulties || [])
+      } catch (err) {
+        console.error('Failed to fetch topics and difficulties', err)
+      }
+    }
+    fetchOptions()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   // Adds topic to checkedTopics if checking the topic, else remove the topic
   const handleCheckTopic = (isChecked: boolean, topic: string) => {
@@ -77,6 +89,10 @@ const Match = () => {
     }
   }
 
+  const changeMatchState = (state: MatchState) => {
+    setMatchState(state)
+  }
+
   return (
     <Container>
       <br></br>
@@ -87,72 +103,21 @@ const Match = () => {
           toggleTopic={handleCheckTopic}
           toggleAllTopic={handleCheckAllTopics}
         />
-        <Difficulty 
+        <Difficulty
           difficultyList={difficultyList}
           checkedDifficulties={checkedDifficulties}
           toggleDifficulty={handleCheckDifficulty}
           toggleAllDifficulty={handleCheckAllDifficulties}
         />
-        <Submission checkedTopics={checkedTopics} checkedDifficulties={checkedDifficulties}/>
+        <Submission
+          checkedTopics={checkedTopics}
+          checkedDifficulties={checkedDifficulties}
+          matchState={matchState}
+          changeMatchState={changeMatchState}
+        />
       </Stack>
     </Container>
   )
 }
-
-const Submission = ({checkedTopics, checkedDifficulties}:{checkedTopics: string[], checkedDifficulties: string[]}) => {
-  const userId = useSelector((state: RootState) => state.user.user?.id)
-  return (
-    <Box
-      sx={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(4, 1fr)',
-        gridTemplateRows: '1',
-        gap: 1,
-        height: '10vh',
-      }}
-    >
-      <Alert sx={{ gridColumn: '1 / 3' }} severity="info">
-        {sessionDurationAlert}
-      </Alert>
-      <Typography sx={{ gridColumn: '3 / 4', placeSelf: 'center end'}} color="red">
-        {/* TODO */}
-      </Typography>
-      <Button
-        sx={{ gridColumn: '4', placeSelf: 'center end' }}
-        variant="contained"
-        size="large"
-        onClick={() => {
-          // Input validation (TODO later)
-          // user send checked topics/difficulty to backend
-          // backend respond with room id if successfully matched
-          // user fetch a question from question service
-          // user recv question + room id, sends this to collab service
-          console.log(checkedTopics, checkedDifficulties)
-          socket.emit("joinMatch", {
-            id: userId, 
-            topics: checkedTopics, 
-            difficulty: checkedDifficulties
-          })
-          
-        }}
-  
-      >
-        Start Matching
-      </Button>
-    </Box>
-  )
-}
-
-// function handleMatchFound({roomId}) {
-//   try {
-//     // Fetch a question from question service
-
-//     socket.emit("startSession", {roomId, question})
-
-//     // Navigate to collab page
-//   } catch (err) {
-//     console.error("Failed to start a match", err)
-//   }
-// }
 
 export default Match

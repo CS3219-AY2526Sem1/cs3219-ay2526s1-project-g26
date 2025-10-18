@@ -1,4 +1,10 @@
-import { Box, Stack, Typography, FormControlLabel, Checkbox } from "@mui/material"
+import {
+  Box,
+  Stack,
+  Typography,
+  FormControlLabel,
+  Checkbox,
+} from '@mui/material'
 
 export const Topics = ({
   topicsList,
@@ -12,7 +18,8 @@ export const Topics = ({
   toggleAllTopic: (isChecked: boolean) => void
 }) => {
   const allSelected = checkedTopics.length === topicsList.length
-  const partiallySelected = checkedTopics.length > 0 && checkedTopics.length < topicsList.length
+  const partiallySelected =
+    checkedTopics.length > 0 && checkedTopics.length < topicsList.length
 
   return (
     <Box>
@@ -55,7 +62,7 @@ export const Topics = ({
                 onChange={(e) => toggleTopic(e.target.checked, topic)}
               />
             }
-            label={topic}
+            label={topic.charAt(0).toUpperCase() + topic.slice(1)}
           />
         ))}
       </Box>
