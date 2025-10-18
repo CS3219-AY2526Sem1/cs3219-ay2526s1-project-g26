@@ -37,9 +37,13 @@ export interface UserSubmission {
   submission_id: string | ObjectId
 }
 
+// Rename?
 export interface SubmissionHistoryResponse {
   submissions: SubmissionSummary[]
   total: number
 }
 
+export interface SingleSubmissionHistoryResponse {
+  submission: Submission
+}
 

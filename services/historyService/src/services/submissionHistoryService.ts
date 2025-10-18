@@ -5,7 +5,8 @@ import {
   Submission,
   type ResultInformation,
   SubmissionHistoryResponse,
-  SubmissionSummary
+  SubmissionSummary,
+  SingleSubmissionHistoryResponse
 } from '../models/submissionHistoryModel.js'
 import { ensureArray } from '../utils/index.js'
 import { type Document, ObjectId, type UpdateFilter, WithoutId } from 'mongodb'
@@ -55,4 +56,30 @@ export const getUserSubmissions = async(userId: string, page: number, perPage: n
   }
 
   return { submissions: submissionSummaries, total }
+}
+
+// update whatever you want out of this yourself when integrating with the frontend
+export const getUserSubmission = async(userId: string, submissionId: string): Promise<SingleSubmissionHistoryResponse> => {
+  const userSubmissions = await getUserSubmissionsCollection()
+  .find(
+      { 
+        user_id: userId,
+        submission_id: submissionId
+      },
+      {
+        projection: {
+          _id: 0,
+          user_id: 0
+        }
+      }
+    )
+    .limit(1)
+    .toArray()
+    
+  const submissions = await getSubmissionsCollection()
+  .find(
+    { _id: { $in: userSubmissions.map(submission => new ObjectId(submission.submission_id)) }},
+  )
+  .toArray()
+  return { submission: submissions[0] }
 }
