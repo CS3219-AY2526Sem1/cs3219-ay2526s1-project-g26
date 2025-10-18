@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: question-service
+spec:
+  selector:
+    app: question-service
+  ports:
+    - protocol: TCP
+      port: 4010
+      targetPort: 4010
+  type: ClusterIP
