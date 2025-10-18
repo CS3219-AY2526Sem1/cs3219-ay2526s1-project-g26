@@ -37,7 +37,9 @@ export const getUserSubmissions = async(userId: string, page: number, perPage: n
   .find(
     { _id: { $in: userSubmissions.map(submission => new ObjectId(submission.submission_id)) } },
   )
+  .sort({ '_id': -1})
   .toArray()
+
 
   let submissionSummaries: SubmissionSummary[] = []
   for (const submission of submissions) {
