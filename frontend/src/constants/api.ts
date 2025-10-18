@@ -17,7 +17,7 @@ export const API_ENDPOINTS = {
   },
   HISTORY: {
     GET_USER_SUBMISSIONS: '/history/submissions',
-  }
+  },
 } as const
 
 export const WEBSOCKET_BASE_URL =

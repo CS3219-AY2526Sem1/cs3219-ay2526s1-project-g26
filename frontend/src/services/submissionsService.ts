@@ -10,7 +10,7 @@ export const submissionsService = {
     const response = await axiosInstance.get(
       `${API_ENDPOINTS.HISTORY.GET_USER_SUBMISSIONS}/${page}/${limit}`,
     )
-    return response.data
+    return response.data.submissions
   },
 }
 

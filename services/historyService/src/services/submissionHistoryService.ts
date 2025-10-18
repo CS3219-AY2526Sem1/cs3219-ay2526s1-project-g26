@@ -31,15 +31,13 @@ export const getUserSubmissions = async(userId: string, page: number, perPage: n
     .skip(page * perPage)
     .limit(perPage)
     .toArray()
-  const total = await getUserSubmissionsCollection().countDocuments()
+  const total = await getUserSubmissionsCollection().countDocuments({ user_id: userId})
 
   const submissions = await getSubmissionsCollection()
   .find(
-    { _id: { $in: userSubmissions.map(submission => submission.submission_id) || [] } },
+    { _id: { $in: userSubmissions.map(submission => new ObjectId(submission.submission_id)) } },
   )
   .toArray()
-  console.log(userSubmissions)
-  console.log(submissions)
 
   let submissionSummaries: SubmissionSummary[] = []
   for (const submission of submissions) {
