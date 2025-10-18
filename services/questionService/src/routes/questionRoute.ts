@@ -59,7 +59,7 @@ router.post('/', authenticate({ shouldBeAdmin: true }), async (req, res) => {
 })
 
 router.put('/:id', authenticate({ shouldBeAdmin: true }), async (req, res) => {
-  const id = Number(req.params.id)
+  const id = req.params.id
   const question = await updateQuestion(id, req.body)
   res.json({ success: true, question })
 })
@@ -68,7 +68,7 @@ router.delete(
   '/:id',
   authenticate({ shouldBeAdmin: true }),
   async (req, res) => {
-    const id = Number(req.params.id)
+    const id = req.params.id
     await deleteQuestion(id)
     res.json({ success: true, message: 'Question deleted' })
   }
