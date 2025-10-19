@@ -7,14 +7,14 @@ import * as Config from '../config/index.js'
 
 const isValidPassword = (password: string): boolean => {
   if (password.length < 8 || password.length > 128) return false
-  
+
   // Check each requirement separately to avoid nested quantifiers
   const hasLowercase = /[a-z]/.test(password)
   const hasUppercase = /[A-Z]/.test(password)
-  const hasDigit = /\d/.test(password)
-  const hasSpecial = /[!-,:-@\[-`{-~]/.test(password)
+  const hasDigit = /[0-9]/.test(password)
+  const hasSpecial = /[!-,:-@[-`{-~]/.test(password)
   const validChars = /^[!-~]+$/.test(password)
-  
+
   return hasLowercase && hasUppercase && hasDigit && hasSpecial && validChars
 }
 
