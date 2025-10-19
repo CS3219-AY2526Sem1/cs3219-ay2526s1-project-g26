@@ -1,6 +1,6 @@
 import { Server, Socket } from 'socket.io'
-import { UserManager } from '../database/userManager'
-import { UserInfo } from '../models/userInfo'
+import { UserManager } from '../database/userManager.js'
+import { UserInfo } from '../models/userInfo.js'
 
 export async function cancelMatchHandler(
   io: Server,

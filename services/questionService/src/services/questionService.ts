@@ -6,7 +6,7 @@ import {
   type MatchedQuestion,
   TestCase,
 } from '../models/questionModel.js'
-import { ensureArray } from '../utils'
+import { ensureArray } from '../utils/index.js'
 import { type Document, ObjectId, type UpdateFilter, WithoutId } from 'mongodb'
 
 const getQuestionCollection = () => getDb().collection<Question>('questions')

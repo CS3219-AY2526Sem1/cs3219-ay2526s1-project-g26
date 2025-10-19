@@ -8,7 +8,7 @@ import {
   getQuestionById,
 } from '../services/questionService.js'
 import { authenticate } from '../middleware/auth.js'
-import { AppError } from '../utils/errors'
+import { AppError } from '../utils/errors.js'
 
 const router = Router()
 
