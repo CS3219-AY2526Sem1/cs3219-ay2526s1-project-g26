@@ -1,5 +1,5 @@
 import { type IncomingMessage } from 'node:http'
-import * as Config from '../../config'
+import * as Config from '../../config/index.js'
 
 export default async function hasValidToken(
   req: IncomingMessage
