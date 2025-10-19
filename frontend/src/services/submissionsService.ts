@@ -1,5 +1,8 @@
 import axiosInstance from '../utils/axios.ts'
-import { SubmissionDataSummary } from '../types/submissions.ts'
+import {
+  SubmissionDataSummary,
+  SubmissionDetail,
+} from '../types/submissions.ts'
 
 export const submissionsService = {
   fetchSubmissions: async (
@@ -31,6 +34,23 @@ export const submissionsService = {
       params,
     })
     return response.data
+  },
+
+  fetchSubmissionById: async (id: string): Promise<SubmissionDetail | null> => {
+    try {
+      const url = 'https://dummyjson.com/c/cee9-e073-40bb-bc51'
+      const response = await axiosInstance.get<{
+        mockSubmissionsData: SubmissionDetail[]
+      }>(url)
+      return (
+        response.data.mockSubmissionsData.find(
+          (sub) => sub.submission_id === id
+        ) || null
+      )
+    } catch (error) {
+      console.error('Error fetching submission details:', error)
+      return null
+    }
   },
 }
 

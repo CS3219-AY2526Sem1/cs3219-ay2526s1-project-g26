@@ -15,6 +15,7 @@ import SubmissionsOverview from './pages/SubmissionsOverview.tsx'
 import Home from './pages/Home.tsx'
 import UpdateProfile from './pages/UpdateProfile.tsx'
 import CollaborationPanel from './pages/CollaborationPanel.tsx'
+import SubmissionDetail from './pages/SubmissionDetail.tsx'
 
 const NotificationSnackbar = lazy(
   () => import('./components/common/NotificationSnackbar.tsx')
@@ -57,6 +58,7 @@ function App() {
               <Route path="/home" element={<Home />} />
               <Route path="/submissions" element={<SubmissionsOverview />} />
               <Route path="/collaboration" element={<CollaborationPanel />} />
+              <Route path="/submissions/:id" element={<SubmissionDetail />} />
             </Route>
           </Route>
           <Route path="/update-profile" element={<UpdateProfile />} />
