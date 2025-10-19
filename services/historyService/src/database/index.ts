@@ -11,7 +11,7 @@ export const connectDB = async (): Promise<void> => {
   
   console.log('Connected to MongoDB')
 
-  setupDb(db) // manually setup the DB for now
+  await setupDb(db) // manually setup the DB for now
 }
 
 export const getDb = (): Db => {
@@ -22,11 +22,11 @@ export const getDb = (): Db => {
 }
 
 const setupDb = async (db: Db) => {
-  db.dropCollection('submissions')
-  db.dropCollection('user_submissions')
-  db.createCollection('submissions')
-  db.createCollection('user_submissions')
-  db.collection('user_submissions').insertMany([
+  await db.dropCollection('submissions')
+  await db.dropCollection('user_submissions')
+  await db.createCollection('submissions')
+  await db.createCollection('user_submissions')
+  await db.collection('user_submissions').insertMany([
     { user_id: 'dc19156e-f669-448d-ae4b-b149fd8b627b', submission_id: '68f1ee58317cc52f4c0b6fe2' },
     { user_id: 'dc19156e-f669-448d-ae4b-b149fd8b627b', submission_id: '68f1eed1317cc52f4c0b6ff7' },
     { user_id: 'dc19156e-f669-448d-ae4b-b149fd8b627b', submission_id: '68f1eedb317cc52f4c0b6ffc' },
@@ -44,7 +44,7 @@ const setupDb = async (db: Db) => {
     { user_id: '1e284a66-4e22-4d97-8e49-375a357e48a2', submission_id: '68f1ef18317cc52f4c0b7000' },
     { user_id: '1e284a66-4e22-4d97-8e49-375a357e48a2', submission_id: '68f1ef20317cc52f4c0b7003' }
   ])
-  db.collection('submissions').insertMany([
+  await db.collection('submissions').insertMany([
     {
       "_id": new ObjectId("68f1ee58317cc52f4c0b6fe2"),
       "question_title": "Two Sum",
