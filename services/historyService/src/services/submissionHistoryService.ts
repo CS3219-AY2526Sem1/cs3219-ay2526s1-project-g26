@@ -81,5 +81,9 @@ export const getUserSubmission = async(userId: string, submissionId: string): Pr
     { _id: { $in: userSubmissions.map(submission => new ObjectId(submission.submission_id)) }},
   )
   .toArray()
+
+  if (submissions.length === 0) {
+    throw new AppError('Requested submission not found', 404)
+  }
   return { submission: submissions[0] }
 }
