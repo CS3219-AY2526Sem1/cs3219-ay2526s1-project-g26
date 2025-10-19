@@ -1,10 +1,22 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { Box, Card, CardContent, Typography, Chip, Paper } from '@mui/material'
+import { Box, Card, CardContent, Typography, Chip } from '@mui/material'
 import { styled } from '@mui/material/styles'
+import Editor from '@monaco-editor/react'
 import { submissionsService } from '../services/submissionsService'
 import { SubmissionDetail } from '../types/submissions'
 import LoadingSkeleton from '../components/common/LoadingSkeleton'
+
+// Helper function to map language names to Monaco Editor language identifiers
+const getMonacoLanguage = (language: string): string => {
+  const languageMap: { [key: string]: string } = {
+    Python: 'python',
+    JavaScript: 'javascript',
+    Java: 'java',
+    'C++': 'cpp',
+  }
+  return languageMap[language] || 'plaintext'
+}
 
 // Styled components
 const StyledCard = styled(Card)(({ theme }) => ({
@@ -29,26 +41,6 @@ const StatusText = styled(Typography)({
   color: '#28a745',
   fontWeight: 600,
   fontSize: '36px',
-})
-
-const CodeContainer = styled(Paper)(({ theme }) => ({
-  backgroundColor: '#f6f8fa',
-  border: '1px solid #d1d9e0',
-  borderRadius: 8,
-  overflow: 'auto',
-  marginTop: theme.spacing(3),
-}))
-
-const CodeBlock = styled('pre')({
-  margin: 0,
-  padding: 20,
-  fontFamily: "'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace",
-  fontSize: 13,
-  lineHeight: 1.6,
-  color: '#1f2328',
-  background: 'transparent',
-  whiteSpace: 'pre',
-  overflow: 'auto',
 })
 
 const SubmissionResult: React.FC = () => {
@@ -302,9 +294,28 @@ const SubmissionResult: React.FC = () => {
                 {submissionData.language}
               </Typography>
             </Box>
-            <CodeContainer>
-              <CodeBlock>{submissionData.code}</CodeBlock>
-            </CodeContainer>
+            <Box
+              sx={{
+                border: '1px solid #e1e4e8',
+                borderRadius: 2,
+                overflow: 'hidden',
+                height: 400,
+              }}
+            >
+              <Editor
+                language={getMonacoLanguage(submissionData.language)}
+                value={submissionData.code}
+                options={{
+                  readOnly: true,
+                  domReadOnly: true,
+                  minimap: { enabled: false },
+                  scrollBeyondLastLine: false,
+                  automaticLayout: true,
+                  wordWrap: 'on',
+                  theme: 'vs-light',
+                }}
+              />
+            </Box>
           </Box>
         </CardContent>
       </StyledCard>
