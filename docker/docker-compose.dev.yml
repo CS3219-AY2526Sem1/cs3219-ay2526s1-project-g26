@@ -51,9 +51,13 @@ services:
       - /app/node_modules
     environment:
       - PORT=4000
-      - DATABASE_URL=postgresql://postgres:postgres@user-service-db:5432/users_db
       - JWT_SECRET=4fa01f2f08d88986b2cc1e0c3d35ae63
       - JWT_EXPIRES_IN=14d
+      - DB_USER=postgres
+      - DB_NAME=postgres
+      - DB_HOST=user-service-db
+      - DB_PASSWORD=postgres
+      - DB_PORT=5432
     depends_on:
       - user-service-db
     ports:
