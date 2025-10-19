@@ -1,5 +1,5 @@
 import { Server, Socket } from 'socket.io'
-import { UserManager } from '../database/userManager'
+import { UserStorage } from '../database/userStorage'
 import { UserInfo } from '../models/userInfo'
 
 export async function cancelMatchHandler(
@@ -10,10 +10,10 @@ export async function cancelMatchHandler(
   console.log('cancelMatch event received')
   const userId = userinfo.id
   try {
-    await UserManager.deleteUser(userId)
+    await UserStorage.deleteUser(userId)
     io.to(socket.id).emit('matchCancelled')
   } catch (error) {
-    if (!(await UserManager.userExist(userId))) {
+    if (!(await UserStorage.userExist(userId))) {
       io.to(socket.id).emit('matchCancelled')
     } else {
       console.error('Cancel match error: ', error)

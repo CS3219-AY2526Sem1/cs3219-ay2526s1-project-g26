@@ -27,7 +27,7 @@ router.get('/match', authenticate(), async (req, res) => {
   return res.json({ success: true, question })
 })
 
-router.get('/options', async (req, res) => {
+router.get('/cnd', async (req, res) => {
   const { categories, difficulties } = await getAllCategoryAndDifficulty()
   return res.json({ success: true, categories, difficulties })
 })

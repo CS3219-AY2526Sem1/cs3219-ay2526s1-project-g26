@@ -14,7 +14,7 @@ export const API_ENDPOINTS = {
   QUESTION: {
     MATCH: '/question/match',
     GET_BY_ID: '/question',
-    GET_OPTIONS: 'question/options',
+    GET_TOPICS_AND_DIFFICULTIES: 'question/cnd',
   },
 } as const
 

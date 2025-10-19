@@ -124,6 +124,8 @@ services:
       - NODE_ENV=development
       - PORT=4020
       - DATABASE_URL=redis://matching-service-queue:6379
+      - USER_SERVICE_URL=http://user-service:4000
+      - COLLAB_SERVICE_URL=http://collaboration-service:4030
     depends_on:
       - matching-service-queue
     ports:

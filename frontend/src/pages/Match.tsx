@@ -1,56 +1,35 @@
 import { Container, Stack } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { io } from 'socket.io-client'
-import { Topics } from '../components/match/topics'
-import { Difficulty } from '../components/match/difficulty'
-import { Submission } from '../components/match/submission'
+import { Topics } from '../components/match/Topics'
+import { Difficulty } from '../components/match/Difficulty'
+import { Submission } from '../components/match/Submission'
 import axiosInstance from '../utils/axios'
 import { API_ENDPOINTS } from '../constants/api'
+import { useMatch } from '../hooks/useMatch'
 
-// const topicsList = [
-//   'Arrays & Hashing',
-//   'Two Pointers',
-//   'Stack',
-//   'Binary Search',
-//   'Sliding Window',
-//   'Linked List',
-//   'Trees',
-//   'Tries',
-//   'Backtracking',
-//   'Heap / Priority Queue',
-//   'Intervals',
-//   'Greedy',
-//   'Graph',
-//   'Dynamic Programming',
-// ]
-
-// const difficultyList = ['Easy', 'Medium', 'Hard']
-
-type MatchState = 'IDLE' | 'ERROR' | 'WAITING' | 'MATCHED'
-
-const socket = io('http://localhost:4020')
 
 const Match = () => {
-  const [matchState, setMatchState] = useState<MatchState>('IDLE')
   const [topicsList, setTopicsList] = useState<string[]>([])
   const [difficultyList, setDifficultyList] = useState<string[]>([])
   const [checkedTopics, setCheckedTopics] = useState<string[]>([])
   const [checkedDifficulties, setCheckedDifficulties] = useState<string[]>([])
 
+  const { errorMsg, matchState, onMatch } = useMatch()
+
   useEffect(() => {
     let isMounted = true
 
-    const fetchOptions = async () => {
+    const fetchTopicsAndDifficulties = async () => {
       try {
-        const res = await axiosInstance.get(API_ENDPOINTS.QUESTION.GET_OPTIONS)
+        const res = await axiosInstance.get(API_ENDPOINTS.QUESTION.GET_TOPICS_AND_DIFFICULTIES)
         if (!isMounted) return
-        setTopicsList(res.data.categories || [])
-        setDifficultyList(res.data.difficulties || [])
+        setTopicsList(res.data.categories)
+        setDifficultyList(res.data.difficulties)
       } catch (err) {
         console.error('Failed to fetch topics and difficulties', err)
       }
     }
-    fetchOptions()
+    fetchTopicsAndDifficulties()
 
     return () => {
       isMounted = false
@@ -89,10 +68,6 @@ const Match = () => {
     }
   }
 
-  const changeMatchState = (state: MatchState) => {
-    setMatchState(state)
-  }
-
   return (
     <Container>
       <br></br>
@@ -102,18 +77,21 @@ const Match = () => {
           checkedTopics={checkedTopics}
           toggleTopic={handleCheckTopic}
           toggleAllTopic={handleCheckAllTopics}
+          matchState={matchState}
         />
         <Difficulty
           difficultyList={difficultyList}
           checkedDifficulties={checkedDifficulties}
           toggleDifficulty={handleCheckDifficulty}
           toggleAllDifficulty={handleCheckAllDifficulties}
+          matchState={matchState}
         />
         <Submission
           checkedTopics={checkedTopics}
           checkedDifficulties={checkedDifficulties}
+          errorMsg={errorMsg}
           matchState={matchState}
-          changeMatchState={changeMatchState}
+          onMatch={onMatch}
         />
       </Stack>
     </Container>

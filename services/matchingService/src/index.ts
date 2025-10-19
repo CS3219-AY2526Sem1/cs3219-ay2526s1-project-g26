@@ -11,15 +11,19 @@ import errorHandler from './middleware/errorHandler.js'
 import { createServer } from 'node:http'
 import { Server } from 'socket.io'
 import { matchingSocketHandler } from './handlers/matchingSocketHandler.js'
+import { socketAuthMiddleware } from './middleware/socketAuthMiddleware.js'
 
 const logger = getLogger('app')
 const app = express()
 const server = createServer(app)
 const io = new Server(server, {
+  connectionStateRecovery: {},
   cors: {
-    origin: ["http://localhost:3000", "http://localhost"]
+    origin: ['http://localhost:3000']
   }
 })
+
+io.use(socketAuthMiddleware())
 
 app.use(
   morgan('tiny', {

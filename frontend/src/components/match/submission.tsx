@@ -1,75 +1,22 @@
-import { Box, Alert, Button } from '@mui/material'
-import { useSelector } from 'react-redux'
-import { API_ENDPOINTS } from '../../constants/api'
-import { socket } from '../../utils/socket'
-import { RootState } from '../../store'
-import axiosInstance from '../../utils/axios'
+import { Box, Alert, Button, CircularProgress } from '@mui/material'
+import type { MatchState } from '../../types/matchState'
 
 const sessionDurationAlert =
   'Collaborative session will last 30 minutes for Easy, 45 minutes for Medium and 60 minutes for Hard'
 
-type MatchState = 'IDLE' | 'ERROR' | 'WAITING' | 'MATCHED'
-
-const severityMap: Record<MatchState, 'info' | 'success' | 'error'> = {
-  IDLE: 'info',
-  WAITING: 'info',
-  MATCHED: 'success',
-  ERROR: 'error',
-}
-
 export const Submission = ({
   checkedTopics,
   checkedDifficulties,
+  errorMsg,
   matchState,
-  changeMatchState,
+  onMatch
 }: {
   checkedTopics: string[]
   checkedDifficulties: string[]
+  errorMsg: string
   matchState: MatchState
-  changeMatchState: (state: MatchState) => void
+  onMatch: (checkedTopics: string[], checkedDifficulties: string[]) => void
 }) => {
-  const userId = useSelector((state: RootState) => state.user.user?.id)
-
-  const onSubmit = async () => {
-    // Input validation (TODO later)
-
-    try {
-      socket.emit('joinMatch', {
-        id: userId,
-        topics: checkedTopics,
-        difficulty: checkedDifficulties,
-      })
-      console.log(
-        'sent joinMatch event with \ntopics: ' +
-          checkedTopics +
-          '\ndifficulties: ' +
-          checkedDifficulties
-      )
-
-      // Wait for matchFound event from matching service (Not implemented room ids yet)
-      changeMatchState('WAITING')
-      // socket.on("matchFound", (data) => {
-      //   const roomId = data.roomId
-      // })
-
-      // Fetch question from question service
-      const questionResponse = await axiosInstance.get(
-        API_ENDPOINTS.QUESTION.MATCH,
-        {
-          params: {
-            difficulty: checkedDifficulties.join(','),
-            categories: checkedTopics.join(','),
-          },
-        }
-      )
-      console.log('Fetched Question: ' + questionResponse.data.question.title)
-
-      // Contact collab service
-    } catch (err) {
-      console.error('Submission Failed: ' + err)
-      changeMatchState('ERROR')
-    }
-  }
 
   return (
     <Box
@@ -88,22 +35,19 @@ export const Submission = ({
 
       {/* Information bar showing match state */}
       {matchState !== 'IDLE' && (
-        <Alert
-          severity={severityMap[matchState]}
-          sx={{ gridColumn: '4', gridRow: '1' }}
-        >
-          {matchState === 'WAITING' && 'Waiting for a match...'}
-          {matchState === 'MATCHED' && 'Match found!'}
-          {matchState === 'ERROR' && 'An error occurred while matching.'}
-        </Alert>
+        <Box sx={{ gridColumn: '4', gridRow: '1' }}>
+          {matchState === 'WAITING' && <CircularProgress />}
+          {matchState === 'MATCHED' && <Alert severity="success">Match found!</Alert>}
+          {matchState === 'ERROR' && <Alert severity='error'>{errorMsg}</Alert> }
+        </Box>
       )}
 
       {/* Start Matching button */}
       <Button
-        sx={{ gridColumn: '4', gridRow: '2', placeSelf: 'baseline end' }}
+        sx={{ gridColumn: '4', gridRow: '2', placeSelf: 'center end' }}
         variant="contained"
         size="large"
-        onClick={onSubmit}
+        onClick={() => onMatch(checkedTopics, checkedDifficulties)}
       >
         Start Matching
       </Button>

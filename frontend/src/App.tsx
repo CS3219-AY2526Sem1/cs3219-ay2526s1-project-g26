@@ -58,7 +58,7 @@ function App() {
               <Route path="/home" element={<Home />} />
               <Route path="/submissions" element={<SubmissionsOverview />} />
               <Route path="/match" element={<Match />} />
-              <Route path="/collaboration" element={<CollaborationPanel />} />
+              <Route path="/collaboration/:roomid" element={<CollaborationPanel />} />
             </Route>
           </Route>
           <Route path="/update-profile" element={<UpdateProfile />} />

@@ -5,22 +5,26 @@ import {
   FormControlLabel,
   Checkbox,
 } from '@mui/material'
+import { MatchState } from '../../types/matchState'
 
 export const Difficulty = ({
   difficultyList,
   checkedDifficulties,
   toggleDifficulty,
   toggleAllDifficulty,
+  matchState
 }: {
   difficultyList: string[]
   checkedDifficulties: string[]
   toggleDifficulty: (isChecked: boolean, difficulty: string) => void
   toggleAllDifficulty: (isChecked: boolean) => void
+  matchState: MatchState
 }) => {
   const allSelected = checkedDifficulties.length === difficultyList.length
   const partiallySelected =
     checkedDifficulties.length > 0 &&
     checkedDifficulties.length < difficultyList.length
+  const isWaiting = matchState === 'WAITING'
 
   return (
     <Box>
@@ -34,6 +38,7 @@ export const Difficulty = ({
             <Checkbox
               checked={allSelected}
               indeterminate={partiallySelected}
+              disabled={isWaiting}
               size="small"
               onChange={(e) => toggleAllDifficulty(e.target.checked)}
             />
@@ -58,6 +63,7 @@ export const Difficulty = ({
             control={
               <Checkbox
                 checked={checkedDifficulties.includes(difficulty)}
+                disabled={isWaiting}
                 size="small"
                 onChange={(e) => toggleDifficulty(e.target.checked, difficulty)}
               />

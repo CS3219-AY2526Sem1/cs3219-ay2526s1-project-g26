@@ -5,21 +5,25 @@ import {
   FormControlLabel,
   Checkbox,
 } from '@mui/material'
+import { MatchState } from '../../types/matchState'
 
 export const Topics = ({
   topicsList,
   checkedTopics,
   toggleTopic,
   toggleAllTopic,
+  matchState
 }: {
   topicsList: string[]
   checkedTopics: string[]
   toggleTopic: (isChecked: boolean, topic: string) => void
   toggleAllTopic: (isChecked: boolean) => void
+  matchState: MatchState
 }) => {
   const allSelected = checkedTopics.length === topicsList.length
   const partiallySelected =
     checkedTopics.length > 0 && checkedTopics.length < topicsList.length
+  const isWaiting = matchState === 'WAITING'
 
   return (
     <Box>
@@ -33,6 +37,7 @@ export const Topics = ({
             <Checkbox
               checked={allSelected}
               indeterminate={partiallySelected}
+              disabled={isWaiting}
               size="small"
               onChange={(e) => toggleAllTopic(e.target.checked)}
             />
@@ -58,6 +63,7 @@ export const Topics = ({
             control={
               <Checkbox
                 checked={checkedTopics.includes(topic)}
+                disabled={isWaiting}
                 size="small"
                 onChange={(e) => toggleTopic(e.target.checked, topic)}
               />
