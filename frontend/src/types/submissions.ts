@@ -6,3 +6,8 @@ export interface SubmissionDataSummary {
   difficulty: string
   language: string
 }
+
+export interface SubmissionDataResponse {
+  submissions: SubmissionDataSummary[]
+  total: number
+}
