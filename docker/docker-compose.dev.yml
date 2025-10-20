@@ -158,7 +158,7 @@ services:
       - "4030:4030"
     stdin_open: true
     tty: true
-  
+
   # History Service
   history-service:
     build:
@@ -179,7 +179,7 @@ services:
       - "4040:4040"
     stdin_open: true
     tty: true
-  
+
   history-service-db:
     image: mongo:8.0
     container_name: history-service-db
@@ -188,7 +188,6 @@ services:
     volumes:
       - history-service-db-data:/data/db
       - ../services/historyService/src/database/init:/docker-entrypoint-initdb.d
-
 
 volumes:
   user-service-db-data:
