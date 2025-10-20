@@ -1,9 +1,13 @@
 import { type ObjectId } from 'mongodb'
 
-export type ResultLabel = 'In Progress' | 'Accepted'
-| 'Wrong Answer' | 'Time Limit Exceeded'
-| 'Memory Limit Exceeded' | 'Runtime Error'
-| 'Compilation Error'
+export type ResultLabel =
+  | 'In Progress'
+  | 'Accepted'
+  | 'Wrong Answer'
+  | 'Time Limit Exceeded'
+  | 'Memory Limit Exceeded'
+  | 'Runtime Error'
+  | 'Compilation Error'
 
 export interface ResultInformation {
   result: ResultLabel
@@ -47,4 +51,3 @@ export interface SubmissionHistoryResponse {
 export interface SingleSubmissionHistoryResponse {
   submission: Submission
 }
-

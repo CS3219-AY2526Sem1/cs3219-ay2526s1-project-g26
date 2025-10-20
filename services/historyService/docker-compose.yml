@@ -10,7 +10,7 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=4040
-    
+
     db:
       image: mongo:8.0
       container_name: history-service-db

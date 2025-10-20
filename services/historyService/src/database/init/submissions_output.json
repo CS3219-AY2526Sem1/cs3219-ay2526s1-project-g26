@@ -28,7 +28,11 @@
     },
     "test_case_results": [
       { "result": "Accepted", "max_memory_used": 1024, "time_taken": 200 },
-      { "result": "Time Limit Exceeded", "max_memory_used": 2048, "time_taken": 3000 }
+      {
+        "result": "Time Limit Exceeded",
+        "max_memory_used": 2048,
+        "time_taken": 3000
+      }
     ]
   },
   {

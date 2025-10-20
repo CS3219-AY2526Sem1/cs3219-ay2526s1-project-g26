@@ -1,13 +1,12 @@
 import { Router } from 'express'
 import {
   getUserSubmission,
-  getUserSubmissions
+  getUserSubmissions,
 } from '../services/submissionHistoryService.js'
 import { authenticate } from '../middleware/auth.js'
 import { AppError } from '../utils/errors.js'
 
 const router = Router()
-
 
 router.get('/submissions/:page/:per_page', authenticate(), async (req, res) => {
   const id = req.user!.id
@@ -39,6 +38,5 @@ router.post('/submissions', async (req, res) => {
 router.put('/submissions/:submission_id', authenticate(), async (req, res) => {
   // ignore for now, not sure if this should neeed authenticate() anyway
 })
-
 
 export default router
