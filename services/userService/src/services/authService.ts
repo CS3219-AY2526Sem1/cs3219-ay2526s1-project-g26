@@ -5,6 +5,19 @@ import { AppError } from '../utils/errors.js'
 import jwt, { JwtPayload, SignOptions } from 'jsonwebtoken'
 import * as Config from '../config/index.js'
 
+const isValidPassword = (password: string): boolean => {
+  if (password.length < 8 || password.length > 128) return false
+
+  // Check each requirement separately to avoid nested quantifiers
+  const hasLowercase = /[a-z]/.test(password)
+  const hasUppercase = /[A-Z]/.test(password)
+  const hasDigit = /[0-9]/.test(password)
+  const hasSpecial = /[!-,:-@[-`{-~]/.test(password)
+  const validChars = /^[!-~]+$/.test(password)
+
+  return hasLowercase && hasUppercase && hasDigit && hasSpecial && validChars
+}
+
 export const createUser = async (
   email: string,
   password: string,
@@ -17,14 +30,12 @@ export const createUser = async (
     // identical to yup internal regex in frontend
     const emailRegex =
       /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
-    const passwordRegex =
-      /^(?=.*[a-z].*)(?=.*[A-Z].*)(?=.*\d.*)(?=.*[!-,:-@[-`{-~].*)[!-~]{8,}$/
 
     if (
       !email ||
       !emailRegex.test(email) ||
       !password ||
-      !passwordRegex.test(password)
+      !isValidPassword(password)
     ) {
       throw new AppError(
         'Invalid email or password, please apply validation before sending',
