@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  code-execution-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "4040:4040"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/temp
+    environment:
+      - NODE_ENV=development
+      - PORT=4040
+    networks:
+      - cs3219-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4040/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  cs3219-network:
+    external: true
+    name: peerprep-dev_default

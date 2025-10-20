@@ -9,7 +9,7 @@ const CollaborationPanel = () => {
   const { question, loading, error, fetchQuestionById } = useQuestion()
 
   useAsyncEffect(async () => {
-    await fetchQuestionById('68e92415d977f66dd64f8810')
+    await fetchQuestionById('68ecad71f7fd251842ce5f54')
   }, [fetchQuestionById])
 
   return (

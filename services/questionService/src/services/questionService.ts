@@ -135,6 +135,16 @@ export const getQuestionById = async (id: string): Promise<Question | null> => {
   return question
 }
 
+export const getQuestionWithTestCases = async (id: string): Promise<Question | null> => {
+  const question = await getQuestionCollection().findOne({
+    _id: new ObjectId(id),
+  })
+  if (!question) {
+    throw new AppError('Question not found', 404)
+  }
+  return question
+}
+
 export const getAllQuestions = async (
   limit: number,
   offset: number

@@ -6,6 +6,7 @@ import {
   deleteQuestion,
   getAllQuestions,
   getQuestionById,
+  getQuestionWithTestCases,
 } from '../services/questionService.js'
 import { authenticate } from '../middleware/auth.js'
 import { AppError } from '../utils/errors'
@@ -29,6 +30,16 @@ router.get('/match', authenticate(), async (req, res) => {
 router.get('/:id', authenticate(), async (req, res) => {
   const id = req.params.id
   const question = await getQuestionById(id)
+  if (!question) {
+    throw new AppError('Question not found', 404)
+  }
+  return res.json({ success: true, question })
+})
+
+// Special endpoint for code execution service - includes test_cases and no auth required
+router.get('/:id/execute', async (req, res) => {
+  const id = req.params.id
+  const question = await getQuestionWithTestCases(id)
   if (!question) {
     throw new AppError('Question not found', 404)
   }
