@@ -1,6 +1,5 @@
 import axiosInstance from '../utils/axios.ts'
 import {
-  SubmissionDataSummary,
   SubmissionDataResponse,
   SubmissionDetail,
 } from '../types/submissions.ts'
