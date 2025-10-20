@@ -1,4 +1,6 @@
-import React, { useEffect } from 'react'
+import React, { Ref, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import {
   AppBar,
   Toolbar,
@@ -20,15 +22,17 @@ import {
   ExitToApp,
   KeyboardArrowDown,
 } from '@mui/icons-material'
-import { useDispatch, useSelector } from 'react-redux'
-import { RootState } from '../../store'
 import { TABS } from '../../constants/navbarTabs.ts'
+import { RootState } from '../../store'
 import { setActiveTab } from '../../store/slices/navbarSlice.ts'
-import { useNavigate } from 'react-router-dom'
 import authService from '../../services/authService.ts'
 import { logout } from '../../store/slices/userSlice.ts'
 
-const Navbar = () => {
+interface NavbarProps {
+  ref?: Ref<HTMLElement>
+}
+
+const Navbar = (props: NavbarProps) => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { user } = useSelector((state: RootState) => state.user)
@@ -46,7 +50,7 @@ const Navbar = () => {
         )
       )
     }
-  }, [activeTab])
+  }, [activeTab, dispatch])
 
   const handleTabChange = (_: React.SyntheticEvent, newTabId: string) => {
     const newActiveTab = TABS.find((tab) => tab.id === newTabId)
@@ -68,8 +72,13 @@ const Navbar = () => {
     dispatch(logout())
   }
 
+  const handleUpdateProfile = async () => {
+    handleMenuClose()
+    navigate('/update-profile')
+  }
+
   return (
-    <AppBar position="static" color="primary" elevation={1}>
+    <AppBar position="static" color="primary" elevation={1} ref={props.ref}>
       <Toolbar sx={{ minHeight: '64px', px: 2 }}>
         <Typography
           variant="h6"
@@ -178,6 +187,13 @@ const Navbar = () => {
                 <AccountCircle fontSize="small" />
               </ListItemIcon>
               <ListItemText>Profile</ListItemText>
+            </MenuItem>
+
+            <MenuItem onClick={handleUpdateProfile} sx={{ py: 1.5 }}>
+              <ListItemIcon>
+                <Settings fontSize="small" />
+              </ListItemIcon>
+              <ListItemText>Update Profile</ListItemText>
             </MenuItem>
 
             <MenuItem onClick={handleMenuClose} sx={{ py: 1.5 }}>

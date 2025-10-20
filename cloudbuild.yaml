@@ -1,0 +1,123 @@
+steps:
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "build",
+        "--no-cache",
+        "-t",
+        "$_GCP_REGION-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/frontend:latest",
+        "-f",
+        "frontend/Dockerfile.prod",
+        "./frontend",
+      ]
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "push",
+        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/frontend:latest",
+      ]
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "build",
+        "--no-cache",
+        "-t",
+        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/user-service:latest",
+        "-f",
+        "services/userService/Dockerfile.prod",
+        "./services/userService",
+      ]
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "push",
+        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/user-service:latest",
+      ]
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "build",
+        "--no-cache",
+        "-t",
+        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/question-service:latest",
+        "-f",
+        "services/questionService/Dockerfile.prod",
+        "./services/questionService",
+      ]
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "push",
+        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/question-service:latest",
+      ]
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "build",
+        "--no-cache",
+        "-t",
+        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/matching-service:latest",
+        "-f",
+        "services/matchingService/Dockerfile.prod",
+        "./services/matchingService",
+      ]
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "push",
+        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/matching-service:latest",
+      ]
+
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "build",
+        "--no-cache",
+        "-t",
+        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/collaboration-service:latest",
+        "-f",
+        "services/collaborationService/Dockerfile.prod",
+        "./services/collaborationService",
+      ]
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "push",
+        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/collaboration-service:latest",
+      ]
+
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: gcloud
+    args:
+      - "container"
+      - "clusters"
+      - "get-credentials"
+      - "$_GKE_NAME"
+      - "--region"
+      - "$_GCP_REGION"
+      - "--project"
+      - "$PROJECT_ID"
+
+  - name: "gcr.io/cloud-builders/kubectl"
+    env:
+      - "CLOUDSDK_COMPUTE_REGION=$_GCP_REGION"
+      - "CLOUDSDK_CONTAINER_CLUSTER=$_GKE_NAME"
+    args: [ "apply", "-f", "kubernetes/" ]
+
+  - name: "gcr.io/cloud-builders/kubectl"
+    env:
+      - "CLOUDSDK_COMPUTE_REGION=$_GCP_REGION"
+      - "CLOUDSDK_CONTAINER_CLUSTER=$_GKE_NAME"
+    args:
+      [
+        "rollout",
+        "restart",
+        "deployment/frontend",
+        "deployment/user-service",
+        "deployment/question-service",
+        "deployment/matching-service",
+        "deployment/collaboration-service",
+      ]
+
+options:
+  logging: CLOUD_LOGGING_ONLY
