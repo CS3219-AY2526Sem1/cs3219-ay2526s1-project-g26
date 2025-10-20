@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: matching-service
-          image: $GCP_REGION/$PROJECT_ID/$REPO_NAME/matching-service:$SHORT_SHA
+          image: asia-southeast1-docker.pkg.dev/peerprep-g26-2025/peerprep/matching-service:latest
           ports:
             - containerPort: 4020
           envFrom:

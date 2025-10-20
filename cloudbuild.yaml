@@ -5,7 +5,7 @@ steps:
         "build",
         "--no-cache",
         "-t",
-        "$_GCP_REGION-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/frontend:$SHORT_SHA",
+        "$_GCP_REGION-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/frontend:latest",
         "-f",
         "frontend/Dockerfile.prod",
         "./frontend",
@@ -14,7 +14,7 @@ steps:
     args:
       [
         "push",
-        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/frontend:$SHORT_SHA",
+        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/frontend:latest",
       ]
   - name: "gcr.io/cloud-builders/docker"
     args:
@@ -22,7 +22,7 @@ steps:
         "build",
         "--no-cache",
         "-t",
-        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/user-service:$SHORT_SHA",
+        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/user-service:latest",
         "-f",
         "services/userService/Dockerfile.prod",
         "./services/userService",
@@ -31,7 +31,7 @@ steps:
     args:
       [
         "push",
-        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/user-service:$SHORT_SHA",
+        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/user-service:latest",
       ]
   - name: "gcr.io/cloud-builders/docker"
     args:
@@ -39,7 +39,7 @@ steps:
         "build",
         "--no-cache",
         "-t",
-        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/question-service:$SHORT_SHA",
+        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/question-service:latest",
         "-f",
         "services/questionService/Dockerfile.prod",
         "./services/questionService",
@@ -48,7 +48,7 @@ steps:
     args:
       [
         "push",
-        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/question-service:$SHORT_SHA",
+        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/question-service:latest",
       ]
   - name: "gcr.io/cloud-builders/docker"
     args:
@@ -56,7 +56,7 @@ steps:
         "build",
         "--no-cache",
         "-t",
-        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/matching-service:$SHORT_SHA",
+        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/matching-service:latest",
         "-f",
         "services/matchingService/Dockerfile.prod",
         "./services/matchingService",
@@ -65,7 +65,7 @@ steps:
     args:
       [
         "push",
-        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/matching-service:$SHORT_SHA",
+        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/matching-service:latest",
       ]
 
   - name: "gcr.io/cloud-builders/docker"
@@ -74,7 +74,7 @@ steps:
         "build",
         "--no-cache",
         "-t",
-        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/collaboration-service:$SHORT_SHA",
+        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/collaboration-service:latest",
         "-f",
         "services/collaborationService/Dockerfile.prod",
         "./services/collaborationService",
@@ -83,7 +83,7 @@ steps:
     args:
       [
         "push",
-        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/collaboration-service:$SHORT_SHA",
+        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/collaboration-service:latest",
       ]
 
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
@@ -97,20 +97,6 @@ steps:
       - "$_GCP_REGION"
       - "--project"
       - "$PROJECT_ID"
-
-  - name: "gcr.io/cloud-builders/gcloud"
-    entrypoint: "bash"
-    env:
-      - "GCP_REGION=$_GCP_REGION"
-      - "PROJECT_ID=$PROJECT_ID"
-      - "REPO_NAME=$_REPO_NAME"
-      - "SHORT_SHA=$SHORT_SHA"
-    args:
-      - "-c"
-      - |
-        for filename in kubernetes/*-deployment.yaml; do
-          envsubst < "$filename"
-        done | kubectl apply -f -
 
   - name: "gcr.io/cloud-builders/kubectl"
     env:

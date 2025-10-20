@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: user-service
-          image: $GCP_REGION/$PROJECT_ID/$REPO_NAME/user-service:$SHORT_SHA
+          image: asia-southeast1-docker.pkg.dev/peerprep-g26-2025/peerprep/user-service:latest
           ports:
             - containerPort: 4000
           envFrom:
