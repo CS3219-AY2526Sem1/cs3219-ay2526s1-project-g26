@@ -1,5 +1,5 @@
-import { UserInfo } from '../models/userInfo'
-import redisClient from './redis'
+import { UserInfo } from '../models/userInfo.js'
+import redisClient from './redis.js'
 
 // Stores the information of all users who are currently waiting for a match
 export class UserManager {

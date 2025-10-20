@@ -28,7 +28,11 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=4000
-      - DATABASE_URL=postgres://postgres:postgres@user-service-db:5432/users_db
+      - DB_USER=postgres
+      - DB_NAME=postgres
+      - DB_HOST=user-service-db
+      - DB_PASSWORD=postgres
+      - DB_PORT=5432
       - JWT_SECRET=${JWT_SECRET}
       - JWT_EXPIRES_IN=${JWT_EXPIRES_IN}
     ports:

@@ -1,5 +1,5 @@
 import { MongoClient, Db } from 'mongodb'
-import { DATABASE_URL } from '../config'
+import { DATABASE_URL } from '../config/index.js'
 
 let db: Db
 

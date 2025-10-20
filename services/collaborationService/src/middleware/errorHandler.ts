@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from 'express'
-import { AppError } from '../utils/errors'
-import { getLogger } from '../utils/logger'
+import { AppError } from '../utils/errors.js'
+import { getLogger } from '../utils/logger.js'
 
 const logger = getLogger('ErrorHandler')
 
 export default (
-  err: unknown,
+  err: Error | AppError,
   req: Request,
   res: Response,
   _next: NextFunction

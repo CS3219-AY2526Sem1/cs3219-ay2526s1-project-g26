@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: collaboration-service
+  annotations:
+    cloud.google.com/backend-config: '{"ports": {"4030":"websocket-backendconfig"}}'
+spec:
+  selector:
+    app: collaboration-service
+  ports:
+    - protocol: TCP
+      port: 4030
+      targetPort: 4030
+  type: ClusterIP
