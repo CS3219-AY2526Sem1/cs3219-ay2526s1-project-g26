@@ -1,4 +1,6 @@
 name: Lint & Prettier Check
+permissions:
+  contents: read
 
 on:
   push:

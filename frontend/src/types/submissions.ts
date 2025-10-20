@@ -7,6 +7,11 @@ export interface SubmissionDataSummary {
   language: string
 }
 
+export interface SubmissionDataResponse {
+  submissions: SubmissionDataSummary[]
+  total: number
+}
+
 export interface SubmissionDetail {
   submission_id: string
   title: string

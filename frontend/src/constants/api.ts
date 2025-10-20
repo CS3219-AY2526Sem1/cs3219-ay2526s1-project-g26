@@ -15,6 +15,9 @@ export const API_ENDPOINTS = {
     MATCH: '/question/match',
     GET_BY_ID: '/question',
   },
+  HISTORY: {
+    GET_USER_SUBMISSIONS: '/history/submissions',
+  },
 } as const
 
 export const WEBSOCKET_BASE_URL =

@@ -70,6 +70,29 @@ services:
       - question-service-mongodata_prod:/data/db
       - ../services/questionService/src/database/init:/docker-entrypoint-initdb.d
 
+  history-service:
+    image: zengfu0307/peerprep-historyservice:latest
+    platform: linux/amd64
+    container_name: history_service-prod
+    environment:
+      - NODE_ENV=production
+      - PORT=4040
+      - DATABASE_URL=mongodb://history-service-db:27017/history_db
+      - USER_SERVICE_URL=${USER_SERVICE_URL}
+    ports:
+      - "4040:4040"
+    depends_on:
+      - history-service-db
+
+  history-service-db:
+    image: mongo:8.0
+    container_name: history_service_mongo_prod
+    restart: unless-stopped
+    volumes:
+      - history-service-mongodata_prod:/data/db
+      - ../services/historyService/src/database/init:/docker-entrypoint-initdb.d
+
 volumes:
   user-service-pgdata_prod:
   question-service-mongodata_prod:
+  history-service-mongodata_prod:
