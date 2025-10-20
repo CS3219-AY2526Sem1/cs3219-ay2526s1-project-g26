@@ -1,6 +1,8 @@
 /* eslint-disable */
-/* Note: This file does not seem to translate to mongoDB when checking with mongosh at all */
+/*
 
+
+*/
 
 
 db = db.getSiblingDB('history_db')

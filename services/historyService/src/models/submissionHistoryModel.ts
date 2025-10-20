@@ -15,6 +15,7 @@ export interface ResultInformation {
 export interface Submission {
   _id: string | ObjectId // ObjectId includes timestamp info already
   question_title: string
+  categories: string[]
 
   code: string
   difficulty: string
