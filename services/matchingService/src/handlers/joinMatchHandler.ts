@@ -4,13 +4,14 @@ import { UserStorage } from '../database/userStorage'
 import { SocketIdStorage } from '../database/socketIdStorage'
 import { randomUUID } from 'crypto'
 import { QUESTION_SERVICE_URL } from '../config'
+import { matchSuccess } from '../constants/eventNames'
+import { getToken } from './matchingSocketHandler'
 
 export async function joinMatchHandler(
   io: Server,
   socket: Socket,
   userinfo: UserInfo
 ): Promise<void> {
-  console.log('joinMatch event received by matching service')
   if (await UserStorage.userExist(userinfo.id)) {
     throw new Error('User already in queue')
   }
@@ -21,20 +22,17 @@ export async function joinMatchHandler(
   } else {
     const overlapTopics = userinfo.topics.filter(topic => matchedUser.topics.includes(topic))
     const overlapDifficulties = userinfo.difficulty.filter(diff => matchedUser.difficulty.includes(diff))
-    const token = socket.handshake.auth.token
+    const token = getToken(socket)
     const question = await fetchQuestion(overlapDifficulties, overlapTopics, token)
-    console.log('Question Fetch succeeded')
     const otherSocketId = await SocketIdStorage.getSocketId(matchedUser.id)
-    console.log('Matched with socketid: ' + otherSocketId)
     if (!otherSocketId) {
       await UserStorage.removeUser(matchedUser.id)
       await SocketIdStorage.removeSocketId(matchedUser.id)
       await UserStorage.storeUser(userinfo)
     } else {
       const roomid = randomUUID()
-      // Server may fail to reach client (Not yet handled)
-      io.to(otherSocketId).emit('matchSuccess', {roomid, question})
-      io.to(socket.id).emit('matchSuccess', { roomid, question })
+      io.to(otherSocketId).emit(matchSuccess, {roomid, question})
+      io.to(socket.id).emit(matchSuccess, { roomid, question })
       await UserStorage.removeUser(matchedUser.id)
       await SocketIdStorage.removeSocketId(matchedUser.id)
       await UserStorage.removeUser(userinfo.id)

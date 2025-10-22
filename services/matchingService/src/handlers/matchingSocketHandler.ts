@@ -4,13 +4,14 @@ import { getUserInfo } from '../models/userInfo'
 import { cancelMatchHandler } from './cancelMatchHandler'
 import { disconnectMatchHandler } from './disconnectMatchHandler'
 import { joinMatchHandler } from './joinMatchHandler'
+import { cancelMatch, disconnect, joinMatch } from '../constants/eventNames'
 
 export function matchingSocketHandler(io: Server): void {
   io.on('connection', (socket: Socket) => {
-    console.log('User connected with\nUser ID: ' + socket.handshake.auth.userId + '\nSocket ID: ' + socket.id)
+    console.log('User connected with\nUser ID: ' + getUserId(socket) + '\nSocket ID: ' + socket.id)
 
     // Join match handler
-    socket.on('joinMatch', async (data) => {
+    socket.on(joinMatch, async (data) => {
       try {
         const userinfo = getUserInfo(data)
         await SocketIdStorage.storeSocketId(userinfo.id, socket.id)
@@ -23,13 +24,13 @@ export function matchingSocketHandler(io: Server): void {
     })
 
     // Cancel match handler
-    socket.on('cancelMatch', async (data) => {
+    socket.on(cancelMatch, async (data) => {
       const userid = data.id
       await cancelMatchHandler(userid)
     })
 
     // Disconnect handler
-    socket.on('disconnect', async (reason) => {
+    socket.on(disconnect, async (reason) => {
       await disconnectMatchHandler(socket, reason)
     })
   })
@@ -41,5 +42,13 @@ export function matchingSocketHandler(io: Server): void {
     console.log(err.code);     // the error code, for example 1
     console.log(err.message);  // the error message, for example "Session ID unknown"
     console.log(err.context);  // some additional error context
-  });
+  })
+}
+
+export function getToken(socket: Socket): string {
+  return socket.handshake.auth.token
+}
+
+export function getUserId(socket: Socket): string {
+  return socket.handshake.auth.userId
 }
