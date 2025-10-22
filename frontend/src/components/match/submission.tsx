@@ -44,9 +44,9 @@ export const Submission = ({
         </Box>
       )}
 
-      {/* Start Matching button (When IDLE)*/}
+      {/* Start Matching button (When IDLE or ERROR)*/}
       {
-        matchState === 'IDLE' && 
+        (matchState === 'IDLE' || matchState === 'ERROR') && 
         <Button
         sx={{ gridColumn: '4', gridRow: '2', placeSelf: 'center end' }}
         variant="contained"
@@ -56,9 +56,9 @@ export const Submission = ({
         Start Matching
       </Button>
       }
-      {/* Cancel Matching button (When not IDLE) */}
+      {/* Cancel Matching button (When WAITING or MATCHED) */}
       {
-        matchState !== 'IDLE' &&
+        (matchState === 'WAITING' || matchState === 'MATCHED') &&
         <Button
         sx={{ gridColumn: '4', gridRow: '2', placeSelf: 'center end' }}
         variant="contained"

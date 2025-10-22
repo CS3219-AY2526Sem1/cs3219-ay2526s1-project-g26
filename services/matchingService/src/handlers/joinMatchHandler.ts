@@ -4,7 +4,6 @@ import { UserStorage } from '../database/userStorage'
 import { SocketIdStorage } from '../database/socketIdStorage'
 import { randomUUID } from 'crypto'
 import { QUESTION_SERVICE_URL } from '../config'
-import { match } from 'assert'
 
 export async function joinMatchHandler(
   io: Server,

@@ -10,7 +10,7 @@ interface UserStorageFields {
 
 export class UserStorage {
   static async storeUser(userInfo: UserInfo): Promise<void> {
-    console.log('UserStorage: calling store user for' + userInfo.id)
+    console.log('UserStorage: Storing user: ' + userInfo.id)
     await redisClient.sAdd('userIds', userInfo.id)
     await redisClient.hSet(`user:${userInfo.id}`, {
       'topics': JSON.stringify(userInfo.topics),
@@ -20,7 +20,7 @@ export class UserStorage {
   }
 
   static async removeUser(userid: string): Promise<void> {
-    console.log('UserStorage: removing user' + userid)
+    console.log('UserStorage: Removing user: ' + userid)
     await redisClient.sRem('userIds', userid)
     await redisClient.hDel(`user:${userid}`, 'topics')
     await redisClient.hDel(`user:${userid}`, 'difficulty')
@@ -32,7 +32,7 @@ export class UserStorage {
   }
 
   static async getMatch(userInfo: UserInfo): Promise<UserInfo | null> {
-    console.log('UserStorage: getting a match for ' + userInfo.id)
+    console.log('UserStorage: Getting a match for user: ' + userInfo.id)
     const users = await UserStorage.getAllUsers()
     const currTime = Date.now()
  

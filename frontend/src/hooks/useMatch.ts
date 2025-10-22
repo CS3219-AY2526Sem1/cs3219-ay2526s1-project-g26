@@ -18,14 +18,13 @@ export function useMatch() {
     }
   }, [])
 
-  const onMatch = useCallback((checkedTopics: string[], checkedDifficulties: string[]) => {
-    if (checkedTopics.length === 0 || checkedDifficulties.length === 0) {
-      throw new Error('Choose at least one topic and difficulty')
-    }
-
-    if (matchState === 'WAITING') return
-
+  const onMatch = useCallback((checkedTopics: string[], checkedDifficulties: string[]) => {    
     try {
+      if (checkedTopics.length === 0 || checkedDifficulties.length === 0) {
+        throw new Error('Choose at least one topic and difficulty')
+      }
+  
+      if (matchState === 'WAITING') return
       socket.on("connect_error", (err) => {
         if (socket.active) {
           // temporary failure, the socket will automatically try to reconnect
@@ -61,13 +60,12 @@ export function useMatch() {
         throw new Error(err)
       })
 
-      // Server may fail to reach client (Not yet handled)
       socket.on("matchSuccess", (res) => {
         console.log('User ' + userId + ' received matchSuccess event')
-        const { roomId, question } = res
+        const { roomid, question } = res
         setMatchState("MATCHED")
         cleanup()
-        navigate(`/collaboration/${roomId}`, { state: { question } })
+        navigate(`/collaboration/${roomid}`, { state: { question } })
       })
     } catch (err) {
       const errorMessage =
@@ -81,7 +79,6 @@ export function useMatch() {
     if (userId) {
       socket.emit('cancelMatch', { id: userId })
     }
-    // No issue with multiple cancels causing socket.off
     cleanup()
     setMatchState('IDLE')
   }, [userId])

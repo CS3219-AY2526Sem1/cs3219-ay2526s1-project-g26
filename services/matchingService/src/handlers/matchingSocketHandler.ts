@@ -24,8 +24,8 @@ export function matchingSocketHandler(io: Server): void {
 
     // Cancel match handler
     socket.on('cancelMatch', async (data) => {
-      const userinfo = getUserInfo(data)
-      await cancelMatchHandler(io, socket, userinfo)
+      const userid = data.id
+      await cancelMatchHandler(userid)
     })
 
     // Disconnect handler

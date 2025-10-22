@@ -17,7 +17,7 @@ const Match = () => {
   const [checkedTopics, setCheckedTopics] = useState<string[]>([])
   const [checkedDifficulties, setCheckedDifficulties] = useState<string[]>([])
 
-  const { errorMsg, matchState, onMatch } = useMatch()
+  const { errorMsg, matchState, onMatch, cancelMatch } = useMatch()
 
   const userId = useSelector((state: RootState) => state.user.user?.id)
   const token = localStorage.getItem('authToken')
@@ -101,6 +101,7 @@ const Match = () => {
           errorMsg={errorMsg}
           matchState={matchState}
           onMatch={onMatch}
+          cancelMatch={cancelMatch}
         />
       </Stack>
     </Container>
