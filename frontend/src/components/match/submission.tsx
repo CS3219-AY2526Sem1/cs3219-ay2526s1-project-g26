@@ -9,13 +9,15 @@ export const Submission = ({
   checkedDifficulties,
   errorMsg,
   matchState,
-  onMatch
+  onMatch,
+  cancelMatch
 }: {
   checkedTopics: string[]
   checkedDifficulties: string[]
   errorMsg: string
   matchState: MatchState
   onMatch: (checkedTopics: string[], checkedDifficulties: string[]) => void
+  cancelMatch: () => void
 }) => {
 
   return (
@@ -42,8 +44,10 @@ export const Submission = ({
         </Box>
       )}
 
-      {/* Start Matching button */}
-      <Button
+      {/* Start Matching button (When IDLE)*/}
+      {
+        matchState === 'IDLE' && 
+        <Button
         sx={{ gridColumn: '4', gridRow: '2', placeSelf: 'center end' }}
         variant="contained"
         size="large"
@@ -51,6 +55,19 @@ export const Submission = ({
       >
         Start Matching
       </Button>
+      }
+      {/* Cancel Matching button (When not IDLE) */}
+      {
+        matchState !== 'IDLE' &&
+        <Button
+        sx={{ gridColumn: '4', gridRow: '2', placeSelf: 'center end' }}
+        variant="contained"
+        size="large"
+        onClick={() => cancelMatch()}
+      >
+        Cancel Matching
+      </Button>
+      }
     </Box>
   )
 }

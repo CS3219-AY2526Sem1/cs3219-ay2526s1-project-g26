@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { socket } from '../utils/socket'
 import { useSelector } from 'react-redux'
 import { RootState } from '../store'
-
-type MatchState = 'IDLE' | 'ERROR' | 'WAITING' | 'MATCHED'
+import { MatchState } from '../types/matchState'
 
 export function useMatch() {
   const [errorMsg, setErrorMsg] = useState<string>('')
@@ -15,46 +14,66 @@ export function useMatch() {
   useEffect(() => {
     // cleanup on unmount: ensure no leftover matchSuccess listener
     return () => {
-      socket.off('matchSuccess')
-      socket.off('connect_error')
+      cleanup()
     }
   }, [])
 
   const onMatch = useCallback((checkedTopics: string[], checkedDifficulties: string[]) => {
     if (checkedTopics.length === 0 || checkedDifficulties.length === 0) {
-      setMatchState('ERROR')
-      setErrorMsg('Choose at least one topic and difficulty')
-      return
+      throw new Error('Choose at least one topic and difficulty')
     }
 
     if (matchState === 'WAITING') return
 
     try {
+      socket.on("connect_error", (err) => {
+        if (socket.active) {
+          // temporary failure, the socket will automatically try to reconnect
+        } else {
+          // the connection was denied by the server
+          // in that case, `socket.connect()` must be manually called in order to reconnect
+          socket.connect()
+          console.error(err.message);
+          throw new Error(err.message)
+        }
+      })
+
+      socket.on('disconnect', (reason, details) => {
+        if (socket.active) {
+          // temporary disconnection, the socket will automatically try to reconnect
+        } else {
+          // the connection was forcefully closed by the server or the client itself
+          // in that case, `socket.connect()` must be manually called in order to reconnect
+          socket.connect()
+          console.log('disconnected socket on client side: ' + reason + details)
+          throw new Error(reason)
+        }
+      })
+
       setMatchState('WAITING')
       socket.emit('joinMatch', {
         id: userId,
         topics: checkedTopics,
         difficulty: checkedDifficulties,
       })
-      console.log("client emitted joinMatch, userId: " + userId)
-
-      socket.on("connect_error", (err) => {
-        const errorMessage = err instanceof Error ? err.message : 'Failed to connect'
-        setErrorMsg(errorMessage)
-        console.error("Socket connection error:", err)
-        console.log(err.message);
+      
+      socket.on('error', (err) => {
+        throw new Error(err)
       })
 
-      // socket.once("matchSuccess", (res) => {
-      //   const { roomId, question } = res
-      //   setMatchState("MATCHED")
-      //   navigate(`/collaboration/${roomId}`, { state: { question } })
-      // })
+      // Server may fail to reach client (Not yet handled)
+      socket.on("matchSuccess", (res) => {
+        console.log('User ' + userId + ' received matchSuccess event')
+        const { roomId, question } = res
+        setMatchState("MATCHED")
+        cleanup()
+        navigate(`/collaboration/${roomId}`, { state: { question } })
+      })
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : 'Failed to match'
+        err instanceof Error ? err.message : 'Failed to match with unknown error'
       setErrorMsg(errorMessage)
-      console.error('Error in matching:', err)
+      setMatchState('ERROR')
     }
   }, [userId])
 
@@ -62,10 +81,17 @@ export function useMatch() {
     if (userId) {
       socket.emit('cancelMatch', { id: userId })
     }
-    socket.off('matchSuccess')
-    socket.off('connect_error')
+    // No issue with multiple cancels causing socket.off
+    cleanup()
     setMatchState('IDLE')
   }, [userId])
+
+  const cleanup = useCallback(() => {
+    socket.off('matchSuccess')
+    socket.off('connect_error')
+    socket.off('disconnect')
+    socket.off('error')
+  }, [])
 
   return {
     errorMsg, matchState, onMatch, cancelMatch

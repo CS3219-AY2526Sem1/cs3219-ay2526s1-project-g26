@@ -1,4 +1,4 @@
-import React, { lazy, useState } from 'react'
+import React, { lazy, useEffect, useState } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Login from './pages/Login'
 import SignUp from './pages/SignUp'
@@ -16,6 +16,7 @@ import Home from './pages/Home.tsx'
 import UpdateProfile from './pages/UpdateProfile.tsx'
 import Match from './pages/Match.tsx'
 import CollaborationPanel from './pages/CollaborationPanel.tsx'
+import { disconnectSocket, initSocket } from './utils/socket.ts'
 
 const NotificationSnackbar = lazy(
   () => import('./components/common/NotificationSnackbar.tsx')
@@ -46,6 +47,11 @@ const ProtectedRoutes = () => {
 }
 
 function App() {
+  useEffect(() => {
+    // Clean up function to disconnect socket when App dismounts
+    () => disconnectSocket()
+  }, [])
+  
   return (
     <>
       <Router>

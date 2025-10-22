@@ -6,6 +6,9 @@ import { Submission } from '../components/match/Submission'
 import axiosInstance from '../utils/axios'
 import { API_ENDPOINTS } from '../constants/api'
 import { useMatch } from '../hooks/useMatch'
+import { useSelector } from 'react-redux'
+import { RootState } from '../store'
+import { initSocket } from '../utils/socket'
 
 
 const Match = () => {
@@ -15,6 +18,12 @@ const Match = () => {
   const [checkedDifficulties, setCheckedDifficulties] = useState<string[]>([])
 
   const { errorMsg, matchState, onMatch } = useMatch()
+
+  const userId = useSelector((state: RootState) => state.user.user?.id)
+  const token = localStorage.getItem('authToken')
+  useEffect(() => {
+    initSocket({ token, userId })
+  }, [token, userId])
 
   useEffect(() => {
     let isMounted = true

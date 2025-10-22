@@ -10,26 +10,29 @@ interface UserStorageFields {
 
 export class UserStorage {
   static async storeUser(userInfo: UserInfo): Promise<void> {
+    console.log('UserStorage: calling store user for' + userInfo.id)
     await redisClient.sAdd('userIds', userInfo.id)
     await redisClient.hSet(`user:${userInfo.id}`, {
-      topics: JSON.stringify(userInfo.topics),
-      difficulty: JSON.stringify(userInfo.difficulty),
-      timeJoined: Date.now()
+      'topics': JSON.stringify(userInfo.topics),
+      'difficulty': JSON.stringify(userInfo.difficulty),
+      'timeJoined': String(Date.now())
     })
   }
 
-  static async deleteUser(userId: string): Promise<void> {
-    await redisClient.sRem('userIds', userId)
-    await redisClient.hDel(`user:${userId}`, 'topics')
-    await redisClient.hDel(`user:${userId}`, 'difficulty')
-    await redisClient.hDel(`user:${userId}`, 'timeJoined')
+  static async removeUser(userid: string): Promise<void> {
+    console.log('UserStorage: removing user' + userid)
+    await redisClient.sRem('userIds', userid)
+    await redisClient.hDel(`user:${userid}`, 'topics')
+    await redisClient.hDel(`user:${userid}`, 'difficulty')
+    await redisClient.hDel(`user:${userid}`, 'timeJoined')
   }
 
-  static async userExist(userId: string): Promise<boolean> {
-    return (await redisClient.sIsMember('userIds', userId)) === 1
+  static async userExist(userid: string): Promise<boolean> {
+    return (await redisClient.sIsMember('userIds', userid)) === 1
   }
 
   static async getMatch(userInfo: UserInfo): Promise<UserInfo | null> {
+    console.log('UserStorage: getting a match for ' + userInfo.id)
     const users = await UserStorage.getAllUsers()
     const currTime = Date.now()
  
@@ -39,24 +42,26 @@ export class UserStorage {
     })
     // Sort in descending order (highest score first)
     .sort((a, b) => Number(b[1]) - Number(a[1]))
-    
-    if (sortedScores.length === 0) return null
 
-    const [bestIndex, bestScore] = sortedScores[0]
+    for (let i = 0; i < sortedScores.length; i++) {
+      const score = sortedScores[i][1]
+      const target = users[sortedScores[i][0]]
 
-    // If best score starts with 0, it means no one else has overlapping topics
-    if (bestScore.charAt(0) === '0') {
-      // A to D is 5 digits, gets time waited by slicing from index 5 onwards
-      const timeWaited = bestScore.slice(5)
-      // If time waited > 2mins then match
-      if (Number(timeWaited) >= 1000 * 60 * 2) { 
-        return users[bestIndex]        
-      } else {
-        return null
+      // If score starts with 0, it means no one else has overlapping topics
+      if (score.charAt(0) === '0') {
+        const timeWaited = score.slice(5)
+        if (Number(timeWaited) >= 1000 * 60 * 2 && await UserStorage.userExist(target.id)) { 
+          return target
+        } else {
+          return null
+        }
+      }
+      
+      if (await UserStorage.userExist(target.id)) {
+        return target
       }
     }
-
-    return users[bestIndex]
+    return null
   }
 
   private static async getAllUsers(): Promise<UserStorageFields[]> {
@@ -71,7 +76,8 @@ export class UserStorage {
         return {
           id: userIds[i],
           topics: JSON.parse(data.topics),
-          difficulty: JSON.parse(data.difficulties)
+          difficulty: JSON.parse(data.difficulty),
+          timeJoined: Number(data.timeJoined)
         } as UserStorageFields
       })
 
@@ -93,7 +99,7 @@ export class UserStorage {
     const B = overlapDifficulties.length === 0 ? '0' : '1' // 1 digit
     const C = overlapTopics.length >= 10 ? String(overlapTopics.length) : '0' + String(overlapTopics.length) // 2 digit
     const D = overlapDifficulties.length // 1 digit
-    const E = currTime - targetUser.timeJoined
+    const E = currTime - targetUser.timeJoined // time waited in milliseconds
 
     const similarityScore = `${A}${B}${C}${D}${E}`
 

@@ -1,34 +1,63 @@
 import { Server, Socket } from 'socket.io'
 import { UserInfo } from '../models/userInfo'
 import { UserStorage } from '../database/userStorage'
-
-const stubQuestion = {
-  id: 1,
-  title: 'stub Question',
-  description: 'yes',
-  difficulty: 'hard',
-}
-
-const otherUser: UserInfo = {
-  id: '123',
-  topics: ['Graph', 'Trees'],
-  difficulty: ['medium', 'hard'],
-}
+import { SocketIdStorage } from '../database/socketIdStorage'
+import { randomUUID } from 'crypto'
+import { QUESTION_SERVICE_URL } from '../config'
+import { match } from 'assert'
 
 export async function joinMatchHandler(
   io: Server,
   socket: Socket,
   userinfo: UserInfo
 ): Promise<void> {
-  console.log('joinMatch event received')
-  const userId = userinfo.id
-  const selectedTopics = userinfo.topics
-  const selectedDifficulties = userinfo.difficulty
-
-  const matchedUser = await UserStorage.getMatch(userinfo)
-  if (!matchedUser) {
-    await UserStorage.storeUser(userinfo)
+  console.log('joinMatch event received by matching service')
+  if (await UserStorage.userExist(userinfo.id)) {
+    throw new Error('User already in queue')
   }
-  
-  const question = await 
+  const matchedUser = await UserStorage.getMatch(userinfo)
+
+  if (!matchedUser || !await UserStorage.userExist(matchedUser.id)) {
+    await UserStorage.storeUser(userinfo)
+  } else {
+    const overlapTopics = userinfo.topics.filter(topic => matchedUser.topics.includes(topic))
+    const overlapDifficulties = userinfo.difficulty.filter(diff => matchedUser.difficulty.includes(diff))
+    const token = socket.handshake.auth.token
+    const question = await fetchQuestion(overlapDifficulties, overlapTopics, token)
+    console.log('Question Fetch succeeded')
+    const otherSocketId = await SocketIdStorage.getSocketId(matchedUser.id)
+    console.log('Matched with socketid: ' + otherSocketId)
+    if (!otherSocketId) {
+      await UserStorage.removeUser(matchedUser.id)
+      await SocketIdStorage.removeSocketId(matchedUser.id)
+      await UserStorage.storeUser(userinfo)
+    } else {
+      const roomid = randomUUID()
+      // Server may fail to reach client (Not yet handled)
+      io.to(otherSocketId).emit('matchSuccess', {roomid, question})
+      io.to(socket.id).emit('matchSuccess', { roomid, question })
+      await UserStorage.removeUser(matchedUser.id)
+      await SocketIdStorage.removeSocketId(matchedUser.id)
+      await UserStorage.removeUser(userinfo.id)
+      await SocketIdStorage.removeSocketId(userinfo.id)
+    }
+  }
+}
+
+async function fetchQuestion(overlapDifficulties: string[], overlapTopics: string[], token: string): Promise<any> {
+  const params = new URLSearchParams({
+      difficulty: overlapDifficulties.join(','), 
+      categories: overlapTopics.join(',')
+    })
+  const res = await fetch(`${QUESTION_SERVICE_URL}/match?${params}`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  })
+  if (!res.ok) {
+    throw new Error(`Failed to fetch question with status: ${res.status}`);
+  }
+  const body = await res.json() as { success: boolean, question: any }
+  return body.question
 }

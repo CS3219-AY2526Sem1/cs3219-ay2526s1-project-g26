@@ -1,16 +1,25 @@
 import { Server, Socket } from 'socket.io'
-import { joinMatchHandler } from './joinMatchHandler.js'
-import { cancelMatchHandler } from './cancelMatchHandler.js'
-import { getUserInfo } from '../models/userInfo.js'
+import { SocketIdStorage } from '../database/socketIdStorage'
+import { getUserInfo } from '../models/userInfo'
+import { cancelMatchHandler } from './cancelMatchHandler'
+import { disconnectMatchHandler } from './disconnectMatchHandler'
+import { joinMatchHandler } from './joinMatchHandler'
 
 export function matchingSocketHandler(io: Server): void {
   io.on('connection', (socket: Socket) => {
-    console.log('User connected with socket id: ', socket.id)
-  
+    console.log('User connected with\nUser ID: ' + socket.handshake.auth.userId + '\nSocket ID: ' + socket.id)
+
     // Join match handler
     socket.on('joinMatch', async (data) => {
-      const userinfo = getUserInfo(data)
-      await joinMatchHandler(io, socket, userinfo)
+      try {
+        const userinfo = getUserInfo(data)
+        await SocketIdStorage.storeSocketId(userinfo.id, socket.id)
+        await joinMatchHandler(io, socket, userinfo)
+      } catch (err) {
+        console.error('Failed to join match with err: ' + err)
+        socket.emit('error' , err instanceof Error ? err.message : 'Unknown Error')
+        await disconnectMatchHandler(socket, err as string)
+      }
     })
 
     // Cancel match handler
@@ -20,8 +29,8 @@ export function matchingSocketHandler(io: Server): void {
     })
 
     // Disconnect handler
-    socket.on('disconnect', async () => {
-      // TODO: Disconnect logic
+    socket.on('disconnect', async (reason) => {
+      await disconnectMatchHandler(socket, reason)
     })
   })
 
