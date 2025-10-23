@@ -22,7 +22,9 @@ export const submissionsService = {
     return response.data.submissions
   },
 
-  fetchSubmissionById: async (id: string): Promise<SubmissionDetailResponse> => {
+  fetchSubmissionById: async (
+    id: string
+  ): Promise<SubmissionDetailResponse> => {
     const response = await axiosInstance.get(
       `${API_ENDPOINTS.HISTORY.GET_SUBMISSION_BY_ID}${id}`
     )
