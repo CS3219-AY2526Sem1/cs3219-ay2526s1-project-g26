@@ -110,8 +110,7 @@ export const getUserSubmission = async (
     )
     .limit(1)
     .toArray()
-  console.log(userSubmissions, submissionId)
-
+  
   const submissions = await getSubmissionsCollection()
     .find({
       _id: {
@@ -121,8 +120,7 @@ export const getUserSubmission = async (
       },
     })
     .toArray()
-  console.log(submissions)
-
+  
   if (submissions.length === 0) {
     throw new AppError('Requested submission not found', 404)
   }
