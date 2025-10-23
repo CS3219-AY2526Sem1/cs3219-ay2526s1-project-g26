@@ -10,9 +10,13 @@ import { DEFAULT_LANGUAGE } from '../../../constants/collaboration_editor.ts'
 
 type CollaborationEditorProps = {
   provider: WebsocketProvider | null
+  resizeTrigger: number | null
 }
 
-const CollaborationEditor = ({ provider }: CollaborationEditorProps) => {
+const CollaborationEditor = ({
+  provider,
+  resizeTrigger,
+}: CollaborationEditorProps) => {
   const [editor, setEditor] =
     useState<monaco.editor.IStandaloneCodeEditor | null>(null)
   const { selectedLanguage } = useSelector(
@@ -36,11 +40,21 @@ const CollaborationEditor = ({ provider }: CollaborationEditorProps) => {
     }
   }, [provider, editor])
 
+  useEffect(() => {
+    if (editor && resizeTrigger) {
+      editor.layout()
+    }
+  }, [editor, resizeTrigger])
+
   return (
     <Editor
       defaultLanguage={DEFAULT_LANGUAGE}
       language={selectedLanguage}
-      options={{ minimap: { enabled: false } }}
+      options={{
+        minimap: { enabled: false },
+        scrollBeyondLastLine: false,
+        automaticLayout: false,
+      }}
       onMount={(editor) => {
         setEditor(editor)
       }}

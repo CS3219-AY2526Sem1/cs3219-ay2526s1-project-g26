@@ -1,5 +1,5 @@
 import { Server, Socket } from 'socket.io'
-import { UserInfo } from '../models/userInfo'
+import { UserInfo } from '../models/userInfo.js'
 
 const stubQuestion = {
   id: 1,

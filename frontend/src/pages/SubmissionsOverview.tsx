@@ -29,7 +29,7 @@ import { SubmissionDataSummary } from '../types/submissions'
 export const SubmissionsOverview = () => {
   const [submissions, setSubmissions] = useState<SubmissionDataSummary[]>([])
   const [loading, setLoading] = useState(false)
-  const [pageCount, setPageCount] = useState(0)
+  const [totalRows, setTotalRows] = useState(0)
   const [currentPage, setCurrentPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(10)
   const navigate = useNavigate()
@@ -39,17 +39,13 @@ export const SubmissionsOverview = () => {
       setLoading(true)
 
       try {
-        const rows = await submissionsService.fetchSubmissions(
+        const response = await submissionsService.fetchSubmissions(
           currentPage,
           rowsPerPage
         )
 
-        // Placeholder until backend is done
-        // As more info is needed to calculate this properly
-        // Or deciding to go with -1 instead
-        setPageCount(30)
-
-        setSubmissions(rows)
+        setTotalRows(response.total)
+        setSubmissions(response.submissions)
       } catch (error) {
         console.error('Error fetching submission:', error)
       } finally {
@@ -207,7 +203,7 @@ export const SubmissionsOverview = () => {
                   <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     colSpan={3}
-                    count={pageCount}
+                    count={totalRows}
                     rowsPerPage={rowsPerPage}
                     page={currentPage}
                     slotProps={{

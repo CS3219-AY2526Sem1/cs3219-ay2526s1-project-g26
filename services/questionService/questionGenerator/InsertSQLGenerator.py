@@ -64,6 +64,7 @@ class InsertJSONGenerator:
                         )
                         output = result.stdout
                         if result.stderr:
+                            print(title)
                             print(result.stderr)
                         output_file.write(output)
                         inputs = ""
