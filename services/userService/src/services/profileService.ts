@@ -48,7 +48,7 @@ export const updateUserProfile = async (
   // identical to yup internal regex in frontend
   const emailRegex =
     /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
-  
+
   if (!emailRegex.test(email)) {
     throw new AppError(
       'Invalid email or password, please apply validation before sending',

@@ -47,8 +47,8 @@ const SubmissionResult: React.FC = () => {
   // Get the submission id from URL parameters
   const { id } = useParams<{ id: string }>()
 
-  const [submissionData, setSubmissionData] = 
-  useState<SubmissionDetailResponse | null>(null)
+  const [submissionData, setSubmissionData] =
+    useState<SubmissionDetailResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -146,9 +146,9 @@ const SubmissionResult: React.FC = () => {
                 label={`Difficulty: ${submissionData.difficulty}`}
                 color={
                   getDifficultyColor(submissionData.difficulty) as
-                    | 'success'
-                    | 'warning'
-                    | 'error'
+                  | 'success'
+                  | 'warning'
+                  | 'error'
                 }
                 size="small"
                 sx={{ fontWeight: 600 }}

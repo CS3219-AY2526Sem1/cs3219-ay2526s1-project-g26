@@ -134,7 +134,8 @@ export const getUserSubmission = async (
     ).toISOString(),
     language: submissions[0].language,
     code: submissions[0].code,
-    status: // todo: add frontend support for Pending status
+    // todo: add frontend support for Pending status
+    status:
       submissions[0].overall_result.result === 'Accepted' ? 'Passed' : 'Failed',
     difficulty: submissions[0].difficulty,
     categories: submissions[0].categories,
