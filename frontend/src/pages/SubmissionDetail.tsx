@@ -146,9 +146,9 @@ const SubmissionResult: React.FC = () => {
                 label={`Difficulty: ${submissionData.difficulty}`}
                 color={
                   getDifficultyColor(submissionData.difficulty) as
-                  | 'success'
-                  | 'warning'
-                  | 'error'
+                    | 'success'
+                    | 'warning'
+                    | 'error'
                 }
                 size="small"
                 sx={{ fontWeight: 600 }}
