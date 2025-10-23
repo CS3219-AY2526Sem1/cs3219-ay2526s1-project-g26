@@ -66,7 +66,7 @@ const SubmissionResult: React.FC = () => {
         const submission = await submissionsService.fetchSubmissionById(id)
         if (submission) {
           setSubmissionData(submission)
-          // Debugging: Unclear what is going on here, some languages produce erorrs
+          // Debugging: Unclear what is going on here, some languages produce errors
           // while others don't
           console.log(getMonacoLanguage(submission.language))
         } else {
