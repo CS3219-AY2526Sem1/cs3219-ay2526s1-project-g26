@@ -1,9 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react' // <-- Import new hooks
+import React, { useState, useRef, useEffect } from 'react'
 import { Paper } from '@mui/material'
 import QuestionPanel from '../components/question/QuestionPanel'
 import { useAsyncEffect, useQuestion } from '../hooks'
 import CollaborationRightPanel from '../components/collaboration_space/right_panel'
-import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels'
+import StyledPanelResizeHandle from '../components/collaboration_space/StyledPanelResizeHandle'
+import { PanelGroup, Panel } from 'react-resizable-panels'
 
 const CollaborationPanel = () => {
   const { question, loading, error, fetchQuestionById } = useQuestion()
@@ -11,7 +12,7 @@ const CollaborationPanel = () => {
   const resizeTimerRef = useRef<NodeJS.Timeout | null>(null)
 
   useAsyncEffect(async () => {
-    await fetchQuestionById('68e92415d977f66dd64f8810')
+    await fetchQuestionById('68f0c42a8e51ebfea84f8823')
   }, [fetchQuestionById])
 
   useEffect(() => {
@@ -41,11 +42,9 @@ const CollaborationPanel = () => {
           error={error || undefined}
         />
       </Panel>
-      <PanelResizeHandle
-        style={{
-          width: 2,
-        }}
-      />
+
+      <StyledPanelResizeHandle />
+
       <Panel defaultSize={50} maxSize={80} minSize={20}>
         <PanelGroup direction={'vertical'}>
           <Panel
@@ -70,7 +69,9 @@ const CollaborationPanel = () => {
               />
             </Paper>
           </Panel>
-          <PanelResizeHandle style={{ height: 2 }} />
+
+          <StyledPanelResizeHandle />
+
           <Panel defaultSize={15} minSize={5} maxSize={80}>
             <Paper
               elevation={1}
