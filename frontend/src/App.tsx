@@ -57,9 +57,9 @@ function App() {
             <Route element={<NavBarLayout />}>
               <Route path="/home" element={<Home />} />
               <Route path="/submissions" element={<SubmissionsOverview />} />
-              <Route path="/collaboration" element={<CollaborationPanel />} />
               <Route path="/submissions/:id" element={<SubmissionDetail />} />
             </Route>
+            <Route path="/collaboration" element={<CollaborationPanel />} />
           </Route>
           <Route path="/update-profile" element={<UpdateProfile />} />
         </Routes>

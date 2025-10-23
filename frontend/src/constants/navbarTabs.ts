@@ -5,5 +5,4 @@ export const TABS = [
     label: 'Submissions',
     id: 'submissions',
   },
-  { pathname: '/collaboration', label: 'Collaboration', id: 'collaboration' },
 ]
