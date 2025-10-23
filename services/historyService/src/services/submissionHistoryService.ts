@@ -96,7 +96,6 @@ export const getUserSubmission = async (
   const submission = result?.data as Submission[] ?? null
   return submission*/
 
-
   const userSubmissions = await getUserSubmissionsCollection()
     .find(
       {
@@ -105,7 +104,7 @@ export const getUserSubmission = async (
       },
       {
         projection: {
-          submission_id: 1
+          submission_id: 1,
         },
       }
     )
@@ -128,16 +127,15 @@ export const getUserSubmission = async (
     throw new AppError('Requested submission not found', 404)
   }
 
-  let result: SubmissionDetailsResponse = {
+  const result: SubmissionDetailsResponse = {
     title: submissions[0].question_title,
     submission_time: new Date(
       new ObjectId(submissions[0]._id).getTimestamp()
     ).toISOString(),
     language: submissions[0].language,
     code: submissions[0].code,
-    status:
-      submissions[0].overall_result.result === 'Accepted'
-        ? 'Passed' : 'Failed',
+    status: // todo: add frontend support for Pending status
+      submissions[0].overall_result.result === 'Accepted' ? 'Passed' : 'Failed',
     difficulty: submissions[0].difficulty,
     categories: submissions[0].categories,
     memory: `${submissions[0].overall_result.max_memory_used} MB`,
