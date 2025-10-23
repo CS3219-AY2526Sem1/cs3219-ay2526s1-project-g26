@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { DEFAULT_LANGUAGE } from '../../constants/collaboration_editor.ts'
 
 interface CollaborationState {
-  selectedLanguage: string,
+  selectedLanguage: string
 }
 
 const initialState: CollaborationState = {

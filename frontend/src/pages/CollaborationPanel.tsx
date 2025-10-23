@@ -1,14 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Paper, Box } from '@mui/material'
 import QuestionPanel from '../components/question/QuestionPanel'
-import { useAsyncEffect, useQuestion } from '../hooks'
 import CollaborationRightPanel from '../components/collaboration_space/right_panel'
 import StyledPanelResizeHandle from '../components/collaboration_space/StyledPanelResizeHandle'
 import { PanelGroup, Panel } from 'react-resizable-panels'
 import TopToolBar from '../components/collaboration_space/TopToolBar'
-import { useSelector } from 'react-redux'
 import { useLocation, useParams } from 'react-router-dom'
-import { RootState } from '../store'
 
 const CollaborationPanel = () => {
   // const { question, loading, error, fetchQuestionById } = useQuestion()

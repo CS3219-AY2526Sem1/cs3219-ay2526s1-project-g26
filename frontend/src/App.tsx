@@ -67,7 +67,10 @@ function App() {
               <Route path="/match" element={<Match />} />
               <Route path="/submissions/:id" element={<SubmissionDetail />} />
             </Route>
-            <Route path="/collaboration/:roomid" element={<CollaborationPanel />} />
+            <Route
+              path="/collaboration/:roomid"
+              element={<CollaborationPanel />}
+            />
           </Route>
           <Route path="/update-profile" element={<UpdateProfile />} />
         </Routes>
