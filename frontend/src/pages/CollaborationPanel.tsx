@@ -3,37 +3,25 @@ import { Paper, Box } from '@mui/material'
 import QuestionPanel from '../components/question/QuestionPanel'
 import { useAsyncEffect, useQuestion } from '../hooks'
 import CollaborationRightPanel from '../components/collaboration_space/right_panel'
-<<<<<<< HEAD
-import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels'
-import { useLocation, useParams } from 'react-router-dom'
+import StyledPanelResizeHandle from '../components/collaboration_space/StyledPanelResizeHandle'
+import { PanelGroup, Panel } from 'react-resizable-panels'
+import TopToolBar from '../components/collaboration_space/TopToolBar'
 import { useSelector } from 'react-redux'
+import { useLocation, useParams } from 'react-router-dom'
 import { RootState } from '../store'
 
 const CollaborationPanel = () => {
   // const { question, loading, error, fetchQuestionById } = useQuestion()
-
-  // useAsyncEffect(async () => {
-  //   await fetchQuestionById('68e92415d977f66dd64f8810')
-  // }, [fetchQuestionById])
-
-  const { roomid } = useParams<{ roomid: string }>()
-  const question = useSelector(
-    (state: RootState) => state.collaboration.currentQuestion
-  )
-=======
-import StyledPanelResizeHandle from '../components/collaboration_space/StyledPanelResizeHandle'
-import { PanelGroup, Panel } from 'react-resizable-panels'
-import TopToolBar from '../components/collaboration_space/TopToolBar'
-
-const CollaborationPanel = () => {
-  const { question, loading, error, fetchQuestionById } = useQuestion()
   const [resizeTrigger, setResizeTrigger] = useState<number | null>(null)
   const resizeTimerRef = useRef<NodeJS.Timeout | null>(null)
 
-  useAsyncEffect(async () => {
-    await fetchQuestionById('68f0c42a8e51ebfea84f8823')
-  }, [fetchQuestionById])
->>>>>>> develop
+  // useAsyncEffect(async () => {
+  //   await fetchQuestionById('68f0c42a8e51ebfea84f8823')
+  // }, [fetchQuestionById])
+
+  const { roomid } = useParams<{ roomid: string }>()
+  const location = useLocation()
+  const question = location.state.question
 
   useEffect(() => {
     return () => {
@@ -54,37 +42,6 @@ const CollaborationPanel = () => {
   }
 
   return (
-<<<<<<< HEAD
-    <PanelGroup direction={'horizontal'}>
-      <Panel defaultSize={50} minSize={20}>
-        <QuestionPanel
-          question={question || undefined}
-          loading={question ? false : true}
-          error={question ? undefined : 'No question supplied'}
-        />
-      </Panel>
-      <PanelResizeHandle
-        style={{
-          width: 2,
-        }}
-      />
-      <Panel defaultSize={50}>
-        <PanelGroup direction={'vertical'}>
-          <Panel defaultSize={85}>
-            <Paper
-              elevation={1}
-              sx={{
-                height: '100%',
-                borderRadius: 2,
-                border: '1px solid',
-                borderColor: 'divider',
-              }}
-            >
-              <CollaborationRightPanel
-                roomId={roomid ? (roomid as string) : ''}
-              />
-            </Paper>
-=======
     <>
       <TopToolBar />
       <Box
@@ -94,10 +51,9 @@ const CollaborationPanel = () => {
           <Panel defaultSize={50} minSize={20} maxSize={80}>
             <QuestionPanel
               question={question || undefined}
-              loading={loading}
-              error={error || undefined}
+              // loading={loading}
+              // error={error || undefined}
             />
->>>>>>> develop
           </Panel>
 
           <StyledPanelResizeHandle />

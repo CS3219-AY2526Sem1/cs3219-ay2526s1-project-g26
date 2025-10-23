@@ -15,7 +15,6 @@ services:
       - matching-service
       - collaboration-service
       - history-service
-      - matching-service
 
   frontend:
     build:
