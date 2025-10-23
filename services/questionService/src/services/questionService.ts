@@ -169,20 +169,22 @@ export const getAllCategoryAndDifficulty = async (): Promise<{
   difficulties: string[]
 }> => {
   const db = getDb()
-  
+
   const categoriesCollection = db.collection('categories')
   const difficultiesCollection = db.collection('difficulties')
 
   const categoriesDocs = await categoriesCollection
-    .find({}, { projection: { _id: 0, name: 1 } })
+    .find<{ name: string }>({}, { projection: { _id: 0, name: 1 } })
     .toArray()
 
   const difficultiesDocs = await difficultiesCollection
-    .find({}, { projection: { _id: 0, level: 1 } })
+    .find<{ level: string }>({}, { projection: { _id: 0, level: 1 } })
     .toArray()
 
   const categories = categoriesDocs.map((doc: { name: string }) => doc.name)
-  const difficulties = difficultiesDocs.map((doc: { level: string }) => doc.level)
+  const difficulties = difficultiesDocs.map(
+    (doc: { level: string }) => doc.level
+  )
 
   return { categories, difficulties }
 }
