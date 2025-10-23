@@ -4,7 +4,7 @@ import { Box, Card, CardContent, Typography, Chip } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import Editor from '@monaco-editor/react'
 import { submissionsService } from '../services/submissionsService'
-import { SubmissionDetail } from '../types/submissions'
+import { SubmissionDetailResponse } from '../types/submissions'
 import LoadingSkeleton from '../components/common/LoadingSkeleton'
 
 // Helper function to map language names to Monaco Editor language identifiers
@@ -47,7 +47,7 @@ const SubmissionResult: React.FC = () => {
   // Get the submission id from URL parameters
   const { id } = useParams<{ id: string }>()
 
-  const [submissionData, setSubmissionData] = useState<SubmissionDetail | null>(
+  const [submissionData, setSubmissionData] = useState<SubmissionDetailResponse | null>(
     null
   )
   const [loading, setLoading] = useState(true)
@@ -243,14 +243,14 @@ const SubmissionResult: React.FC = () => {
                     color="text.secondary"
                     sx={{ fontWeight: 500 }}
                   >
-                    Algorithms:{' '}
+                    Categories:{' '}
                   </Typography>
                   <Typography
                     component="span"
                     variant="body2"
                     sx={{ color: '#1f2328' }}
                   >
-                    {submissionData.algorithms.join(', ')}
+                    {submissionData.categories.join(', ')}
                   </Typography>
                 </Typography>
                 <Typography variant="body2" sx={{ ml: 2 }}>

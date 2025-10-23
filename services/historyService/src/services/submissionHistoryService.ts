@@ -5,7 +5,7 @@ import {
   Submission,
   SubmissionHistoryResponse,
   SubmissionSummary,
-  SingleSubmissionHistoryResponse,
+  SubmissionDetailsResponse,
 } from '../models/submissionHistoryModel.js'
 import { ObjectId } from 'mongodb'
 
@@ -71,11 +71,32 @@ export const getUserSubmissions = async (
 
   return { submissions, total }
 }
+
 // update whatever you want out of this yourself when integrating with the frontend
 export const getUserSubmission = async (
   userId: string,
   submissionId: string
-): Promise<SingleSubmissionHistoryResponse> => {
+): Promise<SubmissionDetailsResponse> => {
+  /*const pipeline = [
+    { $match: {
+        user_id: userId,
+        submission_id: submissionId,
+      } },
+    {
+      $limit: 1
+    },
+    {
+      $lookup: {
+    }
+  ]
+
+  const result = await getUserSubmissionsCollection()
+    .aggregate(pipeline)
+    .toArray()
+  const submission = result?.data as Submission[] ?? null
+  return submission*/
+
+
   const userSubmissions = await getUserSubmissionsCollection()
     .find(
       {
@@ -84,13 +105,13 @@ export const getUserSubmission = async (
       },
       {
         projection: {
-          _id: 0,
-          user_id: 0,
+          submission_id: 1
         },
       }
     )
     .limit(1)
     .toArray()
+  console.log(userSubmissions, submissionId)
 
   const submissions = await getSubmissionsCollection()
     .find({
@@ -101,9 +122,26 @@ export const getUserSubmission = async (
       },
     })
     .toArray()
+  console.log(submissions)
 
   if (submissions.length === 0) {
     throw new AppError('Requested submission not found', 404)
   }
-  return { submission: submissions[0] }
+
+  let result: SubmissionDetailsResponse = {
+    title: submissions[0].question_title,
+    submission_time: new Date(
+      new ObjectId(submissions[0]._id).getTimestamp()
+    ).toISOString(),
+    language: submissions[0].language,
+    code: submissions[0].code,
+    status:
+      submissions[0].overall_result.result === 'Accepted'
+        ? 'Passed' : 'Failed',
+    difficulty: submissions[0].difficulty,
+    categories: submissions[0].categories,
+    memory: `${submissions[0].overall_result.max_memory_used} MB`,
+    runtime: `${submissions[0].overall_result.time_taken} ms`,
+  }
+  return result
 }

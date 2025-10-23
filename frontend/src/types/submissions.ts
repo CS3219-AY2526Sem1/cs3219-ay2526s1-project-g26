@@ -12,17 +12,17 @@ export interface SubmissionDataResponse {
   total: number
 }
 
-export interface SubmissionDetail {
-  submission_id: string
+export interface SubmissionDetailResponse {
   title: string
-  difficulty: 'Easy' | 'Medium' | 'Hard'
-  language: string
   submission_time: string
-  overall_status: string
-  status: 'Passed' | 'Failed'
-  runtime?: string
-  memory?: string
-  algorithms: string[]
-  error_message?: string
+  language: string
   code: string
+
+  status: 'Passed' | 'Failed'
+  difficulty: 'Easy' | 'Medium' | 'Hard'
+  categories: string[]
+  memory: string
+  runtime: string
+
+  error_message?: string
 }

@@ -23,9 +23,10 @@ router.get('/', authenticate(), async (req, res) => {
 router.get('/:submission_id', authenticate(), async (req, res) => {
   const id = req.user!.id
   const submissionId = req.params.submission_id
+  console.log(req.params)
   const submission = await getUserSubmission(id, submissionId)
   if (!submission) {
-    throw new AppError('Submission not found', 404)
+    throw new AppError('Requested submission not found', 404)
   }
   return res.json({ success: true, submission })
 })

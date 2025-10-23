@@ -22,7 +22,7 @@ export interface Submission {
   categories: string[]
 
   code: string
-  difficulty: string
+  difficulty: 'Easy' | 'Medium' | 'Hard'
   language: string
   overall_result: ResultInformation
   test_case_results: ResultInformation[]
@@ -33,7 +33,7 @@ export interface SubmissionSummary {
   title: string
   submission_time: string
   overall_status: string
-  difficulty: string
+  difficulty: 'Easy' | 'Medium' | 'Hard'
   language: string
 }
 
@@ -42,12 +42,22 @@ export interface UserSubmission {
   submission_id: string | ObjectId
 }
 
-// Rename?
 export interface SubmissionHistoryResponse {
   submissions: SubmissionSummary[]
   total: number
 }
 
-export interface SingleSubmissionHistoryResponse {
-  submission: Submission
+export interface SubmissionDetailsResponse {
+  title: string
+  submission_time: string
+  language: string
+  code: string
+
+  status: 'Passed' | 'Failed'
+  difficulty: 'Easy' | 'Medium' | 'Hard'
+  categories: string[]
+  memory: string
+  runtime: string
+
+  error_message?: string
 }
