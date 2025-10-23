@@ -54,7 +54,7 @@ export class UserStorage {
       }
 
       // If second digit of score is 0 after checking first digit above
-      // then no one else has overlapping difficulties 
+      // then no one else has overlapping difficulties
       if (score.charAt(1) === '0') {
         return null
       }

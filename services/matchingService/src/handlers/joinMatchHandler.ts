@@ -6,6 +6,7 @@ import { randomUUID } from 'crypto'
 import { QUESTION_SERVICE_URL } from '../config/index.js'
 import { matchSuccess } from '../constants/eventNames.js'
 import { getToken } from './matchingSocketHandler.js'
+import { Question } from '../models/question.js'
 
 export async function joinMatchHandler(
   io: Server,
@@ -55,7 +56,7 @@ async function fetchQuestion(
   overlapDifficulties: string[],
   overlapTopics: string[],
   token: string
-): Promise<any> {
+): Promise<Question> {
   const params = new URLSearchParams({
     difficulty: overlapDifficulties.join(','),
     categories: overlapTopics.join(','),
