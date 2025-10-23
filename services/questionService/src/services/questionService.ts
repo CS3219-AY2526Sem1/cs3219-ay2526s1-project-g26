@@ -4,8 +4,9 @@ import {
   Question,
   CreateQuestionInput,
   type MatchedQuestion,
+  TestCase,
 } from '../models/questionModel.js'
-import { ensureArray } from '../utils'
+import { ensureArray } from '../utils/index.js'
 import { type Document, ObjectId, type UpdateFilter, WithoutId } from 'mongodb'
 
 const getQuestionCollection = () => getDb().collection<Question>('questions')
@@ -195,6 +196,7 @@ export const updateQuestion = async (
   for (const key of Object.keys(data) as (keyof CreateQuestionInput)[]) {
     const value = data[key]
     if (value !== undefined) {
+      // @ts-expect-error passed
       updateData.$set[key] = value as Question[keyof Question]
     }
   }
@@ -218,9 +220,13 @@ export const createQuestion = async (
   const newQuestion: WithoutId<Question> = {
     ...data,
     constraints: ensureArray(data.constraints!),
-    examples: ensureArray(data.examples!),
+    examples: ensureArray<{
+      input: string
+      output: string
+    }>(data.examples!),
     hints: ensureArray(data.hints!),
     categories: ensureArray(data.categories),
+    test_cases: ensureArray<TestCase>(data.test_cases),
     is_active: data.is_active ?? true,
   }
 

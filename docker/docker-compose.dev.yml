@@ -14,6 +14,8 @@ services:
       - question-service
       - matching-service
       - collaboration-service
+      - history-service
+      - matching-service
 
   frontend:
     build:
@@ -52,9 +54,13 @@ services:
       - /app/node_modules
     environment:
       - PORT=4000
-      - DATABASE_URL=postgresql://postgres:postgres@user-service-db:5432/users_db
       - JWT_SECRET=4fa01f2f08d88986b2cc1e0c3d35ae63
       - JWT_EXPIRES_IN=14d
+      - DB_USER=postgres
+      - DB_NAME=users_db
+      - DB_HOST=user-service-db
+      - DB_PASSWORD=postgres
+      - DB_PORT=5432
     depends_on:
       - user-service-db
     ports:
@@ -160,7 +166,38 @@ services:
     stdin_open: true
     tty: true
 
+  # History Service
+  history-service:
+    build:
+      context: ../services/historyService
+      dockerfile: Dockerfile.dev
+    container_name: history-service
+    volumes:
+      - ../services/historyService:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=4040
+      - DATABASE_URL=mongodb://history-service-db:27017/history_db
+      - USER_SERVICE_URL=http://user-service:4000
+    depends_on:
+      - history-service-db
+    ports:
+      - "4040:4040"
+    stdin_open: true
+    tty: true
+
+  history-service-db:
+    image: mongo:8.0
+    container_name: history-service-db
+    ports:
+      - "4041:27017"
+    volumes:
+      - history-service-db-data:/data/db
+      - ../services/historyService/src/database/init:/docker-entrypoint-initdb.d
+
 volumes:
   user-service-db-data:
   question-service-db-data:
   matching-service-queue-data:
+  history-service-db-data:

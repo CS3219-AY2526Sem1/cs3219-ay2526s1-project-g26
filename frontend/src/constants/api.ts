@@ -16,6 +16,9 @@ export const API_ENDPOINTS = {
     GET_BY_ID: '/question',
     GET_TOPICS_AND_DIFFICULTIES: 'question/cnd',
   },
+  HISTORY: {
+    GET_USER_SUBMISSIONS: '/history/submissions',
+  },
 } as const
 
 export const WEBSOCKET_BASE_URL =

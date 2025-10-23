@@ -1,4 +1,5 @@
 import { Server, Socket } from 'socket.io'
+<<<<<<< HEAD
 import { UserInfo } from '../models/userInfo'
 import { UserStorage } from '../database/userStorage'
 import { SocketIdStorage } from '../database/socketIdStorage'
@@ -6,6 +7,24 @@ import { randomUUID } from 'crypto'
 import { QUESTION_SERVICE_URL } from '../config'
 import { matchSuccess } from '../constants/eventNames'
 import { getToken } from './matchingSocketHandler'
+=======
+import { UserInfo } from '../models/userInfo.js'
+
+const stubQuestion = {
+  id: 1,
+  title: 'stub Question',
+  description: 'yes',
+  difficulty: 'hard',
+}
+
+const otherUser: UserInfo = {
+  id: '123',
+  topics: ['Graph', 'Trees'],
+  difficulty: ['medium', 'hard'],
+}
+
+let isMatch = false // Toggles between true and false for every joinMatch event received
+>>>>>>> develop
 
 export async function joinMatchHandler(
   io: Server,
