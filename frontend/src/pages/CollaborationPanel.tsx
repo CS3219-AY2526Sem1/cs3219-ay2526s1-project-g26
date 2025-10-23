@@ -8,17 +8,17 @@ import TopToolBar from '../components/collaboration_space/TopToolBar'
 import { useLocation, useParams } from 'react-router-dom'
 
 const CollaborationPanel = () => {
-  // const { question, loading, error, fetchQuestionById } = useQuestion()
   const [resizeTrigger, setResizeTrigger] = useState<number | null>(null)
   const resizeTimerRef = useRef<NodeJS.Timeout | null>(null)
 
-  // useAsyncEffect(async () => {
-  //   await fetchQuestionById('68f0c42a8e51ebfea84f8823')
-  // }, [fetchQuestionById])
-
   const { roomid } = useParams<{ roomid: string }>()
   const location = useLocation()
-  const question = location.state.question
+
+  const question = location.state?.question
+
+  if (!question) {
+    return <Box>No Question has been supplied.</Box>
+  }
 
   useEffect(() => {
     return () => {
@@ -46,11 +46,7 @@ const CollaborationPanel = () => {
       >
         <PanelGroup direction={'horizontal'}>
           <Panel defaultSize={50} minSize={20} maxSize={80}>
-            <QuestionPanel
-              question={question || undefined}
-              // loading={loading}
-              // error={error || undefined}
-            />
+            <QuestionPanel question={question || undefined} />
           </Panel>
 
           <StyledPanelResizeHandle />

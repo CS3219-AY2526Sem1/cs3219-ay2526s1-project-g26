@@ -10,14 +10,14 @@ export function useMatch() {
   const [matchState, setMatchState] = useState<MatchState>('IDLE')
   const userId = useSelector((state: RootState) => state.user.user?.id)
   const navigate = useNavigate()
-  
+
   const cleanup = useCallback(() => {
     socket.off('matchSuccess')
     socket.off('connect_error')
     socket.off('disconnect')
     socket.off('error')
   }, [])
-  
+
   useEffect(() => {
     return () => {
       cleanup()
@@ -95,7 +95,6 @@ export function useMatch() {
     cleanup()
     setMatchState('IDLE')
   }, [userId, cleanup])
-
 
   return {
     errorMsg,

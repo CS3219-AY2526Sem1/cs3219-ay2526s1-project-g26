@@ -50,7 +50,7 @@ const ProtectedRoutes = () => {
 function App() {
   useEffect(() => {
     // Clean up function to disconnect socket when App dismounts
-    ;() => disconnectSocket()
+    return () => disconnectSocket()
   }, [])
 
   return (

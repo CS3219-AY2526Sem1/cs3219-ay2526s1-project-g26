@@ -1,7 +1,7 @@
 import { Socket } from 'socket.io'
-import { SocketIdStorage } from '../database/socketIdStorage'
-import { UserStorage } from '../database/userStorage'
-import { getUserId } from './matchingSocketHandler'
+import { SocketIdStorage } from '../database/socketIdStorage.js'
+import { UserStorage } from '../database/userStorage.js'
+import { getUserId } from './matchingSocketHandler.js'
 
 export async function disconnectMatchHandler(socket: Socket, reason: string) {
   console.log('User disconnected with reason: ' + reason)

@@ -70,6 +70,6 @@ async function fetchQuestion(
   if (!res.ok) {
     throw new Error(`Failed to fetch question with status: ${res.status}`)
   }
-  const body = (await res.json()) as { success: boolean; question: any }
+  const body = (await res.json()) as { success: boolean; question: Question }
   return body.question
 }
