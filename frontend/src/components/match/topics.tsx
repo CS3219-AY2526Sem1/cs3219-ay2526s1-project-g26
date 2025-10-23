@@ -12,7 +12,7 @@ export const Topics = ({
   checkedTopics,
   toggleTopic,
   toggleAllTopic,
-  matchState
+  matchState,
 }: {
   topicsList: string[]
   checkedTopics: string[]

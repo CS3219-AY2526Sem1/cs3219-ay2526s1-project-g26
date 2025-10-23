@@ -11,6 +11,7 @@ interface NavbarTab {
 
 interface NavbarState {
   activeTab: NavbarTab
+  lastCollaborationId?: string
 }
 
 const initialState: NavbarState = {
@@ -24,11 +25,18 @@ const navbarSlice = createSlice({
     setActiveTab: (state, action: PayloadAction<NavbarTab | undefined>) => {
       state.activeTab = action.payload || defaultTab
     },
+    setLastCollaborationId: (
+      state,
+      action: PayloadAction<string | undefined>
+    ) => {
+      state.lastCollaborationId = action.payload
+    },
     resetTab: (state) => {
       state.activeTab = defaultTab
     },
   },
 })
 
-export const { setActiveTab, resetTab } = navbarSlice.actions
+export const { setActiveTab, setLastCollaborationId, resetTab } =
+  navbarSlice.actions
 export default navbarSlice.reducer

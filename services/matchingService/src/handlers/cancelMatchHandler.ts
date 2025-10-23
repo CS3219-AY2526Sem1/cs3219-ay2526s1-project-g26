@@ -3,12 +3,10 @@ import { UserStorage } from '../database/userStorage'
 import { UserInfo } from '../models/userInfo'
 import { SocketIdStorage } from '../database/socketIdStorage'
 
-export async function cancelMatchHandler(
-  userid: string
-): Promise<void> {
+export async function cancelMatchHandler(userid: string): Promise<void> {
   console.log('cancelMatch event received by matching service')
   try {
-    if (!await UserStorage.userExist(userid)) {
+    if (!(await UserStorage.userExist(userid))) {
       throw new Error('User is already not in queue')
     }
     await UserStorage.removeUser(userid)

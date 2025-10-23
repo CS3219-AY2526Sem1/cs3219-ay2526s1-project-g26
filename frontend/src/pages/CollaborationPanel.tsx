@@ -5,6 +5,8 @@ import { useAsyncEffect, useQuestion } from '../hooks'
 import CollaborationRightPanel from '../components/collaboration_space/right_panel'
 import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels'
 import { useLocation, useParams } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import { RootState } from '../store'
 
 const CollaborationPanel = () => {
   // const { question, loading, error, fetchQuestionById } = useQuestion()
@@ -13,10 +15,11 @@ const CollaborationPanel = () => {
   //   await fetchQuestionById('68e92415d977f66dd64f8810')
   // }, [fetchQuestionById])
 
-  const { roomid } = useParams<{roomid: string}>()
-  const location = useLocation()
-  const question = location.state.question
-  
+  const { roomid } = useParams<{ roomid: string }>()
+  const question = useSelector(
+    (state: RootState) => state.collaboration.currentQuestion
+  )
+
   return (
     <PanelGroup direction={'horizontal'}>
       <Panel defaultSize={50} minSize={20}>
@@ -43,7 +46,9 @@ const CollaborationPanel = () => {
                 borderColor: 'divider',
               }}
             >
-              <CollaborationRightPanel roomId={roomid ? (roomid as string) : ''} />
+              <CollaborationRightPanel
+                roomId={roomid ? (roomid as string) : ''}
+              />
             </Paper>
           </Panel>
           <PanelResizeHandle style={{ height: 2 }} />

@@ -1,6 +1,6 @@
 import React, { Ref, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { matchPath, useLocation, useNavigate } from 'react-router-dom'
 import {
   AppBar,
   Toolbar,
@@ -35,27 +35,46 @@ interface NavbarProps {
 const Navbar = (props: NavbarProps) => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const location = useLocation()
   const { user } = useSelector((state: RootState) => state.user)
-  const { activeTab } = useSelector((state: RootState) => state.navbar)
+  const { activeTab, lastCollaborationId } = useSelector(
+    (state: RootState) => state.navbar
+  )
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
 
   useEffect(() => {
     if (!window) {
       return
     }
-    if (window.location.pathname !== activeTab.pathname) {
-      dispatch(
-        setActiveTab(
-          TABS.find((tab) => tab.pathname === window.location.pathname)
-        )
-      )
+    const currentPath = location.pathname
+    const matched = TABS.find((tab) => matchPath(tab.pathname, currentPath))
+    if (matched && matched.pathname !== activeTab.pathname) {
+      dispatch(setActiveTab(matched))
     }
-  }, [activeTab, dispatch])
+  }, [location, activeTab, dispatch])
 
   const handleTabChange = (_: React.SyntheticEvent, newTabId: string) => {
     const newActiveTab = TABS.find((tab) => tab.id === newTabId)
+    if (!newActiveTab) return
+
     dispatch(setActiveTab(newActiveTab))
-    navigate(newActiveTab?.pathname || 'home')
+
+    // If the tab has a param pattern, navigate to the last opened room if present
+    // otherwise navigate to the base segment: '/collaboration/:roomid' -> '/collaboration' or '/collaboration/<lastId>' if available
+    if (
+      newActiveTab.pathname.includes('/:') &&
+      newActiveTab.id === 'collaboration'
+    ) {
+      if (lastCollaborationId) {
+        navigate(`/collaboration/${lastCollaborationId}`)
+      } else {
+        const target = newActiveTab.pathname.split('/:')[0]
+        navigate(target || 'home')
+      }
+    } else {
+      const target = newActiveTab.pathname.split('/:')[0]
+      navigate(target || 'home')
+    }
   }
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {

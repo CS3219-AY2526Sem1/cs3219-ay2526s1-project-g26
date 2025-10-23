@@ -10,7 +10,6 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../store'
 import { initSocket } from '../utils/socket'
 
-
 const Match = () => {
   const [topicsList, setTopicsList] = useState<string[]>([])
   const [difficultyList, setDifficultyList] = useState<string[]>([])
@@ -30,7 +29,9 @@ const Match = () => {
 
     const fetchTopicsAndDifficulties = async () => {
       try {
-        const res = await axiosInstance.get(API_ENDPOINTS.QUESTION.GET_TOPICS_AND_DIFFICULTIES)
+        const res = await axiosInstance.get(
+          API_ENDPOINTS.QUESTION.GET_TOPICS_AND_DIFFICULTIES
+        )
         if (!isMounted) return
         setTopicsList(res.data.categories)
         setDifficultyList(res.data.difficulties)

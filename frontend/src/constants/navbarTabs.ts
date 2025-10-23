@@ -14,7 +14,7 @@ export const TABS = [
   },
 
   {
-    pathname: '/collaboration',
+    pathname: '/collaboration/:roomid',
     label: 'Collaboration',
     id: 'collaboration',
   },

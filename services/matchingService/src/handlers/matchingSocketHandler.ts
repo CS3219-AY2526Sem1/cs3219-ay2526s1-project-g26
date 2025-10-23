@@ -8,7 +8,12 @@ import { cancelMatch, disconnect, joinMatch } from '../constants/eventNames'
 
 export function matchingSocketHandler(io: Server): void {
   io.on('connection', (socket: Socket) => {
-    console.log('User connected with\nUser ID: ' + getUserId(socket) + '\nSocket ID: ' + socket.id)
+    console.log(
+      'User connected with\nUser ID: ' +
+        getUserId(socket) +
+        '\nSocket ID: ' +
+        socket.id
+    )
 
     // Join match handler
     socket.on(joinMatch, async (data) => {
@@ -18,7 +23,10 @@ export function matchingSocketHandler(io: Server): void {
         await joinMatchHandler(io, socket, userinfo)
       } catch (err) {
         console.error('Failed to join match with err: ' + err)
-        socket.emit('error' , err instanceof Error ? err.message : 'Unknown Error')
+        socket.emit(
+          'error',
+          err instanceof Error ? err.message : 'Unknown Error'
+        )
         await disconnectMatchHandler(socket, err as string)
       }
     })
@@ -36,12 +44,12 @@ export function matchingSocketHandler(io: Server): void {
   })
 
   // Copied from https://socket.io/docs/v4/troubleshooting-connection-issues/#problem-the-socket-is-not-able-to-connect
-  // For troubleshooting 
-  io.engine.on("connection_error", (err) => {
-    console.log(err.req);      // the request object
-    console.log(err.code);     // the error code, for example 1
-    console.log(err.message);  // the error message, for example "Session ID unknown"
-    console.log(err.context);  // some additional error context
+  // For troubleshooting
+  io.engine.on('connection_error', (err) => {
+    console.log(err.req) // the request object
+    console.log(err.code) // the error code, for example 1
+    console.log(err.message) // the error message, for example "Session ID unknown"
+    console.log(err.context) // some additional error context
   })
 }
 

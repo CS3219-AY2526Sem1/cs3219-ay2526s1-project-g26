@@ -10,7 +10,7 @@ export const Submission = ({
   errorMsg,
   matchState,
   onMatch,
-  cancelMatch
+  cancelMatch,
 }: {
   checkedTopics: string[]
   checkedDifficulties: string[]
@@ -19,7 +19,6 @@ export const Submission = ({
   onMatch: (checkedTopics: string[], checkedDifficulties: string[]) => void
   cancelMatch: () => void
 }) => {
-
   return (
     <Box
       sx={{
@@ -39,35 +38,35 @@ export const Submission = ({
       {matchState !== 'IDLE' && (
         <Box sx={{ gridColumn: '4', gridRow: '1' }}>
           {matchState === 'WAITING' && <CircularProgress />}
-          {matchState === 'MATCHED' && <Alert severity="success">Match found!</Alert>}
-          {matchState === 'ERROR' && <Alert severity='error'>{errorMsg}</Alert> }
+          {matchState === 'MATCHED' && (
+            <Alert severity="success">Match found!</Alert>
+          )}
+          {matchState === 'ERROR' && <Alert severity="error">{errorMsg}</Alert>}
         </Box>
       )}
 
       {/* Start Matching button (When IDLE or ERROR)*/}
-      {
-        (matchState === 'IDLE' || matchState === 'ERROR') && 
+      {(matchState === 'IDLE' || matchState === 'ERROR') && (
         <Button
-        sx={{ gridColumn: '4', gridRow: '2', placeSelf: 'center end' }}
-        variant="contained"
-        size="large"
-        onClick={() => onMatch(checkedTopics, checkedDifficulties)}
-      >
-        Start Matching
-      </Button>
-      }
+          sx={{ gridColumn: '4', gridRow: '2', placeSelf: 'center end' }}
+          variant="contained"
+          size="large"
+          onClick={() => onMatch(checkedTopics, checkedDifficulties)}
+        >
+          Start Matching
+        </Button>
+      )}
       {/* Cancel Matching button (When WAITING or MATCHED) */}
-      {
-        (matchState === 'WAITING' || matchState === 'MATCHED') &&
+      {(matchState === 'WAITING' || matchState === 'MATCHED') && (
         <Button
-        sx={{ gridColumn: '4', gridRow: '2', placeSelf: 'center end' }}
-        variant="contained"
-        size="large"
-        onClick={() => cancelMatch()}
-      >
-        Cancel Matching
-      </Button>
-      }
+          sx={{ gridColumn: '4', gridRow: '2', placeSelf: 'center end' }}
+          variant="contained"
+          size="large"
+          onClick={() => cancelMatch()}
+        >
+          Cancel Matching
+        </Button>
+      )}
     </Box>
   )
 }

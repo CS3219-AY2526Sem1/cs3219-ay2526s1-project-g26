@@ -1,4 +1,4 @@
-import { USER_SERVICE_URL } from "../config"
+import { USER_SERVICE_URL } from '../config'
 
 export function socketAuthMiddleware() {
   return async (socket, next) => {

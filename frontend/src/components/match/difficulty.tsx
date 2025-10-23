@@ -12,7 +12,7 @@ export const Difficulty = ({
   checkedDifficulties,
   toggleDifficulty,
   toggleAllDifficulty,
-  matchState
+  matchState,
 }: {
   difficultyList: string[]
   checkedDifficulties: string[]

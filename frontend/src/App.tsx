@@ -16,7 +16,7 @@ import Home from './pages/Home.tsx'
 import UpdateProfile from './pages/UpdateProfile.tsx'
 import Match from './pages/Match.tsx'
 import CollaborationPanel from './pages/CollaborationPanel.tsx'
-import { disconnectSocket, initSocket } from './utils/socket.ts'
+import { disconnectSocket } from './utils/socket.ts'
 
 const NotificationSnackbar = lazy(
   () => import('./components/common/NotificationSnackbar.tsx')
@@ -49,9 +49,9 @@ const ProtectedRoutes = () => {
 function App() {
   useEffect(() => {
     // Clean up function to disconnect socket when App dismounts
-    () => disconnectSocket()
+    ;() => disconnectSocket()
   }, [])
-  
+
   return (
     <>
       <Router>
@@ -64,7 +64,10 @@ function App() {
               <Route path="/home" element={<Home />} />
               <Route path="/submissions" element={<SubmissionsOverview />} />
               <Route path="/match" element={<Match />} />
-              <Route path="/collaboration/:roomid" element={<CollaborationPanel />} />
+              <Route
+                path="/collaboration/:roomid"
+                element={<CollaborationPanel />}
+              />
             </Route>
           </Route>
           <Route path="/update-profile" element={<UpdateProfile />} />
