@@ -11,9 +11,9 @@ db.createCollection('categories')
 db.createCollection('questions')
 
 db.difficulties.insertMany([
-  { level: 'easy' },
-  { level: 'medium' },
-  { level: 'hard' },
+  { level: 'Easy' },
+  { level: 'Medium' },
+  { level: 'Hard' },
 ])
 
 db.categories.insertMany([

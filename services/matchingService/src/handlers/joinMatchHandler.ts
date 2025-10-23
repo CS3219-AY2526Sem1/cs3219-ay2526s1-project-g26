@@ -5,13 +5,13 @@ const stubQuestion = {
   id: 1,
   title: 'stub Question',
   description: 'yes',
-  difficulty: 'hard',
+  difficulty: 'Hard',
 }
 
 const otherUser: UserInfo = {
   id: '123',
   topics: ['Graph', 'Trees'],
-  difficulty: ['medium', 'hard'],
+  difficulty: ['Medium', 'Hard'],
 }
 
 let isMatch = false // Toggles between true and false for every joinMatch event received

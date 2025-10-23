@@ -77,68 +77,73 @@ export const getUserSubmission = async (
   userId: string,
   submissionId: string
 ): Promise<SubmissionDetailsResponse> => {
-  /*const pipeline = [
-    { $match: {
+  const pipeline = [
+    {
+      $match: {
         user_id: userId,
         submission_id: submissionId,
-      } },
+      }
+    },
+    { $limit: 1 },
     {
-      $limit: 1
+      $addFields: {
+        submission_obj_id: { $toObjectId: '$submission_id' }
+      }
     },
     {
       $lookup: {
-    }
+        from: 'submissions',
+        localField: 'submission_obj_id',
+        foreignField: '_id',
+        as: 'submissionDetails'
+      }
+    },
+    { $unwind: '$submissionDetails' },
+    // Should not be needed since ObjectID is unique?
+    { $limit: 1 },
+    {
+      $project: {
+        _id: 0,
+        title: '$submissionDetails.question_title',
+        submission_time: {
+          $dateToString: {
+            format: '%Y-%m-%d %H:%M',
+            date: { $toDate: '$submissionDetails._id' }
+          }
+        },
+        language: '$submissionDetails.language',
+        code: '$submissionDetails.code',
+        status: {
+          $cond: {
+            if: { $eq: ['$submissionDetails.overall_result.result', 'Accepted'] },
+            then: 'Passed',
+            else: 'Failed'
+          }
+        },
+        difficulty: '$submissionDetails.difficulty',
+        categories: '$submissionDetails.categories',
+        runtime: {
+          $concat: [
+            { $toString: '$submissionDetails.overall_result.time_taken' },
+            ' ms'
+          ]
+        },
+        memory: {
+          $concat: [
+            { $toString: '$submissionDetails.overall_result.max_memory_used' },
+            ' MB'
+          ]
+        },
+        error_message: '$submissionDetails.overall_result.additional_information',
+      },
+    },
   ]
 
-  const result = await getUserSubmissionsCollection()
+  const [submission] = await getUserSubmissionsCollection()
     .aggregate(pipeline)
     .toArray()
-  const submission = result?.data as Submission[] ?? null
-  return submission*/
-
-  const userSubmissions = await getUserSubmissionsCollection()
-    .find(
-      {
-        user_id: userId,
-        submission_id: submissionId,
-      },
-      {
-        projection: {
-          submission_id: 1,
-        },
-      }
-    )
-    .limit(1)
-    .toArray()
-  
-  const submissions = await getSubmissionsCollection()
-    .find({
-      _id: {
-        $in: userSubmissions.map(
-          (submission) => new ObjectId(submission.submission_id)
-        ),
-      },
-    })
-    .toArray()
-  
-  if (submissions.length === 0) {
-    throw new AppError('Requested submission not found', 404)
+  if (!submission) {
+    throw new AppError('Submission not found', 404)
   }
-
-  const result: SubmissionDetailsResponse = {
-    title: submissions[0].question_title,
-    submission_time: new Date(
-      new ObjectId(submissions[0]._id).getTimestamp()
-    ).toISOString(),
-    language: submissions[0].language,
-    code: submissions[0].code,
-    // todo: add frontend support for Pending status
-    status:
-      submissions[0].overall_result.result === 'Accepted' ? 'Passed' : 'Failed',
-    difficulty: submissions[0].difficulty,
-    categories: submissions[0].categories,
-    memory: `${submissions[0].overall_result.max_memory_used} MB`,
-    runtime: `${submissions[0].overall_result.time_taken} ms`,
-  }
-  return result
+  return submission as SubmissionDetailsResponse
 }

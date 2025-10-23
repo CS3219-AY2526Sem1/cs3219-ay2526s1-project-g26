@@ -4,7 +4,7 @@
     "input": "The first line contains two integers `n` and `target`. The second line contains `n` integers giving the elements in `nums`.",
     "output": "Two integers that are the smallest indices. Output `-1 -1` if there no answer.",
     "description": "Given an array of integers `nums` of length `n`, and an integer `target`, return the smallest indices of the two numbers such that they add up to target.\n\nYou may not use the same element twice.",
-    "difficulty": "easy",
+    "difficulty": "Easy",
     "categories": ["array", "hash-table", "greedy"],
     "examples": [
       {
@@ -280,7 +280,7 @@
     "input": "The first line contains two integers `n` and `k`. The second line contains `n` integers giving the elements in `nums`.",
     "output": "An integer that is the `kth` largest element in the array.",
     "description": "Given an integer array `nums` of length `n`, and an integer `k`, return the `kth` largest element in the array.",
-    "difficulty": "medium",
+    "difficulty": "Medium",
     "categories": ["array", "sorting"],
     "examples": [
       {
@@ -554,7 +554,7 @@
     "input": "A single string `s`.",
     "output": "A single string that is the longest palindrome substring.",
     "description": "Given a string `s`, return the longest palindrome substring in `s`.\n\nA string is a palindrome when it reads the same backward as forward.\n\nIf there are multiple answers, return the substring with the smallest indices.",
-    "difficulty": "medium",
+    "difficulty": "Medium",
     "categories": ["string", "dynamic-programming"],
     "examples": [
       {
@@ -833,7 +833,7 @@
     "input": "The first line contains two integers `n` and `target`. The second line contains `n` integers giving the elements in `nums`.",
     "output": "An integer - index that would be inserted.",
     "description": "Given a sorted array of distinct integers and a target value, return the index if the target is found. If not, return the index where it would be if it were inserted in order.",
-    "difficulty": "easy",
+    "difficulty": "Easy",
     "categories": ["array", "binary-search"],
     "examples": [
       {
@@ -1114,7 +1114,7 @@
     "input": "The first line contains an integer `n` indicating the length of the array `nums`. The next line contains `n` integers, that are elements of `num`.",
     "output": "Output `YES` if the position is reachable, else output `NO`.",
     "description": "You are given an integer array `nums` of size `n`. You are initially positioned at the **first index**, and each element in the array represents your maximum jump length at that position.\n\nDetermine whether or not you can reach the last index.",
-    "difficulty": "medium",
+    "difficulty": "Medium",
     "categories": ["array", "dynamic-programming", "greedy"],
     "examples": [
       {
@@ -1383,7 +1383,7 @@
     "input": "The first line contains two integers `m` and `n`. For the next `m` lines, each line contains `n` integers where each integer is either `0` or `1`.",
     "output": "A single integer that is the number of islands.",
     "description": "Given an `m x n` 2D binary grid which represents a map `1`s (land) and `0`s (water), return the number of islands.\n\nAn island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically. You may assume all four edges of the grid are all surrounded by water. ",
-    "difficulty": "medium",
+    "difficulty": "Medium",
     "categories": ["array", "graph"],
     "examples": [
       {
@@ -1652,7 +1652,7 @@
     "input": "The first line contains an integer `n`. The next line contains `n` non-negative integers.",
     "output": "A single integer that is the amount of water it can trap after raining.",
     "description": "Given `n` non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it can trap after raining.",
-    "difficulty": "hard",
+    "difficulty": "Hard",
     "categories": ["array", "dynamic-programming"],
     "examples": [
       {
@@ -1926,7 +1926,7 @@
     "input": "The first line contains two integers `n` and `k`, where `n` is the number of students and `k` is the number of True/False questions on the exam.\n\nEach of the next `n` lines contains a string of length `k`, consisting only of upper-case T and upper-case F. This string represents the answers that a student submitted, in the order the questions were given.",
     "output": "A single integer, the best possible lowest score in the class.",
     "description": "A group of students is taking a True/False exam. Each question is worth one point. You, as their teacher, want to make your students look as good as possible\u2014so you cheat! (I know, you would never actually do that.) To cheat, you manipulate the answer key so that the lowest score in the class is as high as possible.\n\nWhat is the best possible lowest score you can achieve?",
-    "difficulty": "medium",
+    "difficulty": "Medium",
     "categories": ["array"],
     "examples": [
       {
@@ -2190,7 +2190,7 @@
     "input": "A single line containing the string `s`.",
     "output": "Output `YES` if the string is valid, else output `NO`.",
     "description": "Given a string `s` containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.\n\nAn input string is valid if:\n- Open brackets must be closed by the same type of brackets.\n- Open brackets must be closed in the correct order.\n- Every close bracket has a corresponding open bracket of the same type.",
-    "difficulty": "easy",
+    "difficulty": "Easy",
     "categories": ["string", "hash-table"],
     "examples": [
       {
@@ -2489,7 +2489,7 @@
     "input": "The first line contains an integer `n` for the size of the first list. The second line contains `n` integers for `list1`.\nThe third line contains an integer `m` for the size of the second list. The fourth line contains `m` integers for `list2`.",
     "output": "A single line of space-separated integers representing the merged sorted list. Output an empty line if the merged list is empty.",
     "description": "You are given two sorted lists of integers, `list1` and `list2`.\n\nMerge the two lists into one sorted list.",
-    "difficulty": "easy",
+    "difficulty": "Easy",
     "categories": ["linked-list", "sorting"],
     "examples": [
       {
@@ -2733,7 +2733,7 @@
     "input": "The first line contains an integer `n`. The second line contains `n` integers representing `nums`.",
     "output": "An integer representing the largest subarray sum.",
     "description": "Given an integer array `nums`, find the subarray with the largest sum, and return its sum.",
-    "difficulty": "easy",
+    "difficulty": "Easy",
     "categories": ["array", "dynamic-programming"],
     "examples": [
       {
@@ -3029,7 +3029,7 @@
     "input": "The first line contains an integer `n`. The second line contains `n` integers representing `nums`.",
     "output": "Output `YES` or `NO`.",
     "description": "Given an integer array `nums`, return `YES` if any value appears at least twice in the array, and `NO` if every element is distinct.",
-    "difficulty": "easy",
+    "difficulty": "Easy",
     "categories": ["array", "hash-table"],
     "examples": [
       {
@@ -3323,7 +3323,7 @@
     "input": "The first line contains an integer `n`. The second line contains `n` integers representing `nums`.",
     "output": "A single line of space-separated integers representing the answer array.",
     "description": "Given an integer array `nums` of length `n`, return an array `answer` such that `answer[i]` is equal to the product of all the elements of `nums` except `nums[i]`.",
-    "difficulty": "medium",
+    "difficulty": "Medium",
     "categories": ["array"],
     "examples": [
       {
@@ -3624,7 +3624,7 @@
     "input": "The first line contains an integer `n`, the number of nodes. The second line contains `n` space-separated values representing the tree in level-order, with `null` for empty nodes.",
     "output": "Output `YES` if it's a valid BST, otherwise `NO`.",
     "description": "Given the root of a binary tree, determine if it is a valid binary search tree (BST).\nA valid BST is defined as follows:\n- The left subtree of a node contains only nodes with keys less than the node's key.\n- The right subtree of a node contains only nodes with keys greater than the node's key.\n- Both the left and right subtrees must also be binary search trees.",
-    "difficulty": "medium",
+    "difficulty": "Medium",
     "categories": ["tree", "binary-search"],
     "examples": [
       {
@@ -3915,7 +3915,7 @@
     "input": "The first line contains two integers `n` (number of coin types) and `amount`. The second line contains `n` integers representing the coin denominations.",
     "output": "The minimum number of coins required, or -1 if not possible.",
     "description": "You are given an integer array `coins` representing coins of different denominations and an integer `amount` representing a total amount of money. Return the fewest number of coins that you need to make up that amount. If that amount of money cannot be made up by any combination of the coins, return -1.",
-    "difficulty": "medium",
+    "difficulty": "Medium",
     "categories": ["dynamic-programming", "array"],
     "examples": [
       {
@@ -4213,7 +4213,7 @@
     "input": "The first line contains `n`. The next `n` lines each contain `n` integers representing the matrix.",
     "output": "The rotated `n x n` matrix, with each row on a new line.",
     "description": "You are given an `n x n` 2D matrix representing an image. Rotate the image by 90 degrees (clockwise). You have to rotate the image in-place, which means you have to modify the input 2D matrix directly. DO NOT allocate another 2D matrix and do the rotation.",
-    "difficulty": "medium",
+    "difficulty": "Medium",
     "categories": ["array"],
     "examples": [
       {
@@ -4309,7 +4309,7 @@
     "input": "The first line contains an integer `n`. The second line contains `n` integers representing `nums`.",
     "output": "A single integer for the length of the LIS.",
     "description": "Given an integer array `nums`, return the length of the longest strictly increasing subsequence.",
-    "difficulty": "medium",
+    "difficulty": "Medium",
     "categories": ["array", "dynamic-programming", "binary-search"],
     "examples": [
       {
@@ -4590,7 +4590,7 @@
     "input": "The first line contains the string `s`. The second line contains an integer `n` for the number of words in the dictionary. The next `n` lines contain the dictionary words.",
     "output": "Output `YES` or `NO`.",
     "description": "Given a string `s` and a dictionary of strings `wordDict`, return `YES` if `s` can be segmented into a space-separated sequence of one or more dictionary words. Note that the same word in the dictionary may be reused multiple times in the segmentation.",
-    "difficulty": "medium",
+    "difficulty": "Medium",
     "categories": ["dynamic-programming", "hash-table", "string"],
     "examples": [
       {
@@ -4871,7 +4871,7 @@
     "input": "The first line contains `n` and `target`. The second line contains `n` integers for `candidates`.",
     "output": "Each line should be a unique combination of space-separated integers.",
     "description": "Given an array of distinct integers `candidates` and a target integer `target`, return a list of all unique combinations of `candidates` where the chosen numbers sum to `target`. You may return the combinations in any order. The same number may be chosen from `candidates` an unlimited number of times.",
-    "difficulty": "medium",
+    "difficulty": "Medium",
     "categories": ["array", "graph"],
     "examples": [
       {
@@ -5147,7 +5147,7 @@
     "input": "The first line contains `n`. The second line contains `n` integers.",
     "output": "The minimum element.",
     "description": "Suppose an array of length `n` sorted in ascending order is rotated between 1 and `n` times. For example, the array `nums = [0,1,2,4,5,6,7]` might become `[4,5,6,7,0,1,2]`. Given the sorted rotated array `nums` of unique elements, return the minimum element of this array. You must write an algorithm that runs in O(log n) time.",
-    "difficulty": "medium",
+    "difficulty": "Medium",
     "categories": ["array", "binary-search"],
     "examples": [
       {
@@ -5401,7 +5401,7 @@
     "input": "The first line contains `n`. The second line contains `n` integers.",
     "output": "The maximum area.",
     "description": "You are given an integer array `height` of length `n`. There are `n` vertical lines drawn such that the two endpoints of the `ith` line are `(i, 0)` and `(i, height[i])`. Find two lines that together with the x-axis form a container, such that the container contains the most water. Return the maximum amount of water a container can store.",
-    "difficulty": "medium",
+    "difficulty": "Medium",
     "categories": ["array", "greedy"],
     "examples": [
       {
@@ -5667,7 +5667,7 @@
     "input": "First line: `m`. Second line: `m` integers for `nums1`. Third line: `n`. Fourth line: `n` integers for `nums2`.",
     "output": "The median value, with one decimal place.",
     "description": "Given two sorted arrays `nums1` and `nums2` of size `m` and `n` respectively, return the median of the two sorted arrays. The overall run time complexity should be O(log (m+n)).",
-    "difficulty": "hard",
+    "difficulty": "Hard",
     "categories": ["array", "binary-search"],
     "examples": [
       {
@@ -5913,7 +5913,7 @@
     "input": "First line: `n`. Second line: `n` integers for `heights`.",
     "output": "The area of the largest rectangle.",
     "description": "Given an array of integers `heights` representing the histogram's bar height where the width of each bar is 1, return the area of the largest rectangle in the histogram.",
-    "difficulty": "hard",
+    "difficulty": "Hard",
     "categories": ["array", "hash-table"],
     "examples": [
       {
@@ -6184,7 +6184,7 @@
     "input": "First line: `k`. Following lines contain `n_i` on one line and `n_i` integers on the next, for each of the `k` lists.",
     "output": "A single line of space-separated integers for the merged list.",
     "description": "You are given an array of `k` linked-lists `lists`, each linked-list is sorted in ascending order. Merge all the linked-lists into one sorted linked-list and return it.",
-    "difficulty": "hard",
+    "difficulty": "Hard",
     "categories": ["linked-list", "sorting"],
     "examples": [
       {
@@ -6445,7 +6445,7 @@
     "input": "First line: string `s`. Second line: pattern `p`.",
     "output": "`YES` if the pattern matches the entire string, `NO` otherwise.",
     "description": "Given an input string `s` and a pattern `p`, implement regular expression matching with support for `.` and `*`.\n- `.` Matches any single character.\n- `*` Matches zero or more of the preceding element.",
-    "difficulty": "hard",
+    "difficulty": "Hard",
     "categories": ["string", "dynamic-programming"],
     "examples": [
       {
@@ -6726,7 +6726,7 @@
     "input": "The first line contains an integer `n`, the number of nodes. The second line contains `n` space-separated values representing the tree in level-order, with `null` for empty nodes.",
     "output": "The maximum path sum.",
     "description": "A path in a binary tree is a sequence of nodes where each pair of adjacent nodes in the sequence has an edge connecting them. A node can only appear in the sequence at most once. Note that the path does not need to pass through the root.\nThe path sum of a path is the sum of the node's values in the path. Given the root of a binary tree, return the maximum path sum of any non-empty path.",
-    "difficulty": "hard",
+    "difficulty": "Hard",
     "categories": ["tree", "dynamic-programming"],
     "examples": [
       {
@@ -7007,7 +7007,7 @@
     "input": "A single integer `n`.",
     "output": "The number of distinct ways.",
     "description": "You are climbing a staircase. It takes `n` steps to reach the top. Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?",
-    "difficulty": "easy",
+    "difficulty": "Easy",
     "categories": ["dynamic-programming"],
     "examples": [
       {
@@ -7256,7 +7256,7 @@
     "input": "The first line contains an integer `n`, the number of nodes. The second line contains `n` space-separated values representing the tree in level-order, with `null` for empty nodes.",
     "output": "A single line of space-separated values representing the inverted tree in level-order.",
     "description": "Given the root of a binary tree, invert the tree, and return its root.",
-    "difficulty": "easy",
+    "difficulty": "Easy",
     "categories": ["tree"],
     "examples": [
       {
@@ -7512,7 +7512,7 @@
     "input": "The first line contains an integer `n`. The second line contains `n` integers for `prices`.",
     "output": "The maximum profit.",
     "description": "You are given an array `prices` where `prices[i]` is the price of a given stock on the `ith` day. You want to maximize your profit by choosing a single day to buy one stock and choosing a different day in the future to sell that stock. Return the maximum profit you can achieve from this transaction. If you cannot achieve any profit, return 0.",
-    "difficulty": "easy",
+    "difficulty": "Easy",
     "categories": ["array", "greedy"],
     "examples": [
       {
@@ -7758,7 +7758,7 @@
     "input": "The first line contains an integer `n`. The next `n` lines contain the strings.",
     "output": "Each line of output should contain a group of space-separated anagrams.",
     "description": "Given an array of strings `strs`, group the anagrams together. You can return the answer in any order. An Anagram is a word or phrase formed by rearranging the letters of a different word or phrase, typically using all the original letters exactly once.",
-    "difficulty": "medium",
+    "difficulty": "Medium",
     "categories": ["string", "hash-table"],
     "examples": [
       {
@@ -8019,7 +8019,7 @@
     "input": "The first line contains `numCourses` and `p`, the number of prerequisites. The next `p` lines each contain a pair `ai bi`.",
     "output": "`YES` or `NO`.",
     "description": "There are a total of `numCourses` courses you have to take, labeled from 0 to `numCourses - 1`. You are given an array `prerequisites` where `prerequisites[i] = [ai, bi]` indicates that you must take course `bi` first if you want to take course `ai`. Return `YES` if you can finish all courses. Otherwise, return `NO`.",
-    "difficulty": "medium",
+    "difficulty": "Medium",
     "categories": ["graph", "sorting"],
     "examples": [
       {

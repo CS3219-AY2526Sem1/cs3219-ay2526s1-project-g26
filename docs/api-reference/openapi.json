@@ -274,10 +274,10 @@
             "name": "difficulty",
             "in": "query",
             "required": true,
-            "description": "The difficulty level of the question (e.g., 'easy', 'medium', 'hard').",
+            "description": "The difficulty level of the question (e.g., 'Easy', 'Medium', 'Hard').",
             "schema": {
               "type": "string",
-              "example": "medium"
+              "example": "Medium"
             }
           },
           {
@@ -316,7 +316,7 @@
                         },
                         "difficulty": {
                           "type": "string",
-                          "example": "medium"
+                          "example": "Medium"
                         },
                         "constraints": {
                           "type": "string",

@@ -33,11 +33,11 @@ const QuestionPanel: React.FC<QuestionPanelProps> = ({
 }) => {
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty.toLowerCase()) {
-      case 'easy':
+      case 'Easy':
         return 'success'
-      case 'medium':
+      case 'Medium':
         return 'warning'
-      case 'hard':
+      case 'Hard':
         return 'error'
       default:
         return 'default'
