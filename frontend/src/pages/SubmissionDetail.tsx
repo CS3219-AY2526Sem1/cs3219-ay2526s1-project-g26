@@ -11,7 +11,7 @@ import LoadingSkeleton from '../components/common/LoadingSkeleton'
 const getMonacoLanguage = (language: string): string => {
   const languageMap: { [key: string]: string } = {
     Python: 'python',
-    JavaScript: 'avascript',
+    JavaScript: 'javascript',
     Java: 'java',
     'C++': 'cpp',
   }
