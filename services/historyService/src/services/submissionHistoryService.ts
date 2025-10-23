@@ -3,13 +3,11 @@ import { AppError } from '../utils/errors.js'
 import {
   UserSubmission,
   Submission,
-  type ResultInformation,
   SubmissionHistoryResponse,
   SubmissionSummary,
   SingleSubmissionHistoryResponse,
 } from '../models/submissionHistoryModel.js'
-import { ensureArray } from '../utils/index.js'
-import { type Document, ObjectId, type UpdateFilter, WithoutId } from 'mongodb'
+import { ObjectId } from 'mongodb'
 
 const getSubmissionsCollection = () =>
   getDb().collection<Submission>('submissions')
@@ -19,57 +17,60 @@ const getUserSubmissionsCollection = () =>
 export const getUserSubmissions = async (
   userId: string,
   page: number,
-  perPage: number
+  limit: number
 ): Promise<SubmissionHistoryResponse> => {
-  const userSubmissions = await getUserSubmissionsCollection()
-    .find(
-      { user_id: userId },
-      {
-        projection: {
-          _id: 0,
-          user_id: 0,
-        },
-      }
-    )
-    // apparently objectId contains timestamp info, which may be sortable directly
-    // https://stackoverflow.com/questions/5125521/uses-for-mongodb-objectid-creation-time
-    .sort({ _id: -1 })
-    .skip(page * perPage)
-    .limit(perPage)
-    .toArray()
-  const total = await getUserSubmissionsCollection().countDocuments({
-    user_id: userId,
-  })
-
-  const submissions = await getSubmissionsCollection()
-    .find({
-      _id: {
-        $in: userSubmissions.map(
-          (submission) => new ObjectId(submission.submission_id)
-        ),
+  const pipeline = [
+    { $match: { user_id: userId } },
+    {
+      $facet: {
+        metadata: [{ $count: 'total' }],
+        data: [
+          { $sort: { _id: -1 } },
+          { $skip: page * limit },
+          { $limit: limit },
+          {
+            $addFields: {
+              submission_obj_id: { $toObjectId: '$submission_id' },
+            },
+          },
+          {
+            $lookup: {
+              from: 'submissions',
+              localField: 'submission_obj_id',
+              foreignField: '_id',
+              as: 'submissionDetails',
+            },
+          },
+          { $unwind: '$submissionDetails' },
+          {
+            $project: {
+              _id: 0,
+              submission_id: { $toString: '$submissionDetails._id' },
+              title: '$submissionDetails.question_title',
+              submission_time: {
+                $dateToString: {
+                  format: '%Y-%m-%d %H:%M',
+                  date: { $toDate: '$submissionDetails._id' },
+                },
+              },
+              overall_status: '$submissionDetails.overall_result.result',
+              difficulty: '$submissionDetails.difficulty',
+              language: '$submissionDetails.language',
+            },
+          },
+        ],
       },
-    })
-    .sort({ _id: -1 })
+    },
+  ]
+  const [result] = await getUserSubmissionsCollection()
+    .aggregate(pipeline)
     .toArray()
 
-  let submissionSummaries: SubmissionSummary[] = []
-  for (const submission of submissions) {
-    let submissionSummary: SubmissionSummary = {
-      submission_id: submission._id.toString(),
-      title: submission.question_title,
-      submission_time: (submission._id as ObjectId)
-        .getTimestamp()
-        .toISOString(),
-      overall_status: submission.overall_result.result,
-      difficulty: submission.difficulty,
-      language: submission.language,
-    }
-    submissionSummaries.push(submissionSummary)
-  }
+  const submissions = (result?.data as SubmissionSummary[]) ?? []
+  const total = result?.metadata[0]?.total ?? 0
 
-  return { submissions: submissionSummaries, total }
+  return { submissions, total }
 }
-
 // update whatever you want out of this yourself when integrating with the frontend
 export const getUserSubmission = async (
   userId: string,

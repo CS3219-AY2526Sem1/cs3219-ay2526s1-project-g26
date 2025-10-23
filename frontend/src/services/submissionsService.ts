@@ -11,7 +11,13 @@ export const submissionsService = {
     limit: number
   ): Promise<SubmissionDataResponse> => {
     const response = await axiosInstance.get(
-      `${API_ENDPOINTS.HISTORY.GET_USER_SUBMISSIONS}/${page}/${limit}`
+      `${API_ENDPOINTS.HISTORY.GET_USER_SUBMISSIONS}`,
+      {
+        params: {
+          page,
+          limit,
+        },
+      }
     )
     return response.data.submissions
   },
