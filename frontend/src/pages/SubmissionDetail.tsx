@@ -11,7 +11,7 @@ import LoadingSkeleton from '../components/common/LoadingSkeleton'
 const getMonacoLanguage = (language: string): string => {
   const languageMap: { [key: string]: string } = {
     Python: 'python',
-    JavaScript: 'javascript',
+    JavaScript: 'avascript',
     Java: 'java',
     'C++': 'cpp',
   }
@@ -66,6 +66,9 @@ const SubmissionResult: React.FC = () => {
         const submission = await submissionsService.fetchSubmissionById(id)
         if (submission) {
           setSubmissionData(submission)
+          // Debugging: Unclear what is going on here, some languages produce erorrs
+          // while others don't
+          console.log(getMonacoLanguage(submission.language))
         } else {
           setError(`Submission with ID "${id}" not found`)
         }
