@@ -14,7 +14,7 @@ services:
       - question-service
       - collaboration-service
       - history-service
-      # also matching-service?
+      - matching-service
 
   frontend:
     build:
@@ -56,7 +56,7 @@ services:
       - JWT_SECRET=4fa01f2f08d88986b2cc1e0c3d35ae63
       - JWT_EXPIRES_IN=14d
       - DB_USER=postgres
-      - DB_NAME=postgres
+      - DB_NAME=users_db
       - DB_HOST=user-service-db
       - DB_PASSWORD=postgres
       - DB_PORT=5432
