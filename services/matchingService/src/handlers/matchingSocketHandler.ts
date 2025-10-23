@@ -1,10 +1,10 @@
 import { Server, Socket } from 'socket.io'
-import { SocketIdStorage } from '../database/socketIdStorage'
-import { getUserInfo } from '../models/userInfo'
-import { cancelMatchHandler } from './cancelMatchHandler'
-import { disconnectMatchHandler } from './disconnectMatchHandler'
-import { joinMatchHandler } from './joinMatchHandler'
-import { cancelMatch, disconnect, joinMatch } from '../constants/eventNames'
+import { SocketIdStorage } from '../database/socketIdStorage.js'
+import { getUserInfo } from '../models/userInfo.js'
+import { cancelMatchHandler } from './cancelMatchHandler.js'
+import { disconnectMatchHandler } from './disconnectMatchHandler.js'
+import { joinMatchHandler } from './joinMatchHandler.js'
+import { cancelMatch, disconnect, joinMatch } from '../constants/eventNames.js'
 
 export function matchingSocketHandler(io: Server): void {
   io.on('connection', (socket: Socket) => {

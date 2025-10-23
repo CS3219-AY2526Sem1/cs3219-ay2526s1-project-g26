@@ -1,5 +1,5 @@
-import { Difficulty, UserInfo } from '../models/userInfo'
-import redisClient from './redis'
+import { Difficulty, UserInfo } from '../models/userInfo.js'
+import redisClient from './redis.js'
 
 interface UserStorageFields {
   id: string

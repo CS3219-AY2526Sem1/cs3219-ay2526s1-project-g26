@@ -1,12 +1,5 @@
-import { Server, Socket } from 'socket.io'
-<<<<<<< HEAD
-import { UserStorage } from '../database/userStorage'
-import { UserInfo } from '../models/userInfo'
-import { SocketIdStorage } from '../database/socketIdStorage'
-=======
-import { UserManager } from '../database/userManager.js'
-import { UserInfo } from '../models/userInfo.js'
->>>>>>> develop
+import { UserStorage } from '../database/userStorage.js'
+import { SocketIdStorage } from '../database/socketIdStorage.js'
 
 export async function cancelMatchHandler(userid: string): Promise<void> {
   console.log('cancelMatch event received by matching service')

@@ -1,4 +1,4 @@
-import redisClient from './redis'
+import redisClient from './redis.js'
 
 export class SocketIdStorage {
   static async storeSocketId(userid: string, socketid: string): Promise<void> {
