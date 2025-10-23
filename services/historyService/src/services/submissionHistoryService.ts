@@ -9,8 +9,6 @@ import {
 } from '../models/submissionHistoryModel.js'
 import { ObjectId } from 'mongodb'
 
-const getSubmissionsCollection = () =>
-  getDb().collection<Submission>('submissions')
 const getUserSubmissionsCollection = () =>
   getDb().collection<UserSubmission>('user_submissions')
 
@@ -82,21 +80,21 @@ export const getUserSubmission = async (
       $match: {
         user_id: userId,
         submission_id: submissionId,
-      }
+      },
     },
     { $limit: 1 },
     {
       $addFields: {
-        submission_obj_id: { $toObjectId: '$submission_id' }
-      }
+        submission_obj_id: { $toObjectId: '$submission_id' },
+      },
     },
     {
       $lookup: {
         from: 'submissions',
         localField: 'submission_obj_id',
         foreignField: '_id',
-        as: 'submissionDetails'
-      }
+        as: 'submissionDetails',
+      },
     },
     { $unwind: '$submissionDetails' },
     // Should not be needed since ObjectID is unique?
@@ -108,33 +106,36 @@ export const getUserSubmission = async (
         submission_time: {
           $dateToString: {
             format: '%Y-%m-%d %H:%M',
-            date: { $toDate: '$submissionDetails._id' }
-          }
+            date: { $toDate: '$submissionDetails._id' },
+          },
         },
         language: '$submissionDetails.language',
         code: '$submissionDetails.code',
         status: {
           $cond: {
-            if: { $eq: ['$submissionDetails.overall_result.result', 'Accepted'] },
+            if: {
+              $eq: ['$submissionDetails.overall_result.result', 'Accepted']
+            },
             then: 'Passed',
-            else: 'Failed'
-          }
+            else: 'Failed',
+          },
         },
         difficulty: '$submissionDetails.difficulty',
         categories: '$submissionDetails.categories',
         runtime: {
           $concat: [
             { $toString: '$submissionDetails.overall_result.time_taken' },
-            ' ms'
-          ]
+            ' ms',
+          ],
         },
         memory: {
           $concat: [
             { $toString: '$submissionDetails.overall_result.max_memory_used' },
-            ' MB'
-          ]
+            ' MB',
+          ],
         },
-        error_message: '$submissionDetails.overall_result.additional_information',
+        error_message:
+          '$submissionDetails.overall_result.additional_information',
       },
     },
   ]
