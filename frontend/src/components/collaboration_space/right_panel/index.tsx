@@ -10,6 +10,7 @@ import { setSelectedLanguage } from '../../../store/slices/collaborationSlice.ts
 
 interface CollaborationRightPanelProps {
   roomId: string
+  resizeTrigger: number | null
 }
 
 const CollaborationRightPanel = (props: CollaborationRightPanelProps) => {
@@ -44,7 +45,10 @@ const CollaborationRightPanel = (props: CollaborationRightPanelProps) => {
   return (
     <Stack sx={{ height: '100%' }}>
       <EditorTool provider={provider} />
-      <CollaborationEditor provider={provider} />
+      <CollaborationEditor
+        provider={provider}
+        resizeTrigger={props.resizeTrigger}
+      />
     </Stack>
   )
 }
