@@ -2,12 +2,10 @@ import { getDb } from '../database/index.js'
 import { AppError } from '../utils/errors.js'
 import {
   UserSubmission,
-  Submission,
   SubmissionHistoryResponse,
   SubmissionSummary,
   SubmissionDetailsResponse,
 } from '../models/submissionHistoryModel.js'
-import { ObjectId } from 'mongodb'
 
 const getUserSubmissionsCollection = () =>
   getDb().collection<UserSubmission>('user_submissions')
@@ -114,7 +112,7 @@ export const getUserSubmission = async (
         status: {
           $cond: {
             if: {
-              $eq: ['$submissionDetails.overall_result.result', 'Accepted']
+              $eq: ['$submissionDetails.overall_result.result', 'Accepted'],
             },
             then: 'Passed',
             else: 'Failed',
