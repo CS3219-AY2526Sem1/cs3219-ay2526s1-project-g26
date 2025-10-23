@@ -40,7 +40,7 @@ const CollaborationRightPanel = (props: CollaborationRightPanelProps) => {
       provider?.destroy()
       ydoc.destroy()
     }
-  }, [ydoc, props.roomId])
+  }, [ydoc, props.roomId, dispatch])
 
   return (
     <Stack sx={{ height: '100%' }}>
