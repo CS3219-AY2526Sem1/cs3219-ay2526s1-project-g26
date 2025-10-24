@@ -37,7 +37,7 @@ router.post('/', async (_req, _res) => {
 })
 
 router.put('/:submission_id', authenticate(), async (_req, _res) => {
-  // ignore for now, not sure if this should neeed authenticate() anyway
+  // ignore for now, not sure if this should need authenticate() anyway
 })
 
 export default router
