@@ -13,7 +13,7 @@ const CollaborationPanel = () => {
   const resizeTimerRef = useRef<NodeJS.Timeout | null>(null)
 
   useAsyncEffect(async () => {
-    await fetchQuestionById('68ecad71f7fd251842ce5f54')
+    await fetchQuestionById('68fba3ce8eeedf6b82ce5f54')
   }, [fetchQuestionById])
 
   useEffect(() => {

@@ -15,6 +15,7 @@ services:
       - collaboration-service
       - history-service
       - matching-service
+      - code-execution-service
 
   frontend:
     build:
@@ -192,6 +193,27 @@ services:
     volumes:
       - history-service-db-data:/data/db
       - ../services/historyService/src/database/init:/docker-entrypoint-initdb.d
+
+  # Code Execution Service
+  code-execution-service:
+    build:
+      context: ../services/codeExecutionService
+      dockerfile: Dockerfile.dev
+    container_name: code-execution-service
+    volumes:
+      - ../services/codeExecutionService:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=4050
+      - DATABASE_URL=mongodb://question-service-db:27017/questions_db
+      - QUESTION_SERVICE_URL=http://question-service:4010
+    depends_on:
+      - question-service-db
+    ports:
+      - "4050:4050"
+    stdin_open: true
+    tty: true
 
 volumes:
   user-service-db-data:

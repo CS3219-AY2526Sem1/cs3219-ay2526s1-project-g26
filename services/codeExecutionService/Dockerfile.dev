@@ -1,50 +1,17 @@
-# Development Dockerfile for Code Execution Service
-FROM node:20-bullseye
+FROM node:18-alpine
 
-# Install system dependencies for all programming languages
-RUN apt-get update && apt-get install -y \
-    # C++ compiler
+# Install compilers and runtime environments for C++, Python, JavaScript
+RUN apk add --no-cache \
     g++ \
-    gcc \
-    build-essential \
-    # Java
-    openjdk-17-jdk \
-    # Python (already included in the node image, but ensure latest)
-    python3 \
-    python3-pip \
-    python3-dev \
-    # General utilities
-    curl \
-    wget \
-    git \
-    && rm -rf /var/lib/apt/lists/*
+    python3
 
-# Verify installations
-RUN node --version && \
-    npm --version && \
-    python3 --version && \
-    g++ --version && \
-    javac -version && \
-    java -version
-
-# Set working directory
 WORKDIR /app
 
-# Copy package files
 COPY package*.json ./
-
-# Install all dependencies (including dev dependencies)
 RUN npm install
 
-# Create temp directory for code execution
-RUN mkdir -p /app/temp && chmod 777 /app/temp
+COPY tsconfig.json ./
 
-# Expose port
-EXPOSE 4040
+EXPOSE 4050
 
-# Set environment variables
-ENV NODE_ENV=development
-ENV PORT=4040
-
-# Start the application in development mode
 CMD ["npm", "run", "dev"]
