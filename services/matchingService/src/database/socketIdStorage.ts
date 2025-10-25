@@ -1,8 +1,11 @@
 import redisClient from './redis.js'
 
+import { getLogger } from '../utils/logger.js'
+const logger = getLogger('socketIdStorage')
+
 export class SocketIdStorage {
   static async storeSocketId(userid: string, socketid: string): Promise<void> {
-    console.log(
+    logger.info(
       'SocketIdStorage: Storing socketid of ' +
         socketid +
         ' for userid: ' +
@@ -12,7 +15,7 @@ export class SocketIdStorage {
   }
 
   static async removeSocketId(userid: string): Promise<void> {
-    console.log('SocketIdStorage: Removing socketid of user: ' + userid)
+    logger.info('SocketIdStorage: Removing socketid of user: ' + userid)
     await redisClient.hDel(`useridSocket:${userid}`, 'socketid')
   }
 

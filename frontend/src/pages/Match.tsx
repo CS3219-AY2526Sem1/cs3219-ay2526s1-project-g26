@@ -1,14 +1,13 @@
-import { Container, Stack } from '@mui/material'
 import React, { useEffect, useState } from 'react'
+import { Container, Stack } from '@mui/material'
 import { Topics } from '../components/match/topics'
 import { Difficulty } from '../components/match/difficulty'
 import { Submission } from '../components/match/submission'
 import axiosInstance from '../utils/axios'
 import { API_ENDPOINTS } from '../constants/api'
 import { useMatch } from '../hooks/useMatch'
-import { useSelector } from 'react-redux'
-import { RootState } from '../store'
-import { initSocket } from '../utils/socket'
+import { disconnectSocket, initSocket } from '../utils/matchingServiceSocket'
+import { useAsyncEffect } from '../hooks'
 
 const Match = () => {
   const [topicsList, setTopicsList] = useState<string[]>([])
@@ -18,48 +17,35 @@ const Match = () => {
 
   const { errorMsg, matchState, onMatch, cancelMatch } = useMatch()
 
-  const userId = useSelector((state: RootState) => state.user.user?.id)
-  const token = localStorage.getItem('authToken')
   useEffect(() => {
-    initSocket({ token, userId })
-  }, [token, userId])
+    initSocket()
+    return disconnectSocket
+  }, [])
 
-  useEffect(() => {
-    let isMounted = true
-
-    const fetchTopicsAndDifficulties = async () => {
-      try {
-        const res = await axiosInstance.get(
-          API_ENDPOINTS.QUESTION.GET_TOPICS_AND_DIFFICULTIES
-        )
-        if (!isMounted) return
-        setTopicsList(res.data.categories)
-        setDifficultyList(res.data.difficulties)
-      } catch (err) {
-        console.error('Failed to fetch topics and difficulties', err)
-      }
-    }
-    fetchTopicsAndDifficulties()
-
-    return () => {
-      isMounted = false
-    }
+  useAsyncEffect(async () => {
+    const res = await axiosInstance.get(
+      API_ENDPOINTS.QUESTION.GET_TOPICS_AND_DIFFICULTIES
+    )
+    setTopicsList(res.data.categories)
+    setDifficultyList(res.data.difficulties)
   }, [])
 
   // Adds topic to checkedTopics if checking the topic, else remove the topic
   const handleCheckTopic = (isChecked: boolean, topic: string) => {
-    isChecked
-      ? setCheckedTopics([...checkedTopics, topic])
-      : setCheckedTopics(checkedTopics.filter((x) => x != topic))
+    if (isChecked) {
+      setCheckedTopics([...checkedTopics, topic])
+    } else {
+      setCheckedTopics(checkedTopics.filter((x) => x != topic))
+    }
   }
 
   // Adds difficulty to checkedDifficulty if checking the difficulty, else remove the difficulty
   const handleCheckDifficulty = (isChecked: boolean, difficulty: string) => {
-    isChecked
-      ? setCheckedDifficulties([...checkedDifficulties, difficulty])
-      : setCheckedDifficulties(
-          checkedDifficulties.filter((x) => x != difficulty)
-        )
+    if (isChecked) {
+      setCheckedDifficulties([...checkedDifficulties, difficulty])
+    } else {
+      setCheckedDifficulties(checkedDifficulties.filter((x) => x != difficulty))
+    }
   }
 
   const handleCheckAllTopics = (isChecked: boolean) => {

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { socket } from '../utils/socket'
+import { socket } from '../utils/matchingServiceSocket'
 import { useSelector } from 'react-redux'
 import { RootState } from '../store'
 import { MatchState } from '../types/matchState'

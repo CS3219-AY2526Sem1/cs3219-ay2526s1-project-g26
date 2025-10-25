@@ -1,5 +1,8 @@
 import { Difficulty, UserInfo } from '../models/userInfo.js'
+import { getLogger } from '../utils/logger.js'
 import redisClient from './redis.js'
+
+const logger = getLogger('userStorage')
 
 interface UserStorageFields {
   id: string
@@ -10,7 +13,7 @@ interface UserStorageFields {
 
 export class UserStorage {
   static async storeUser(userInfo: UserInfo): Promise<void> {
-    console.log('UserStorage: Storing user: ' + userInfo.id)
+    logger.info('UserStorage: Storing user: ' + userInfo.id)
     await redisClient.sAdd('userIds', userInfo.id)
     await redisClient.hSet(`user:${userInfo.id}`, {
       topics: JSON.stringify(userInfo.topics),
@@ -20,7 +23,7 @@ export class UserStorage {
   }
 
   static async removeUser(userid: string): Promise<void> {
-    console.log('UserStorage: Removing user: ' + userid)
+    logger.info('UserStorage: Removing user: ' + userid)
     await redisClient.sRem('userIds', userid)
     await redisClient.hDel(`user:${userid}`, 'topics')
     await redisClient.hDel(`user:${userid}`, 'difficulty')
@@ -32,7 +35,7 @@ export class UserStorage {
   }
 
   static async getMatch(userInfo: UserInfo): Promise<UserInfo | null> {
-    console.log('UserStorage: Getting a match for user: ' + userInfo.id)
+    logger.info('UserStorage: Getting a match for user: ' + userInfo.id)
     const users = await UserStorage.getAllUsers()
     const currTime = Date.now()
 

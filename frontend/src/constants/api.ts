@@ -1,23 +1,24 @@
 export const API_BASE_URL =
-  process.env.REACT_APP_API_BASE_URL || 'http://localhost/api'
+  process.env.REACT_APP_API_BASE_URL || 'http://localhost'
 
 export const API_ENDPOINTS = {
   AUTH: {
-    LOGIN: '/user/auth/login',
-    REGISTER: '/user/auth/register',
-    VERIFY_TOKEN: '/user/auth/verify-token',
+    LOGIN: '/api/user/auth/login',
+    REGISTER: '/api/user/auth/register',
+    VERIFY_TOKEN: '/api/user/auth/verify-token',
   },
   PROFILE: {
-    GET: '/user/profile/me',
-    UPDATE: '/user/profile',
+    GET: '/api/user/profile/me',
+    UPDATE: '/api/user/profile',
   },
+  MATCHING: '/api/matching',
   QUESTION: {
-    MATCH: '/question/match',
-    GET_BY_ID: '/question',
-    GET_TOPICS_AND_DIFFICULTIES: 'question/cnd',
+    MATCH: '/api/question/match',
+    GET_BY_ID: '/api/question',
+    GET_TOPICS_AND_DIFFICULTIES: '/api/question/cnd',
   },
   HISTORY: {
-    GET_USER_SUBMISSIONS: '/history/submissions',
+    GET_USER_SUBMISSIONS: '/api/history/submissions',
   },
 } as const
 
