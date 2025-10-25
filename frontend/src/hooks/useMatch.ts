@@ -18,11 +18,7 @@ export function useMatch() {
     socket.off('error')
   }, [])
 
-  useEffect(() => {
-    return () => {
-      cleanup()
-    }
-  }, [cleanup])
+  useEffect(() => cleanup, [cleanup])
 
   const onMatch = useCallback(
     (checkedTopics: string[], checkedDifficulties: string[]) => {

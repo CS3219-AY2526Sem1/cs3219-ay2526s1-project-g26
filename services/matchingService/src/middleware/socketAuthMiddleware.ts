@@ -1,7 +1,8 @@
-import { USER_SERVICE_URL } from '../config'
+import { type Socket, type ExtendedError } from 'socket.io'
+import { USER_SERVICE_URL } from '../config/index.js'
 
 export function socketAuthMiddleware() {
-  return async (socket, next) => {
+  return async (socket: Socket, next: (err?: ExtendedError) => void) => {
     const token = socket.handshake.auth.token
     if (!token) {
       next(new Error('Missing Auth Token'))

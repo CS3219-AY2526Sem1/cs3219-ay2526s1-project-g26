@@ -5,7 +5,7 @@ interface TestCase {
 }
 
 export interface Question {
-  _id: string 
+  _id: string
   description: string
   difficulty: string
   input?: string
