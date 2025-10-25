@@ -2,12 +2,14 @@ import { Socket } from 'socket.io'
 import { SocketIdStorage } from '../database/socketIdStorage.js'
 import { UserStorage } from '../database/userStorage.js'
 import { getUserId } from './matchingSocketHandler.js'
+import { getLogger } from '../utils/logger.js'
+const logger = getLogger('disconnectMatchHandler')
 
 export async function disconnectMatchHandler(socket: Socket, reason: string) {
-  console.log('User disconnected with reason: ' + reason)
+  logger.info('User disconnected with reason: ' + reason)
   const userId = getUserId(socket)
   if (!userId) {
-    console.log('Missing userId in the socket')
+    logger.warning('Missing userId in the socket')
     return
   }
   await SocketIdStorage.removeSocketId(userId)

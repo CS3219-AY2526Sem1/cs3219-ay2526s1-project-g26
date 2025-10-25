@@ -5,13 +5,15 @@ import { cancelMatchHandler } from './cancelMatchHandler.js'
 import { disconnectMatchHandler } from './disconnectMatchHandler.js'
 import { joinMatchHandler } from './joinMatchHandler.js'
 import { cancelMatch, disconnect, joinMatch } from '../constants/eventNames.js'
+import { getLogger } from '../utils/logger.js'
 
+const logger = getLogger('matchingSocketHandler')
 export function matchingSocketHandler(io: Server): void {
   io.on('connection', (socket: Socket) => {
-    console.log(
-      'User connected with\nUser ID: ' +
+    logger.info(
+      'User connected with: User ID: ' +
         getUserId(socket) +
-        '\nSocket ID: ' +
+        '; Socket ID: ' +
         socket.id
     )
 
@@ -22,7 +24,7 @@ export function matchingSocketHandler(io: Server): void {
         await SocketIdStorage.storeSocketId(userinfo.id, socket.id)
         await joinMatchHandler(io, socket, userinfo)
       } catch (err) {
-        console.error('Failed to join match with err: ' + err)
+        logger.error('Failed to join match with err: ' + err)
         socket.emit(
           'error',
           err instanceof Error ? err.message : 'Unknown Error'
@@ -46,10 +48,10 @@ export function matchingSocketHandler(io: Server): void {
   // Copied from https://socket.io/docs/v4/troubleshooting-connection-issues/#problem-the-socket-is-not-able-to-connect
   // For troubleshooting
   io.engine.on('connection_error', (err) => {
-    console.log(err.req) // the request object
-    console.log(err.code) // the error code, for example 1
-    console.log(err.message) // the error message, for example "Session ID unknown"
-    console.log(err.context) // some additional error context
+    logger.error(err.req) // the request object
+    logger.error(err.code) // the error code, for example 1
+    logger.error(err.message) // the error message, for example "Session ID unknown"
+    logger.error(err.context) // some additional error context
   })
 }
 

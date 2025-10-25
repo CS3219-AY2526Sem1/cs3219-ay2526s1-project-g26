@@ -18,6 +18,9 @@ const app = express()
 const server = createServer(app)
 const io = new Server(server, {
   connectionStateRecovery: {},
+  cors: {
+    origin: '*',
+  },
 })
 
 io.use(socketAuthMiddleware())
@@ -36,5 +39,5 @@ matchingSocketHandler(io)
 app.use(errorHandler)
 
 server.listen(PORT, () => {
-  console.log(`Running on Port ${PORT}`)
+  logger.info(`Running on Port ${PORT}`)
 })
