@@ -16,10 +16,6 @@ const CollaborationPanel = () => {
 
   const question = location.state?.question
 
-  if (!question) {
-    return <Box>No Question has been supplied.</Box>
-  }
-
   useEffect(() => {
     return () => {
       if (resizeTimerRef.current) {
@@ -27,6 +23,10 @@ const CollaborationPanel = () => {
       }
     }
   }, [])
+
+  if (!question) {
+    return <Box>No Question has been supplied.</Box>
+  }
 
   const handleResize = () => {
     if (resizeTimerRef.current) {
