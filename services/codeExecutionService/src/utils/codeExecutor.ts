@@ -198,33 +198,16 @@ const executeWithStdin = (
     let memoryExceeded = false
     let maxMemory = 0
 
-    // Sample memory immediately after process starts (for fast-executing programs like C++)
-    const sampleMemory = async () => {
-      try {
-        if (child.pid) {
-          const stats = await pidusage(child.pid)
-          const currentMemory = stats.memory / (1024 * 1024)
-          if (currentMemory > maxMemory) {
-            maxMemory = currentMemory
-          }
-          return currentMemory
-        }
-      } catch (_error) {
-        // Ignore errors
-      }
-      return 0
-    }
-
-    // Take initial memory sample after a short delay to ensure process has started
-    setTimeout(() => {
-      sampleMemory()
-    }, 5)
-
     // Monitor memory usage of the child process
     const memoryMonitor = setInterval(async () => {
       try {
         if (child.pid) {
-          const currentMemory = await sampleMemory()
+          const stats = await pidusage(child.pid)
+          // stats.memory is in bytes, convert to MB
+          const currentMemory = stats.memory / (1024 * 1024)
+          if (currentMemory > maxMemory) {
+            maxMemory = currentMemory
+          }
 
           // Check if memory limit exceeded
           if (currentMemory > memoryLimit) {
@@ -237,7 +220,7 @@ const executeWithStdin = (
       } catch (_error) {
         // Ignore memory monitoring errors (process might have ended)
       }
-    }, 10) // Check every 10ms
+    }, 50) // Check every 50ms
 
     // Set up timeout
     const timer = setTimeout(() => {
@@ -263,13 +246,9 @@ const executeWithStdin = (
     child.stdin.end()
 
     // Handle process completion
-    child.on('close', async (code) => {
+    child.on('close', (code) => {
       clearTimeout(timer)
       clearInterval(memoryMonitor)
-
-      // Take a final memory sample before process is completely gone
-      // This helps capture memory usage for very fast programs
-      await sampleMemory()
 
       if (memoryExceeded) {
         reject({
