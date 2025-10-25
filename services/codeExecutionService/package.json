@@ -22,6 +22,7 @@
     "express": "^5.1.0",
     "mongodb": "^6.20.0",
     "morgan": "^1.10.1",
+    "pidusage": "^4.0.1",
     "uuid": "^13.0.0",
     "winston": "^3.17.0"
   },
@@ -30,6 +31,7 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/node": "^24.5.2",
+    "@types/pidusage": "^2.0.5",
     "@types/winston": "^2.4.4",
     "@typescript-eslint/eslint-plugin": "^8.44.1",
     "@typescript-eslint/parser": "^8.44.1",

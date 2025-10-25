@@ -3,6 +3,7 @@ import { promisify } from 'util'
 import { writeFile, unlink, mkdir } from 'fs/promises'
 import path, { dirname } from 'path'
 import { fileURLToPath } from 'url'
+import pidusage from 'pidusage'
 import { CodeExecutionOutput } from '../types/index.js'
 import { getLogger } from './logger.js'
 
@@ -45,13 +46,15 @@ const LANGUAGE_CONFIG = {
  * @param language - Programming language (cpp/python/javascript)
  * @param input - Input string to pass to the program via stdin
  * @param timeLimit - Maximum execution time in milliseconds (default: 15000ms = 15s)
+ * @param memoryLimit - Maximum memory usage in MB (default: 256MB)
  * @returns CodeExecutionOutput with success status, output, error, and execution time
  */
 export const executeCode = async (
   code: string,
   language: 'cpp' | 'python' | 'javascript',
   input: string,
-  timeLimit: number = 15000
+  timeLimit: number = 15000,
+  memoryLimit: number = 256
 ): Promise<CodeExecutionOutput> => {
   const startTime = Date.now()
   const timestamp = Date.now()
@@ -101,7 +104,8 @@ export const executeCode = async (
       language,
       executeCmd,
       input,
-      timeLimit
+      timeLimit,
+      memoryLimit
     )
 
     const executionTime = Date.now() - startTime
@@ -115,6 +119,7 @@ export const executeCode = async (
       output: result.stdout,
       error: result.stderr || undefined,
       executionTime,
+      memoryUsed: result.memoryUsed,
     }
   } catch (error: unknown) {
     const executionTime = Date.now() - startTime
@@ -160,8 +165,9 @@ const executeWithStdin = (
   language: 'cpp' | 'python' | 'javascript',
   filePath: string,
   input: string,
-  timeLimit: number
-): Promise<{ stdout: string; stderr: string }> => {
+  timeLimit: number,
+  memoryLimit: number
+): Promise<{ stdout: string; stderr: string; memoryUsed?: number }> => {
   return new Promise((resolve, reject) => {
     // Determine command and args based on language
     let command: string
@@ -189,10 +195,54 @@ const executeWithStdin = (
     let stdout = ''
     let stderr = ''
     let killed = false
+    let memoryExceeded = false
+    let maxMemory = 0
+
+    // Sample memory immediately after process starts (for fast-executing programs like C++)
+    const sampleMemory = async () => {
+      try {
+        if (child.pid) {
+          const stats = await pidusage(child.pid)
+          const currentMemory = stats.memory / (1024 * 1024)
+          if (currentMemory > maxMemory) {
+            maxMemory = currentMemory
+          }
+          return currentMemory
+        }
+      } catch (_error) {
+        // Ignore errors
+      }
+      return 0
+    }
+
+    // Take initial memory sample after a short delay to ensure process has started
+    setTimeout(() => {
+      sampleMemory()
+    }, 5)
+
+    // Monitor memory usage of the child process
+    const memoryMonitor = setInterval(async () => {
+      try {
+        if (child.pid) {
+          const currentMemory = await sampleMemory()
+
+          // Check if memory limit exceeded
+          if (currentMemory > memoryLimit) {
+            memoryExceeded = true
+            clearInterval(memoryMonitor)
+            clearTimeout(timer)
+            child.kill('SIGTERM')
+          }
+        }
+      } catch (_error) {
+        // Ignore memory monitoring errors (process might have ended)
+      }
+    }, 10) // Check every 10ms
 
     // Set up timeout
     const timer = setTimeout(() => {
       killed = true
+      clearInterval(memoryMonitor)
       child.kill('SIGTERM')
     }, timeLimit)
 
@@ -213,10 +263,22 @@ const executeWithStdin = (
     child.stdin.end()
 
     // Handle process completion
-    child.on('close', (code) => {
+    child.on('close', async (code) => {
       clearTimeout(timer)
+      clearInterval(memoryMonitor)
 
-      if (killed) {
+      // Take a final memory sample before process is completely gone
+      // This helps capture memory usage for very fast programs
+      await sampleMemory()
+
+      if (memoryExceeded) {
+        reject({
+          killed: true,
+          signal: 'SIGTERM',
+          stdout,
+          stderr: 'Memory Limit Exceeded',
+        })
+      } else if (killed) {
         reject({
           killed: true,
           signal: 'SIGTERM',
@@ -230,13 +292,18 @@ const executeWithStdin = (
           message: `Process exited with code ${code}`,
         })
       } else {
-        resolve({ stdout, stderr })
+        resolve({
+          stdout,
+          stderr,
+          memoryUsed: Math.round(maxMemory * 100) / 100,
+        })
       }
     })
 
     // Handle errors
     child.on('error', (err) => {
       clearTimeout(timer)
+      clearInterval(memoryMonitor)
       reject({
         message: err.message,
         stderr: err.message,

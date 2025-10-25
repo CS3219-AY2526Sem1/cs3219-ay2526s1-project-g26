@@ -45,6 +45,7 @@ export const validateCode = async (
   // Step 2: Execute code against each test case
   let passedTests = 0
   let totalExecutionTime = 0
+  let maxMemoryUsed = 0
 
   for (let i = 0; i < testCases.length; i++) {
     const testCase = testCases[i]
@@ -60,6 +61,9 @@ export const validateCode = async (
       )
 
       totalExecutionTime += result.executionTime
+      if (result.memoryUsed && result.memoryUsed > maxMemoryUsed) {
+        maxMemoryUsed = result.memoryUsed
+      }
 
       // Step 3: Check if execution failed
       if (!result.success) {
@@ -73,6 +77,7 @@ export const validateCode = async (
           passed_tests: passedTests,
           total_tests: totalTests,
           execution_time: totalExecutionTime,
+          memory_used: maxMemoryUsed > 0 ? maxMemoryUsed : undefined,
           error: result.error,
           output: result.output || undefined,
         }
@@ -95,6 +100,7 @@ export const validateCode = async (
           passed_tests: passedTests,
           total_tests: totalTests,
           execution_time: totalExecutionTime,
+          memory_used: maxMemoryUsed > 0 ? maxMemoryUsed : undefined,
           output: actualOutput,
         }
       }
@@ -109,6 +115,7 @@ export const validateCode = async (
         passed_tests: passedTests,
         total_tests: totalTests,
         execution_time: totalExecutionTime,
+        memory_used: maxMemoryUsed > 0 ? maxMemoryUsed : undefined,
         error: error instanceof Error ? error.message : 'Unknown error',
       }
     }
@@ -116,7 +123,7 @@ export const validateCode = async (
 
   // Step 5: All test cases passed!
   logger.info(
-    `All ${totalTests} test cases passed! Total execution time: ${totalExecutionTime}ms`
+    `All ${totalTests} test cases passed! Total execution time: ${totalExecutionTime}ms, Max memory: ${maxMemoryUsed}MB`
   )
 
   return {
@@ -124,6 +131,7 @@ export const validateCode = async (
     passed_tests: passedTests,
     total_tests: totalTests,
     execution_time: totalExecutionTime,
+    memory_used: maxMemoryUsed > 0 ? maxMemoryUsed : undefined,
   }
 }
 

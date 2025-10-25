@@ -1,4 +1,3 @@
-// Must match backend types
 export type ExecutionStatus =
   | 'In Progress'
   | 'Accepted'

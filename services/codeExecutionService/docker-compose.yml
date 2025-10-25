@@ -12,3 +12,7 @@ services:
       - PORT=4050
       - DATABASE_URL=mongodb://question-service-db:27017/questions_db
       - QUESTION_SERVICE_URL=http://question-service:4010
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - apparmor=unconfined

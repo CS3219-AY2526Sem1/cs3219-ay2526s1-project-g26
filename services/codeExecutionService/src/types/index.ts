@@ -12,7 +12,8 @@ export interface CodeExecutionOutput {
   success: boolean
   output: string
   error?: string
-  executionTime: number
+  executionTime: number // Execution time in ms
+  memoryUsed?: number // Memory used in MB
 }
 
 export interface SubmissionResult {

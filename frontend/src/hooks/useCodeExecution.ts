@@ -70,7 +70,8 @@ export const useCodeExecution = ({
       console.log('status         :', response.status)
       console.log('passed_tests   :', response.passed_tests)
       console.log('total_tests    :', response.total_tests)
-      console.log('execution_time :', response.execution_time)
+      console.log('execution_time :', response.execution_time, 'ms')
+      console.log('memory_used    :', response.memory_used, 'MB')
       if (response.output) {
         console.log('output         :', response.output)
       }
@@ -110,7 +111,8 @@ export const useCodeExecution = ({
       console.log('status         :', response.status)
       console.log('passed_tests   :', response.passed_tests)
       console.log('total_tests    :', response.total_tests)
-      console.log('execution_time :', response.execution_time)
+      console.log('execution_time :', response.execution_time, 'ms')
+      console.log('memory_used    :', response.memory_used, 'MB')
       if (response.output) {
         console.log('output         :', response.output)
       }
