@@ -7,21 +7,42 @@ import * as Y from 'yjs'
 import { useDispatch } from 'react-redux'
 import { WEBSOCKET_BASE_URL, WEBSOCKET_URL } from '../../../constants/api.ts'
 import { setSelectedLanguage } from '../../../store/slices/collaborationSlice.ts'
+import { useCodeExecution } from '../../../hooks'
 
 interface CollaborationRightPanelProps {
   roomId: string
   resizeTrigger: number | null
+  questionId: string
+  onExecuteReady?: (
+    executeRun: () => void,
+    executeSubmit: () => void,
+    loading: boolean
+  ) => void
 }
 
 const CollaborationRightPanel = (props: CollaborationRightPanelProps) => {
+  const { roomId, questionId, onExecuteReady } = props
   const [provider, setProvider] = useState<WebsocketProvider | null>(null)
   const dispatch = useDispatch()
   const ydoc = useMemo(() => new Y.Doc(), [])
 
+  // Use code execution hook here (where ydoc is)
+  const { loading, executeRun, executeSubmit } = useCodeExecution({
+    ydoc,
+    questionId: questionId,
+  })
+
+  // Pass execute functions to parent
+  useEffect(() => {
+    if (onExecuteReady) {
+      onExecuteReady(executeRun, executeSubmit, loading)
+    }
+  }, [executeRun, executeSubmit, loading, onExecuteReady])
+
   useEffect(() => {
     const provider = new WebsocketProvider(
       `${WEBSOCKET_BASE_URL}${WEBSOCKET_URL.COLLABORATION}`,
-      props.roomId,
+      roomId,
       ydoc,
       {
         params: {
@@ -40,7 +61,7 @@ const CollaborationRightPanel = (props: CollaborationRightPanelProps) => {
       provider?.destroy()
       ydoc.destroy()
     }
-  }, [ydoc, props.roomId, dispatch])
+  }, [ydoc, roomId, dispatch])
 
   return (
     <Stack sx={{ height: '100%' }}>

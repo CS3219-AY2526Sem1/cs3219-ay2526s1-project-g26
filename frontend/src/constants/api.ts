@@ -18,6 +18,9 @@ export const API_ENDPOINTS = {
   HISTORY: {
     GET_USER_SUBMISSIONS: '/history/submissions',
   },
+  CODE_EXECUTION: {
+    EXECUTE: '/execute/execute',
+  },
 } as const
 
 export const WEBSOCKET_BASE_URL =

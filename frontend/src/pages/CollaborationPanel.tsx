@@ -12,8 +12,27 @@ const CollaborationPanel = () => {
   const [resizeTrigger, setResizeTrigger] = useState<number | null>(null)
   const resizeTimerRef = useRef<NodeJS.Timeout | null>(null)
 
+  // State for code execution
+  const [executeRun, setExecuteRun] = useState<(() => void) | null>(null)
+  const [executeSubmit, setExecuteSubmit] = useState<(() => void) | null>(null)
+  const [executing, setExecuting] = useState(false)
+
+  // Question ID
+  const questionId = '68fba3ce8eeedf6b82ce5f5d'
+
+  // Receive execute functions from CollaborationRightPanel
+  const handleExecuteReady = (
+    runFn: () => void,
+    submitFn: () => void,
+    loadingState: boolean
+  ) => {
+    setExecuteRun(() => runFn)
+    setExecuteSubmit(() => submitFn)
+    setExecuting(loadingState)
+  }
+
   useAsyncEffect(async () => {
-    await fetchQuestionById('68fba3ce8eeedf6b82ce5f54')
+    await fetchQuestionById(questionId)
   }, [fetchQuestionById])
 
   useEffect(() => {
@@ -36,7 +55,11 @@ const CollaborationPanel = () => {
 
   return (
     <>
-      <TopToolBar />
+      <TopToolBar
+        onRun={executeRun || (() => {})}
+        onSubmit={executeSubmit || (() => {})}
+        loading={executing}
+      />
       <Box
         sx={{ height: 'calc(100vh - 64px)', overflowY: 'inherit', padding: 1 }}
       >
@@ -72,6 +95,8 @@ const CollaborationPanel = () => {
                   <CollaborationRightPanel
                     roomId={'12'}
                     resizeTrigger={resizeTrigger}
+                    questionId={questionId}
+                    onExecuteReady={handleExecuteReady}
                   />
                 </Paper>
               </Panel>

@@ -9,6 +9,7 @@ import {
   Avatar,
   AvatarGroup,
   Tooltip,
+  CircularProgress,
 } from '@mui/material'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
@@ -17,17 +18,19 @@ import MicIcon from '@mui/icons-material/Mic'
 import MicOffIcon from '@mui/icons-material/MicOff'
 import { useNavigate } from 'react-router-dom'
 
-const TopToolBar = () => {
+interface TopToolBarProps {
+  onRun: () => void | Promise<void>
+  onSubmit: () => void | Promise<void>
+  loading?: boolean
+}
+
+const TopToolBar = ({ onRun, onSubmit, loading = false }: TopToolBarProps) => {
   const navigate = useNavigate()
   const [isMuted, setIsMuted] = useState(false)
 
   const handleMuteToggle = () => {
     setIsMuted((prev) => !prev)
   }
-
-  const handleRun = () => {}
-
-  const handleSubmit = () => {}
 
   const handleExit = () => {
     navigate(-1)
@@ -58,8 +61,15 @@ const TopToolBar = () => {
           <Button
             variant="contained"
             color="success"
-            startIcon={<PlayArrowIcon />}
-            onClick={handleRun}
+            startIcon={
+              loading ? (
+                <CircularProgress size={20} color="inherit" />
+              ) : (
+                <PlayArrowIcon />
+              )
+            }
+            onClick={onRun}
+            disabled={loading}
             sx={{ color: 'white' }}
           >
             Run
@@ -67,8 +77,15 @@ const TopToolBar = () => {
           <Button
             variant="contained"
             color="secondary"
-            startIcon={<CloudUploadIcon />}
-            onClick={handleSubmit}
+            startIcon={
+              loading ? (
+                <CircularProgress size={20} color="inherit" />
+              ) : (
+                <CloudUploadIcon />
+              )
+            }
+            onClick={onSubmit}
+            disabled={loading}
           >
             Submit
           </Button>
