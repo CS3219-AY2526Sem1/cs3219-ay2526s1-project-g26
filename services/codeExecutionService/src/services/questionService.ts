@@ -1,4 +1,5 @@
 import { getDb } from '../database/index.js'
+import { ObjectId } from 'mongodb'
 import { Question, TestCase } from '../models/questionModel.js'
 import { AppError } from '../utils/errors.js'
 import { getLogger } from '../utils/logger.js'
@@ -11,7 +12,7 @@ export const getQuestionById = async (
   questionId: string
 ): Promise<Question> => {
   const collection = getQuestionCollection()
-  const question = await collection.findOne({ _id: questionId })
+  const question = await collection.findOne({ _id: new ObjectId(questionId) })
 
   if (!question) {
     throw new AppError(`Question with ID ${questionId} not found`, 404)

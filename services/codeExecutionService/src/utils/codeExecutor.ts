@@ -30,7 +30,7 @@ const LANGUAGE_CONFIG = {
     executeCmd: (filename: string) => `python ${filename}`,
   },
   javascript: {
-    extension: '.js',
+    extension: '.cjs', // Use .cjs to support CommonJS (require)
     compileCmd: null,
     executeCmd: (filename: string) => `node ${filename}`,
   },

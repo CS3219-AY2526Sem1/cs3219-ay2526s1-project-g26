@@ -1,3 +1,5 @@
+import { ObjectId } from 'mongodb'
+
 export interface TestCase {
   input: string
   output: string
@@ -5,7 +7,7 @@ export interface TestCase {
 }
 
 export interface Question {
-  _id: string
+  _id: ObjectId
   title: string
   input?: string
   output?: string
