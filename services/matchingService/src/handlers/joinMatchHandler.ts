@@ -47,6 +47,8 @@ export async function joinMatchHandler(
       const roomid = randomUUID()
       io.to(otherSocketId).emit(matchSuccess, { roomid, question })
       io.to(socket.id).emit(matchSuccess, { roomid, question })
+      SocketIdStorage.removeSocketId(matchedUser.id)
+      SocketIdStorage.removeSocketId(userinfo.id)
     }
   }
 }
