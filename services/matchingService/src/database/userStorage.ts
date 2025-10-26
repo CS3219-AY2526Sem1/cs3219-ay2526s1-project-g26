@@ -1,7 +1,12 @@
 import { Difficulty, UserInfo } from '../models/userInfo.js'
-import { fillPrefixZeros } from '../utils/index.js'
+import { fillPrefixZeros, sleep } from '../utils/index.js'
 import { getLogger } from '../utils/logger.js'
 import redisClient from './redis.js'
+import {
+  REDIS_UQ_EXPIRATION_TIME_SECONDS,
+  REDIS_UQ_LOCK_KEY,
+} from '../constants/index.js'
+import { randomUUID, type UUID } from 'crypto'
 
 const logger = getLogger('userStorage')
 
@@ -13,6 +18,8 @@ interface UserStorageFields {
 }
 
 export class UserStorage {
+  private static id: UUID = randomUUID()
+
   static async storeUser(userInfo: UserInfo): Promise<void> {
     logger.info('UserStorage: Storing user: ' + userInfo.id)
     await redisClient.sAdd('userIds', userInfo.id)
@@ -35,39 +42,62 @@ export class UserStorage {
     return (await redisClient.sIsMember('userIds', userid)) === 1
   }
 
+  static async acquireUqLock(): Promise<void> {
+    while (
+      !(await redisClient.set(REDIS_UQ_LOCK_KEY, UserStorage.id.toString(), {
+        NX: true,
+        EX: REDIS_UQ_EXPIRATION_TIME_SECONDS,
+      }))
+    ) {
+      await sleep()
+    }
+  }
+
+  static async releaseUqLock(): Promise<void> {
+    await redisClient.eval(
+      `if redis.call("get", KEYS[1]) == ARGV[1]
+        then
+        return redis.call("del", KEYS[1])
+       else
+        return 0
+        end`,
+      {
+        keys: [REDIS_UQ_LOCK_KEY],
+        arguments: [UserStorage.id.toString()],
+      }
+    )
+  }
+
   static async getMatch(userInfo: UserInfo): Promise<UserInfo | null> {
     logger.info('UserStorage: Getting a match for user: ' + userInfo.id)
     const users = await UserStorage.getAllUsers()
     const currTime = Date.now()
 
-    const sortedScores: [number, string][] = users
-      .map((target, index): [number, string] => {
-        const score = this.calculateSimilarityScore(userInfo, target, currTime)
-        return [index, score]
-      })
-      // Sort in descending order (highest score first)
-      .sort((a, b) => Number(b[1]) - Number(a[1]))
-
-    for (let i = 0; i < sortedScores.length; i++) {
-      const score = sortedScores[i][1]
-      const target = users[sortedScores[i][0]]
-
-      // If score starts with 0, it means no one else has overlapping topics
-      if (score.charAt(0) === '0') {
-        return null
+    let score = '0'
+    let target = null
+    users.forEach((targetUserInfo) => {
+      const targetUserScore = this.calculateSimilarityScore(
+        userInfo,
+        targetUserInfo,
+        currTime
+      )
+      if (targetUserScore > score) {
+        score = targetUserScore
+        target = targetUserInfo
       }
+    })
 
-      // If second digit of score is 0 after checking first digit above
-      // then no one else has overlapping difficulties
-      if (score.charAt(1) === '0') {
-        return null
-      }
-
-      if (await UserStorage.userExist(target.id)) {
-        return target
-      }
+    if (score.charAt(0) === '0') {
+      return null
     }
-    return null
+
+    // If second digit of score is 0 after checking first digit above
+    // then no one else has overlapping difficulties
+    if (score.charAt(1) === '0') {
+      return null
+    }
+
+    return target
   }
 
   private static async getAllUsers(): Promise<UserStorageFields[]> {

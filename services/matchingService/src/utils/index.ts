@@ -5,3 +5,7 @@ export const fillPrefixZeros = (num: number, length: number): string => {
   }
   return String(n).padStart(length, '0')
 }
+
+export const sleep = (ms: number = 100) => {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}

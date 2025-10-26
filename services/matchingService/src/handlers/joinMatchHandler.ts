@@ -16,16 +16,21 @@ export async function joinMatchHandler(
   if (await UserStorage.userExist(userinfo.id)) {
     throw new Error('User already in queue')
   }
-  const matchedUser = await UserStorage.getMatch(userinfo)
-
+  await UserStorage.acquireUqLock()
+  let matchedUser = await UserStorage.getMatch(userinfo)
   if (!matchedUser || !(await UserStorage.userExist(matchedUser.id))) {
     await UserStorage.storeUser(userinfo)
+    await UserStorage.releaseUqLock()
   } else {
+    matchedUser = structuredClone(matchedUser)
+    await UserStorage.removeUser(matchedUser.id)
+    await UserStorage.releaseUqLock()
+
     const overlapTopics = userinfo.topics.filter((topic) =>
-      matchedUser.topics.includes(topic)
+      matchedUser!.topics.includes(topic)
     )
     const overlapDifficulties = userinfo.difficulty.filter((diff) =>
-      matchedUser.difficulty.includes(diff)
+      matchedUser!.difficulty.includes(diff)
     )
     const token = getToken(socket)
     const question = await fetchQuestion(
@@ -36,18 +41,12 @@ export async function joinMatchHandler(
 
     const otherSocketId = await SocketIdStorage.getSocketId(matchedUser.id)
     if (!otherSocketId) {
-      await UserStorage.removeUser(matchedUser.id)
-      await SocketIdStorage.removeSocketId(matchedUser.id)
       await UserStorage.storeUser(userinfo)
+      await joinMatchHandler(io, socket, userinfo)
     } else {
       const roomid = randomUUID()
       io.to(otherSocketId).emit(matchSuccess, { roomid, question })
       io.to(socket.id).emit(matchSuccess, { roomid, question })
-
-      await UserStorage.removeUser(matchedUser.id)
-      await SocketIdStorage.removeSocketId(matchedUser.id)
-      await UserStorage.removeUser(userinfo.id)
-      await SocketIdStorage.removeSocketId(userinfo.id)
     }
   }
 }
