@@ -1,4 +1,5 @@
 import { Difficulty, UserInfo } from '../models/userInfo.js'
+import { fillPrefixZeros } from '../utils/index.js'
 import { getLogger } from '../utils/logger.js'
 import redisClient from './redis.js'
 
@@ -109,12 +110,9 @@ export class UserStorage {
 
     const A = overlapTopics.length === 0 ? '0' : '1' // 1 digit
     const B = overlapDifficulties.length === 0 ? '0' : '1' // 1 digit
-    const C =
-      overlapTopics.length >= 10
-        ? String(overlapTopics.length)
-        : '0' + String(overlapTopics.length) // 2 digit
+    const C = fillPrefixZeros(overlapTopics.length, 2) // 2 digits
     const D = overlapDifficulties.length // 1 digit
-    const E = currTime - targetUser.timeJoined // time waited in milliseconds
+    const E = fillPrefixZeros(currTime - targetUser.timeJoined, 7) // 7 digits - time waited in milliseconds
 
     const similarityScore = `${A}${B}${C}${D}${E}`
 
