@@ -1,11 +1,11 @@
 import { createClient } from 'redis'
-import { DATABASE_URL } from '../config/index.js'
+import { REDIS_URL } from '../config/index.js'
 import { getLogger } from '../utils/logger.js'
 
 const logger = getLogger('redis')
 
 // Initialize Redis Client
-const redisClient = createClient({ url: DATABASE_URL })
+const redisClient = createClient({ url: REDIS_URL })
 redisClient.on('error', (err) => logger.error('Redis Client Error', err))
 await redisClient.connect()
 

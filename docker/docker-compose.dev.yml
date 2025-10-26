@@ -129,23 +129,23 @@ services:
     environment:
       - NODE_ENV=development
       - PORT=4020
-      - DATABASE_URL=redis://matching-service-queue:6379
+      - REDIS_URL=redis://matching-service-redis:6379
       - BACKEND_BASE_URL=http://nginx
     depends_on:
-      - matching-service-queue
+      - matching-service-redis
     ports:
       - "4020:4020"
     stdin_open: true
     tty: true
 
-  matching-service-queue:
+  matching-service-redis:
     image: redis:8-alpine
-    container_name: matching-service-queue
+    container_name: matching-service-redis
     restart: unless-stopped
     ports:
       - "4021:6379"
     volumes:
-      - matching-service-queue-data:/data
+      - matching-service-redis-data:/data
 
   # Collaboration Service
   collaboration-service:
@@ -199,5 +199,5 @@ services:
 volumes:
   user-service-db-data:
   question-service-db-data:
-  matching-service-queue-data:
+  matching-service-redis-data:
   history-service-db-data:
