@@ -136,14 +136,44 @@ export const getQuestionById = async (id: string): Promise<Question | null> => {
   return question
 }
 
-export const getQuestionWithTestCases = async (id: string): Promise<Question | null> => {
-  const question = await getQuestionCollection().findOne({
-    _id: new ObjectId(id),
-  })
-  if (!question) {
-    throw new AppError('Question not found', 404)
-  }
-  return question
+export const getQuestionTestCases = async (
+  id: string,
+  type: 'public' | 'private' | 'all'
+): Promise<Omit<TestCase, 'is_hidden'>[]> => {
+  const pipeline = [
+    {
+      $match: { _id: new ObjectId(id) },
+    },
+    {
+      $project: {
+        _id: 0,
+        test_cases: {
+          $map: {
+            input: {
+              $filter: {
+                input: '$test_cases',
+                as: 'tc',
+                ...(type !== 'all'
+                  ? {
+                      cond: { $eq: ['$$tc.is_hidden', type === 'private'] },
+                    }
+                  : { cond: {} }),
+              },
+            },
+            as: 'tc',
+            in: {
+              input: '$$tc.input',
+              output: '$$tc.output',
+            },
+          },
+        },
+      },
+    },
+  ]
+  const results = (
+    await getQuestionCollection().aggregate(pipeline).toArray()
+  )[0].test_cases as Omit<TestCase, 'is_hidden'>[]
+  return results
 }
 
 export const getAllQuestions = async (

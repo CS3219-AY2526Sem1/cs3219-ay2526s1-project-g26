@@ -209,10 +209,7 @@ services:
     environment:
       - NODE_ENV=development
       - PORT=4050
-      - DATABASE_URL=mongodb://question-service-db:27017/questions_db
-      - QUESTION_SERVICE_URL=http://question-service:4010
-    depends_on:
-      - question-service-db
+      - BACKEND_BASE_URL=http://nginx
     ports:
       - "4050:4050"
     stdin_open: true

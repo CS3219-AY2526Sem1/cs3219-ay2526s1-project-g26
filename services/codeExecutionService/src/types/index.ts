@@ -7,6 +7,10 @@ export type ExecutionStatus =
   | 'Runtime Error'
   | 'Compilation Error'
 
+export type Language = 'cpp' | 'javascript' | 'python'
+
+export type RunMode = 'run' | 'submit'
+
 // Raw output from code execution (used internally by codeExecutor utility)
 export interface CodeExecutionOutput {
   success: boolean
@@ -31,4 +35,9 @@ export interface ExecuteCodeRequest {
   language: string
   code_text: string
   mode: 'run' | 'submit'
+}
+
+export interface TestCase {
+  input: string
+  output: string
 }

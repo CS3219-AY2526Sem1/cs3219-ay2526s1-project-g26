@@ -1,41 +1,9 @@
-import { exec, spawn } from 'child_process'
-import { promisify } from 'util'
-import { writeFile, unlink, mkdir } from 'fs/promises'
-import path, { dirname } from 'path'
-import { fileURLToPath } from 'url'
+import { spawn } from 'child_process'
 import pidusage from 'pidusage'
-import { CodeExecutionOutput } from '../types/index.js'
+import { CodeExecutionOutput, Language } from '../types/index.js'
 import { getLogger } from './logger.js'
 
-const execAsync = promisify(exec)
 const logger = getLogger('CodeExecutor')
-
-// Get __dirname equivalent in ES modules
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
-
-// Temporary directory for code execution
-const TEMP_DIR = path.join(__dirname, '../../temp')
-
-// Language-specific configurations
-const LANGUAGE_CONFIG = {
-  cpp: {
-    extension: '.cpp',
-    compileCmd: (filename: string, outputFile: string) =>
-      `g++ ${filename} -o ${outputFile}`,
-    executeCmd: (executablePath: string) => executablePath,
-  },
-  python: {
-    extension: '.py',
-    compileCmd: null,
-    executeCmd: (filename: string) => `python ${filename}`,
-  },
-  javascript: {
-    extension: '.cjs', // Use .cjs to support CommonJS (require)
-    compileCmd: null,
-    executeCmd: (filename: string) => `node ${filename}`,
-  },
-}
 
 /**
  * Execute user code with given input
@@ -50,69 +18,25 @@ const LANGUAGE_CONFIG = {
  * @returns CodeExecutionOutput with success status, output, error, and execution time
  */
 export const executeCode = async (
-  code: string,
-  language: 'cpp' | 'python' | 'javascript',
+  executableFilePath: string,
+  language: Language,
   input: string,
-  timeLimit: number = 15000,
+  timeLimit: number = 2000,
   memoryLimit: number = 256
 ): Promise<CodeExecutionOutput> => {
   const startTime = Date.now()
-  const timestamp = Date.now()
-  const randomId = Math.random().toString(36).substring(7)
-  const baseFilename = `temp_${timestamp}_${randomId}`
-
-  const config = LANGUAGE_CONFIG[language]
-  const sourceFile = path.join(TEMP_DIR, `${baseFilename}${config.extension}`)
-  const executableFile = path.join(TEMP_DIR, baseFilename)
 
   try {
-    // Ensure temp directory exists
-    await mkdir(TEMP_DIR, { recursive: true })
-
-    // Write source code to temporary file
-    await writeFile(sourceFile, code)
-    logger.info(`Created source file: ${sourceFile}`)
-
-    // Compilation step (only for C++)
-    if (config.compileCmd) {
-      try {
-        const compileCmd = config.compileCmd(sourceFile, executableFile)
-        logger.info(`Compiling: ${compileCmd}`)
-        await execAsync(compileCmd, { timeout: timeLimit })
-        logger.info('Compilation successful')
-      } catch (compileError: unknown) {
-        const error = compileError as { message?: string; stderr?: string }
-        const errorMessage = error.message || String(compileError)
-        logger.error('Compilation failed:', errorMessage)
-        // Clean up source file
-        await unlink(sourceFile).catch(() => {})
-        return {
-          success: false,
-          output: '',
-          error: `Compilation Error: ${error.stderr || errorMessage}`,
-          executionTime: Date.now() - startTime,
-        }
-      }
-    }
-
-    // Execution step
-    const executeCmd = config.compileCmd ? executableFile : sourceFile
-    logger.info(`Executing: ${executeCmd}`)
-
     // Execute code with stdin input using spawn
     const result = await executeWithStdin(
       language,
-      executeCmd,
+      executableFilePath,
       input,
       timeLimit,
       memoryLimit
     )
 
     const executionTime = Date.now() - startTime
-    logger.info(`Execution completed in ${executionTime}ms`)
-
-    // Clean up temporary files
-    await cleanupFiles(sourceFile, executableFile, config.compileCmd !== null)
 
     return {
       success: true,
@@ -123,10 +47,6 @@ export const executeCode = async (
     }
   } catch (error: unknown) {
     const executionTime = Date.now() - startTime
-
-    // Clean up temporary files
-    await cleanupFiles(sourceFile, executableFile, config.compileCmd !== null)
-
     const execError = error as {
       killed?: boolean
       signal?: string
@@ -162,7 +82,7 @@ export const executeCode = async (
  * Execute command with stdin support using spawn
  */
 const executeWithStdin = (
-  language: 'cpp' | 'python' | 'javascript',
+  language: Language,
   filePath: string,
   input: string,
   timeLimit: number,
@@ -187,22 +107,20 @@ const executeWithStdin = (
       return
     }
 
-    // Spawn the process
-    const child = spawn(command, args, {
-      timeout: timeLimit,
-    })
-
     let stdout = ''
     let stderr = ''
     let killed = false
     let memoryExceeded = false
     let maxMemory = 0
 
-    // Monitor memory usage of the child process
-    const memoryMonitor = setInterval(async () => {
-      try {
-        if (child.pid) {
-          const stats = await pidusage(child.pid)
+    // Spawn the process
+    const child = spawn(command, args, {
+      timeout: timeLimit,
+    })
+
+    if (child.pid) {
+      pidusage(child.pid)
+        .then((stats) => {
           // stats.memory is in bytes, convert to MB
           const currentMemory = stats.memory / (1024 * 1024)
           if (currentMemory > maxMemory) {
@@ -212,15 +130,38 @@ const executeWithStdin = (
           // Check if memory limit exceeded
           if (currentMemory > memoryLimit) {
             memoryExceeded = true
-            clearInterval(memoryMonitor)
-            clearTimeout(timer)
             child.kill('SIGTERM')
           }
+        })
+        .catch((_err) => {})
+    }
+
+    let memoryMonitor: NodeJS.Timeout
+    // Monitor memory usage of the child process
+    if (!memoryExceeded) {
+      memoryMonitor = setInterval(async () => {
+        try {
+          if (child.pid) {
+            const stats = await pidusage(child.pid)
+            // stats.memory is in bytes, convert to MB
+            const currentMemory = stats.memory / (1024 * 1024)
+            if (currentMemory > maxMemory) {
+              maxMemory = currentMemory
+            }
+
+            // Check if memory limit exceeded
+            if (currentMemory > memoryLimit) {
+              memoryExceeded = true
+              clearInterval(memoryMonitor)
+              clearTimeout(timer)
+              child.kill('SIGTERM')
+            }
+          }
+        } catch (_error) {
+          // Ignore memory monitoring errors (process might have ended)
         }
-      } catch (_error) {
-        // Ignore memory monitoring errors (process might have ended)
-      }
-    }, 50) // Check every 50ms
+      }, 25) // Check every 25ms
+    }
 
     // Set up timeout
     const timer = setTimeout(() => {
@@ -290,23 +231,4 @@ const executeWithStdin = (
       })
     })
   })
-}
-
-/**
- * Clean up temporary files after execution
- */
-const cleanupFiles = async (
-  sourceFile: string,
-  executableFile: string,
-  hasExecutable: boolean
-): Promise<void> => {
-  try {
-    await unlink(sourceFile)
-    if (hasExecutable) {
-      await unlink(executableFile).catch(() => {}) // Executable might not exist if compilation failed
-    }
-    logger.info('Temporary files cleaned up')
-  } catch (error) {
-    logger.error('Failed to clean up temporary files:', error)
-  }
 }

@@ -1,3 +1,4 @@
+import { randomUUID, type UUID } from 'crypto'
 import { getTestCases } from './questionService.js'
 import { executeCode } from '../utils/codeExecutor.js'
 import { TIME_LIMIT } from '../config/index.js'
@@ -5,10 +6,42 @@ import {
   ExecutionStatus,
   SubmissionResult,
   CodeExecutionOutput,
+  Language,
+  RunMode,
 } from '../types/index.js'
 import { getLogger } from '../utils/logger.js'
+import os from 'os'
+
+import { exec } from 'child_process'
+import { promisify } from 'util'
+import { writeFile, unlink, mkdir } from 'fs/promises'
+import path from 'path'
+
+const execAsync = promisify(exec)
+
+// Temporary directory for code execution
+const TEMP_DIR = os.tmpdir()
 
 const logger = getLogger('codeExecutionService')
+
+const LANGUAGE_CONFIG = {
+  cpp: {
+    extension: '.cpp',
+    compileCmd: (filename: string, outputFile: string) =>
+      `g++ ${filename} -o ${outputFile}`,
+    executeCmd: (executablePath: string) => executablePath,
+  },
+  python: {
+    extension: '.py',
+    compileCmd: null,
+    executeCmd: (filename: string) => `python ${filename}`,
+  },
+  javascript: {
+    extension: '.cjs', // Use .cjs to support CommonJS (require)
+    compileCmd: null,
+    executeCmd: (filename: string) => `node ${filename}`,
+  },
+}
 
 /**
  * Validate user code against test cases
@@ -22,9 +55,9 @@ const logger = getLogger('codeExecutionService')
  */
 export const validateCode = async (
   question_id: string,
-  language: 'cpp' | 'python' | 'javascript',
+  language: Language,
   code_text: string,
-  mode: 'run' | 'submit'
+  mode: RunMode
 ): Promise<SubmissionResult> => {
   logger.info(
     `Starting validation for question ${question_id}, mode: ${mode}, language: ${language}`
@@ -42,6 +75,46 @@ export const validateCode = async (
 
   logger.info(`Loaded ${totalTests} test cases`)
 
+  // Step 2: Prepare execution file
+  const id: UUID = randomUUID()
+  const baseFilename = `temp_${id}`
+
+  const config = LANGUAGE_CONFIG[language]
+  const sourceFile = path.join(TEMP_DIR, `${baseFilename}${config.extension}`)
+  const executableFile = path.join(TEMP_DIR, baseFilename)
+
+  // Ensure temp directory exists
+  await mkdir(TEMP_DIR, { recursive: true })
+
+  // Write source code to temporary file
+  await writeFile(sourceFile, code_text)
+  logger.info(`Created source file: ${sourceFile}`)
+
+  // Compilation step (only for C++)
+  if (config.compileCmd) {
+    try {
+      const compileCmd = config.compileCmd(sourceFile, executableFile)
+      logger.info(`Compiling: ${compileCmd}`)
+      await execAsync(compileCmd, { timeout: 2000 })
+      logger.info('Compilation successful')
+    } catch (compileError: unknown) {
+      const error = compileError as { message?: string; stderr?: string }
+      const errorMessage = error.message || String(compileError)
+      logger.error('Compilation failed:', errorMessage)
+      unlink(sourceFile).catch(() => {})
+      // Clean up source file
+      return {
+        status: 'Compilation Error',
+        output: '',
+        error: `Compilation Error: ${error.stderr || errorMessage}`,
+        execution_time: 0,
+        memory_used: 0,
+        total_tests: 0,
+        passed_tests: 0,
+      }
+    }
+  }
+
   // Step 2: Execute code against each test case
   let passedTests = 0
   let totalExecutionTime = 0
@@ -49,12 +122,11 @@ export const validateCode = async (
 
   for (let i = 0; i < testCases.length; i++) {
     const testCase = testCases[i]
-    logger.info(`Running test case ${i + 1}/${totalTests}`)
 
     try {
       // Execute code with test case input
       const result: CodeExecutionOutput = await executeCode(
-        code_text,
+        language === 'cpp' ? executableFile : sourceFile,
         language,
         testCase.input,
         TIME_LIMIT
@@ -89,7 +161,6 @@ export const validateCode = async (
 
       if (actualOutput === expectedOutput) {
         passedTests++
-        logger.info(`Test case ${i + 1} passed`)
       } else {
         logger.info(
           `Test case ${i + 1} failed - Wrong Answer. Expected: "${expectedOutput}", Got: "${actualOutput}"`
@@ -125,6 +196,11 @@ export const validateCode = async (
   logger.info(
     `All ${totalTests} test cases passed! Total execution time: ${totalExecutionTime}ms, Max memory: ${maxMemoryUsed}MB`
   )
+
+  unlink(sourceFile)
+  if (language === 'cpp') {
+    unlink(executableFile).catch(() => {}) // Executable might not exist if compilation failed
+  }
 
   return {
     status: 'Accepted',
