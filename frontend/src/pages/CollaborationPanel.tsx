@@ -1,24 +1,23 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Paper, Box } from '@mui/material'
 import QuestionPanel from '../components/question/QuestionPanel'
-import { useAsyncEffect, useQuestion } from '../hooks'
 import CollaborationRightPanel from '../components/collaboration_space/right_panel'
 import StyledPanelResizeHandle from '../components/collaboration_space/StyledPanelResizeHandle'
 import { PanelGroup, Panel } from 'react-resizable-panels'
 import TopToolBar from '../components/collaboration_space/TopToolBar'
+import { useLocation, useParams } from 'react-router-dom'
 
 const CollaborationPanel = () => {
-  const { question, loading, error, fetchQuestionById } = useQuestion()
   const [resizeTrigger, setResizeTrigger] = useState<number | null>(null)
   const resizeTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const { roomid } = useParams<{ roomid: string }>()
+  const location = useLocation()
+  const question = location.state?.question
 
   // State for code execution
   const [executeRun, setExecuteRun] = useState<(() => void) | null>(null)
   const [executeSubmit, setExecuteSubmit] = useState<(() => void) | null>(null)
   const [executing, setExecuting] = useState(false)
-
-  // Question ID
-  const questionId = '68fba3ce8eeedf6b82ce5f5d'
 
   // Receive execute functions from CollaborationRightPanel
   const handleExecuteReady = (
@@ -31,10 +30,6 @@ const CollaborationPanel = () => {
     setExecuting(loadingState)
   }
 
-  useAsyncEffect(async () => {
-    await fetchQuestionById(questionId)
-  }, [fetchQuestionById])
-
   useEffect(() => {
     return () => {
       if (resizeTimerRef.current) {
@@ -42,6 +37,10 @@ const CollaborationPanel = () => {
       }
     }
   }, [])
+
+  if (!question) {
+    return <Box>No Question has been supplied.</Box>
+  }
 
   const handleResize = () => {
     if (resizeTimerRef.current) {
@@ -65,11 +64,7 @@ const CollaborationPanel = () => {
       >
         <PanelGroup direction={'horizontal'}>
           <Panel defaultSize={50} minSize={20} maxSize={80}>
-            <QuestionPanel
-              question={question || undefined}
-              loading={loading}
-              error={error || undefined}
-            />
+            <QuestionPanel question={question || undefined} />
           </Panel>
 
           <StyledPanelResizeHandle />
@@ -93,9 +88,9 @@ const CollaborationPanel = () => {
                   }}
                 >
                   <CollaborationRightPanel
-                    roomId={'12'}
+                    roomId={roomid ? roomid : ''}
                     resizeTrigger={resizeTrigger}
-                    questionId={questionId}
+                    questionId={question.id}
                     onExecuteReady={handleExecuteReady}
                   />
                 </Paper>

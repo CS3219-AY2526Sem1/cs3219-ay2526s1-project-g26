@@ -1,0 +1,26 @@
+services:
+  matching-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    container_name: matching-service-prod
+    restart: unless-stopped
+    ports:
+      - '4020:4020'
+    environment:
+      - NODE_ENV=production
+      - PORT=4020
+      - REDIS_URL=${REDIS_URL}
+      - BACKEND_BASE_URL=${BACKEND_BASE_URL}
+
+  matching-service-redis:
+    image: redis:8-alpine
+    container_name: matching-service-redis
+    restart: unless-stopped
+    ports:
+      - '4021:6379'
+    volumes:
+      - matching-service-redis-data:/data
+
+volumes:
+  matching-service-redis-data:

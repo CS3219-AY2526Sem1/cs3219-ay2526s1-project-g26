@@ -6,6 +6,7 @@ import {
   deleteQuestion,
   getAllQuestions,
   getQuestionById,
+  getAllCategoryAndDifficulty,
   getQuestionWithTestCases,
 } from '../services/questionService.js'
 import { authenticate } from '../middleware/auth.js'
@@ -25,6 +26,11 @@ router.get('/match', authenticate(), async (req, res) => {
     categories as string
   )
   return res.json({ success: true, question })
+})
+
+router.get('/cnd', async (_req, res) => {
+  const { categories, difficulties } = await getAllCategoryAndDifficulty()
+  return res.json({ success: true, categories, difficulties })
 })
 
 router.get('/:id', authenticate(), async (req, res) => {
