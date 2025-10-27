@@ -20,7 +20,6 @@ export const API_ENDPOINTS = {
   HISTORY: {
     GET_USER_SUBMISSIONS: '/api/history/submissions',
     GET_SUBMISSION_BY_ID: '/history/submissions/',
-    
   },
 } as const
 
