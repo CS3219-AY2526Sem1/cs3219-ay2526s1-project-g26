@@ -90,7 +90,7 @@ const CollaborationPanel = () => {
                   <CollaborationRightPanel
                     roomId={roomid ? roomid : ''}
                     resizeTrigger={resizeTrigger}
-                    questionId={question.id}
+                    questionId={question._id}
                     onExecuteReady={handleExecuteReady}
                   />
                 </Paper>

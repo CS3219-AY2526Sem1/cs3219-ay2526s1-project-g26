@@ -21,7 +21,7 @@ export const API_ENDPOINTS = {
     GET_USER_SUBMISSIONS: '/api/history/submissions',
   },
   CODE_EXECUTION: {
-    EXECUTE: '/execute/execute',
+    EXECUTE: '/api/code-execution/execute',
   },
 } as const
 
