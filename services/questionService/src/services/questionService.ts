@@ -136,6 +136,49 @@ export const getQuestionById = async (id: string): Promise<Question | null> => {
   return question
 }
 
+export const getQuestionTestCases = async (
+  id: string,
+  type: 'public' | 'private' | 'all'
+): Promise<Partial<Question>> => {
+  const pipeline = [
+    {
+      $match: { _id: new ObjectId(id) },
+    },
+    {
+      $project: {
+        _id: 0,
+        title: 1,
+        difficulty: 1,
+        categories: 1,
+        test_cases: {
+          $map: {
+            input: {
+              $filter: {
+                input: '$test_cases',
+                as: 'tc',
+                ...(type !== 'all'
+                  ? {
+                      cond: { $eq: ['$$tc.is_hidden', type === 'private'] },
+                    }
+                  : { cond: {} }),
+              },
+            },
+            as: 'tc',
+            in: {
+              input: '$$tc.input',
+              output: '$$tc.output',
+            },
+          },
+        },
+      },
+    },
+  ]
+  const results = (
+    await getQuestionCollection().aggregate(pipeline).toArray()
+  )[0] as Question
+  return results
+}
+
 export const getAllQuestions = async (
   limit: number,
   offset: number

@@ -41,7 +41,10 @@ import type { WebSocket } from 'ws'
 import type { IncomingMessage } from 'http'
 import type { Transaction } from 'yjs'
 
+import { convertUint8Array } from '../index.js'
+
 import { getLogger } from '../logger.js'
+import { verifySubmission } from '../../services/codeExecutionService.js'
 
 const logger = getLogger('y-websocket')
 
@@ -85,6 +88,7 @@ const messageAwareness = 1
 // const messageAuth = 2
 // const messageQueryAwareness = 3
 const messageEventSwitchLanguage = 4
+const messageEventCodeSubmitted = 5
 
 /**
  * @param {Uint8Array} update
@@ -243,6 +247,23 @@ const messageListener = (
           if (socket === conn) return
           socket.send(message)
         })
+        break
+      case messageEventCodeSubmitted:
+        {
+          encoding.writeVarUint(encoder, messageEventCodeSubmitted)
+          const [_, textMessage] = convertUint8Array(message)
+          const data = JSON.parse(textMessage)
+          verifySubmission(data, doc).then((ticketId: string | null) => {
+            encoding.writeVarUint8Array(
+              encoder,
+              new TextEncoder().encode(ticketId || '')
+            )
+            doc.conns.forEach((_: Set<number>, socket: WebSocket) => {
+              socket.send(encoding.toUint8Array(encoder))
+            })
+          })
+        }
+        break
     }
   } catch (err) {
     logger.error(err)

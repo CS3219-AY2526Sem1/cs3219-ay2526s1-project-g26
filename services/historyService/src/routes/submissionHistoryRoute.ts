@@ -2,9 +2,12 @@ import { Router } from 'express'
 import {
   getUserSubmission,
   getUserSubmissions,
+  insertSubmission,
 } from '../services/submissionHistoryService.js'
 import { authenticate } from '../middleware/auth.js'
 import { AppError } from '../utils/errors.js'
+import { CreateSubmissionBody } from '../models/submissionHistoryModel.js'
+import redisClient from '../database/redis.js'
 
 const router = Router()
 
@@ -30,9 +33,22 @@ router.get('/:submission_id', authenticate(), async (req, res) => {
   return res.json({ success: true, submission })
 })
 
-router.post('/', async (_req, _res) => {
-  // ignore for now until integration with submission-grading service is needed
-  // given that is called by a backend service, removing authenticate for now?
+router.post('/', async (req, res) => {
+  const body = req.body as CreateSubmissionBody
+  await insertSubmission(body)
+  return res.status(204).send()
+})
+
+router.get('/status/:ticket_id', async (req, res) => {
+  const { ticket_id } = req.params
+  if (!ticket_id) {
+    throw new AppError('Ticket ID is necessary', 401)
+  }
+  const data = await redisClient.get(ticket_id)
+  if (!data) {
+    return res.status(202).send()
+  }
+  return res.status(200).send({ success: true, result: JSON.parse(data) })
 })
 
 router.put('/:submission_id', authenticate(), async (_req, _res) => {
