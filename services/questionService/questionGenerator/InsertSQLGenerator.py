@@ -67,20 +67,8 @@ class InsertJSONGenerator:
                             print(title)
                             print(result.stderr)
                         output_file.write(output)
+                        output_file.write("\n")
                         inputs = ""
-
-                if inputs:
-                    solution_file_path = os.path.join(self.solutions_output_dir, title)
-                    result = subprocess.run(
-                        [solution_file_path],
-                        input=inputs,
-                        text=True,
-                        capture_output=True,
-                    )
-                    output = result.stdout
-                    if result.stderr:
-                        print(result.stderr)
-                    output_file.write(output)
 
     def clean_existing_outputs(self):
         def _clear_folder(folder_path):
@@ -119,16 +107,25 @@ class InsertJSONGenerator:
             with open(inputs_file_path, "r") as f:
                 inputs = f.read().strip().split("\n\n")
             with open(outputs_file_path, "r") as f:
-                outputs = f.read().strip().split("\n")
+                outputs = f.read().strip().split("\n\n")
 
             example_inputs = {ex["input"] for ex in q_data["examples"]}
 
             test_cases = []
-            for i, input_str in enumerate(inputs):
-                output_str = outputs[i] if i < len(outputs) else ""
-                is_hidden = input_str not in example_inputs
+            for example in q_data["examples"]:
                 test_cases.append(
-                    TestCase(input=input_str, output=output_str, is_hidden=is_hidden)
+                    TestCase(
+                        input=example["input"],
+                        output=example["output"],
+                        is_hidden=False,
+                    )
+                )
+            for i, input_str in enumerate(inputs):
+                if input_str in example_inputs:
+                    continue
+                output_str = outputs[i] if i < len(outputs) else ""
+                test_cases.append(
+                    TestCase(input=input_str, output=output_str, is_hidden=True)
                 )
 
             question = Question(
