@@ -11,11 +11,19 @@ import errorHandler from './middleware/errorHandler.js'
 import { createServer } from 'node:http'
 import { Server } from 'socket.io'
 import { matchingSocketHandler } from './handlers/matchingSocketHandler.js'
+import { socketAuthMiddleware } from './middleware/socketAuthMiddleware.js'
 
 const logger = getLogger('app')
 const app = express()
 const server = createServer(app)
-const io = new Server(server)
+const io = new Server(server, {
+  connectionStateRecovery: {},
+  cors: {
+    origin: '*',
+  },
+})
+
+io.use(socketAuthMiddleware())
 
 app.use(
   morgan('tiny', {
@@ -31,5 +39,5 @@ matchingSocketHandler(io)
 app.use(errorHandler)
 
 server.listen(PORT, () => {
-  console.log(`Running on Port ${PORT}`)
+  logger.info(`Running on Port ${PORT}`)
 })

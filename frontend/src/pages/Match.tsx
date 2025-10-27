@@ -1,0 +1,98 @@
+import React, { useEffect, useState } from 'react'
+import { Container, Stack } from '@mui/material'
+import { Topics } from '../components/match/topics'
+import { Difficulty } from '../components/match/difficulty'
+import { Submission } from '../components/match/submission'
+import axiosInstance from '../utils/axios'
+import { API_ENDPOINTS } from '../constants/api'
+import { useMatch } from '../hooks/useMatch'
+import { disconnectSocket, initSocket } from '../utils/matchingServiceSocket'
+import { useAsyncEffect } from '../hooks'
+
+const Match = () => {
+  const [topicsList, setTopicsList] = useState<string[]>([])
+  const [difficultyList, setDifficultyList] = useState<string[]>([])
+  const [checkedTopics, setCheckedTopics] = useState<string[]>([])
+  const [checkedDifficulties, setCheckedDifficulties] = useState<string[]>([])
+
+  const { errorMsg, matchState, onMatch, cancelMatch } = useMatch()
+
+  useEffect(() => {
+    initSocket()
+    return disconnectSocket
+  }, [])
+
+  useAsyncEffect(async () => {
+    const res = await axiosInstance.get(
+      API_ENDPOINTS.QUESTION.GET_TOPICS_AND_DIFFICULTIES
+    )
+    setTopicsList(res.data.categories)
+    setDifficultyList(res.data.difficulties)
+  }, [])
+
+  // Adds topic to checkedTopics if checking the topic, else remove the topic
+  const handleCheckTopic = (isChecked: boolean, topic: string) => {
+    if (isChecked) {
+      setCheckedTopics([...checkedTopics, topic])
+    } else {
+      setCheckedTopics(checkedTopics.filter((x) => x != topic))
+    }
+  }
+
+  // Adds difficulty to checkedDifficulty if checking the difficulty, else remove the difficulty
+  const handleCheckDifficulty = (isChecked: boolean, difficulty: string) => {
+    if (isChecked) {
+      setCheckedDifficulties([...checkedDifficulties, difficulty])
+    } else {
+      setCheckedDifficulties(checkedDifficulties.filter((x) => x != difficulty))
+    }
+  }
+
+  const handleCheckAllTopics = (isChecked: boolean) => {
+    if (isChecked) {
+      setCheckedTopics(topicsList)
+    } else {
+      setCheckedTopics([])
+    }
+  }
+
+  const handleCheckAllDifficulties = (isChecked: boolean) => {
+    if (isChecked) {
+      setCheckedDifficulties(difficultyList)
+    } else {
+      setCheckedDifficulties([])
+    }
+  }
+
+  return (
+    <Container>
+      <br></br>
+      <Stack spacing={2}>
+        <Topics
+          topicsList={topicsList}
+          checkedTopics={checkedTopics}
+          toggleTopic={handleCheckTopic}
+          toggleAllTopic={handleCheckAllTopics}
+          matchState={matchState}
+        />
+        <Difficulty
+          difficultyList={difficultyList}
+          checkedDifficulties={checkedDifficulties}
+          toggleDifficulty={handleCheckDifficulty}
+          toggleAllDifficulty={handleCheckAllDifficulties}
+          matchState={matchState}
+        />
+        <Submission
+          checkedTopics={checkedTopics}
+          checkedDifficulties={checkedDifficulties}
+          errorMsg={errorMsg}
+          matchState={matchState}
+          onMatch={onMatch}
+          cancelMatch={cancelMatch}
+        />
+      </Stack>
+    </Container>
+  )
+}
+
+export default Match

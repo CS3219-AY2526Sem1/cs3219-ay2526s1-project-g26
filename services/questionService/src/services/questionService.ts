@@ -164,6 +164,31 @@ export const getAllQuestions = async (
   }
 }
 
+export const getAllCategoryAndDifficulty = async (): Promise<{
+  categories: string[]
+  difficulties: string[]
+}> => {
+  const db = getDb()
+
+  const categoriesCollection = db.collection('categories')
+  const difficultiesCollection = db.collection('difficulties')
+
+  const categoriesDocs = await categoriesCollection
+    .find<{ name: string }>({}, { projection: { _id: 0, name: 1 } })
+    .toArray()
+
+  const difficultiesDocs = await difficultiesCollection
+    .find<{ level: string }>({}, { projection: { _id: 0, level: 1 } })
+    .toArray()
+
+  const categories = categoriesDocs.map((doc: { name: string }) => doc.name)
+  const difficulties = difficultiesDocs.map(
+    (doc: { level: string }) => doc.level
+  )
+
+  return { categories, difficulties }
+}
+
 export const updateQuestion = async (
   id: string,
   data: Partial<CreateQuestionInput>

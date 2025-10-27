@@ -1,4 +1,4 @@
-type Difficulty = 'Easy' | 'Medium' | 'Hard'
+export type Difficulty = 'Easy' | 'Medium' | 'Hard'
 
 export interface UserInfo {
   id: string
