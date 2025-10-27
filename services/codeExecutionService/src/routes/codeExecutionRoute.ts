@@ -1,7 +1,17 @@
 import { Router, Request, Response } from 'express'
-import { validateCode } from '../services/CodeExecutionService.js'
-import { ExecuteCodeRequest } from '../types/index.js'
+import { validateCode } from '../services/codeExecutionService.js'
+import {
+  ExecuteCodeRequest,
+  Question,
+  SubmissionResult,
+  Language,
+} from '../types/index.js'
 import { getLogger } from '../utils/logger.js'
+import { randomUUID } from 'crypto'
+import {
+  createSubmissionResult,
+  getQuestionWithTestCases,
+} from '../services/questionService.js'
 
 const router = Router()
 const logger = getLogger('codeExecutionRoute')
@@ -30,8 +40,13 @@ const logger = getLogger('codeExecutionRoute')
  */
 router.post('/execute', async (req: Request, res: Response) => {
   try {
-    const { question_id, language, code_text, mode }: ExecuteCodeRequest =
-      req.body
+    const {
+      question_id,
+      language,
+      code_text,
+      mode,
+      user_ids,
+    }: ExecuteCodeRequest = req.body
 
     // Validate required fields
     if (!question_id || !language || !code_text || !mode) {
@@ -57,22 +72,47 @@ router.post('/execute', async (req: Request, res: Response) => {
       `Received execution request - Question: ${question_id}, Language: ${language}, Mode: ${mode}`
     )
 
-    // Execute code and validate against test cases
-    const result = await validateCode(
-      question_id,
-      language as 'cpp' | 'python' | 'javascript',
-      code_text,
-      mode
-    )
+    const ticketId = randomUUID()
 
-    logger.info(
-      `Execution completed - Status: ${result.status}, Passed: ${result.passed_tests}/${result.total_tests}`
-    )
+    setTimeout(async () => {
+      const question: Question = await getQuestionWithTestCases(
+        question_id,
+        mode
+      )
+      const submissionResult: SubmissionResult = await validateCode(
+        question.test_cases,
+        language as Language,
+        code_text
+      )
+      const data = {
+        result: {
+          question_id, // new
+          question_title: question.title,
+          categories: question.categories,
+          difficulty: question.difficulty,
+          code: code_text,
+          language: language as Language,
+          mode,
+          ticket_id: ticketId,
+          overall_result: {
+            result: submissionResult.status,
+            max_memory_used: submissionResult.memory_used,
+            time_taken: submissionResult.execution_time,
+            error: submissionResult.error, // new
+            output: submissionResult.output, // new
+            passed_tests: submissionResult.passed_tests, // new
+            total_tests: submissionResult.total_tests, // new
+          },
+        },
+        user_ids,
+      }
+      await createSubmissionResult(data)
+    }, 50)
 
     // Return result
     return res.status(200).json({
       success: true,
-      result,
+      ticketId,
     })
   } catch (error) {
     logger.error(

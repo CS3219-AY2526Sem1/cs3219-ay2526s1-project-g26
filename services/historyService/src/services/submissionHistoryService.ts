@@ -8,6 +8,8 @@ import {
   SingleSubmissionHistoryResponse,
 } from '../models/submissionHistoryModel.js'
 import { ObjectId } from 'mongodb'
+import { CreateSubmissionBody } from '../models/submissionHistoryModel.js'
+import redisClient from '../database/redis.js'
 
 const getSubmissionsCollection = () =>
   getDb().collection<Submission>('submissions')
@@ -106,4 +108,19 @@ export const getUserSubmission = async (
     throw new AppError('Requested submission not found', 404)
   }
   return { submission: submissions[0] }
+}
+
+export const insertSubmission = async (data: CreateSubmissionBody) => {
+  const result = await getSubmissionsCollection().insertOne(data.result)
+  if (data.user_ids.length !== 2) {
+    return
+  }
+  await redisClient.set(data.result.ticket_id, JSON.stringify(data.result), {
+    EX: 15,
+  })
+  const submissionId = result.insertedId.toString()
+  await getUserSubmissionsCollection().insertMany([
+    { user_id: data.user_ids[0], submission_id: submissionId },
+    { user_id: data.user_ids[1], submission_id: submissionId },
+  ])
 }

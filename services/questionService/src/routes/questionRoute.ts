@@ -51,11 +51,11 @@ router.get('/:id/test-cases', async (req, res) => {
     throw new AppError('Invalid test cases type', 401)
   }
 
-  const testCases = await getQuestionTestCases(id, type)
-  if (!testCases) {
+  const question = await getQuestionTestCases(id, type)
+  if (!question) {
     throw new AppError('Question not found', 404)
   }
-  return res.json({ success: true, testCases })
+  return res.json({ success: true, question })
 })
 
 router.get('/', authenticate({ shouldBeAdmin: true }), async (req, res) => {

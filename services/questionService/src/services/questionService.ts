@@ -139,7 +139,7 @@ export const getQuestionById = async (id: string): Promise<Question | null> => {
 export const getQuestionTestCases = async (
   id: string,
   type: 'public' | 'private' | 'all'
-): Promise<Omit<TestCase, 'is_hidden'>[]> => {
+): Promise<Partial<Question>> => {
   const pipeline = [
     {
       $match: { _id: new ObjectId(id) },
@@ -147,6 +147,9 @@ export const getQuestionTestCases = async (
     {
       $project: {
         _id: 0,
+        title: 1,
+        difficulty: 1,
+        categories: 1,
         test_cases: {
           $map: {
             input: {
@@ -172,7 +175,7 @@ export const getQuestionTestCases = async (
   ]
   const results = (
     await getQuestionCollection().aggregate(pipeline).toArray()
-  )[0].test_cases as Omit<TestCase, 'is_hidden'>[]
+  )[0] as Question
   return results
 }
 

@@ -1,17 +1,27 @@
-import { RunMode, TestCase } from '../types/index.js'
-import { QUESTION_SERVICE_URL } from '../config/index.js'
+import { Question, RunMode, CreateSubmissionResult } from '../types/index.js'
+import { QUESTION_SERVICE_URL, HISTORY_SERVICE_URL } from '../config/index.js'
 
-export const getTestCases = async (
+export const getQuestionWithTestCases = async (
   questionId: string,
   mode: RunMode
-): Promise<TestCase[]> => {
+): Promise<Question> => {
   const res = await fetch(
     `${QUESTION_SERVICE_URL}/${questionId}/test-cases?type=${mode === 'run' ? 'public' : 'all'}`
   )
   const result = (await res.json()) as {
     success: boolean
-    testCases: TestCase[]
+    question: Question
   }
 
-  return result.testCases
+  return result.question
+}
+
+export const createSubmissionResult = async (data: CreateSubmissionResult) => {
+  await fetch(`${HISTORY_SERVICE_URL}/submissions`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
 }

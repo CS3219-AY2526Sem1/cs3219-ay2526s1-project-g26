@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useMemo } from 'react'
 import { Paper, Box } from '@mui/material'
 import QuestionPanel from '../components/question/QuestionPanel'
 import CollaborationRightPanel from '../components/collaboration_space/right_panel'
@@ -6,29 +6,26 @@ import StyledPanelResizeHandle from '../components/collaboration_space/StyledPan
 import { PanelGroup, Panel } from 'react-resizable-panels'
 import TopToolBar from '../components/collaboration_space/TopToolBar'
 import { useLocation, useParams } from 'react-router-dom'
+import { WEBSOCKET_BASE_URL, WEBSOCKET_URL } from '../constants/api.ts'
+import { setSelectedLanguage } from '../store/slices/collaborationSlice.ts'
+import * as Y from 'yjs'
+import { useDispatch, useSelector } from 'react-redux'
+import { WebsocketProvider } from '../utils/y-websocket.js'
+import { setIsCodeExecuting } from '../store/slices/collaborationSlice.ts'
+import { RootState } from '../store/index.ts'
+import submissionService from '../services/submissionsService.ts'
+import { setOpen as setNotificationBarOpen } from '../store/slices/notificationSnackbarSlice.ts'
 
 const CollaborationPanel = () => {
+  const uid = useSelector((state: RootState) => state.user.user?.id)
   const [resizeTrigger, setResizeTrigger] = useState<number | null>(null)
   const resizeTimerRef = useRef<NodeJS.Timeout | null>(null)
   const { roomid } = useParams<{ roomid: string }>()
   const location = useLocation()
   const question = location.state?.question
-
-  // State for code execution
-  const [executeRun, setExecuteRun] = useState<(() => void) | null>(null)
-  const [executeSubmit, setExecuteSubmit] = useState<(() => void) | null>(null)
-  const [executing, setExecuting] = useState(false)
-
-  // Receive execute functions from CollaborationRightPanel
-  const handleExecuteReady = (
-    runFn: () => void,
-    submitFn: () => void,
-    loadingState: boolean
-  ) => {
-    setExecuteRun(() => runFn)
-    setExecuteSubmit(() => submitFn)
-    setExecuting(loadingState)
-  }
+  const [provider, setProvider] = useState<WebsocketProvider | null>(null)
+  const dispatch = useDispatch()
+  const ydoc = useMemo(() => new Y.Doc(), [])
 
   useEffect(() => {
     return () => {
@@ -37,6 +34,48 @@ const CollaborationPanel = () => {
       }
     }
   }, [])
+
+  useEffect(() => {
+    if (!roomid) return
+    const provider = new WebsocketProvider(
+      `${WEBSOCKET_BASE_URL}${WEBSOCKET_URL.COLLABORATION}`,
+      roomid,
+      ydoc,
+      {
+        params: {
+          token: localStorage.getItem('authToken') || '',
+        },
+      },
+      {
+        onSwitchLanguage: (language) => {
+          dispatch(setSelectedLanguage(language))
+        },
+        onCodeSubmitted: (ticketId) => {
+          dispatch(setIsCodeExecuting(true))
+          const n = setInterval(async () => {
+            const result =
+              await submissionService.getSubmissionStatusByTicketId(ticketId!)
+            if (!result) return
+            dispatch(
+              setNotificationBarOpen({
+                message: JSON.stringify(result),
+                severity: 'success',
+              })
+            )
+            dispatch(setIsCodeExecuting(false))
+            clearInterval(n)
+          }, 500)
+          setTimeout(() => clearInterval(n), 30000)
+        },
+      }
+    )
+    setProvider(provider)
+    provider.awareness.setLocalStateField('id', uid)
+    return () => {
+      provider?.destroy()
+      ydoc.destroy()
+    }
+  }, [ydoc, roomid, dispatch])
 
   if (!question) {
     return <Box>No Question has been supplied.</Box>
@@ -54,11 +93,7 @@ const CollaborationPanel = () => {
 
   return (
     <>
-      <TopToolBar
-        onRun={executeRun || (() => {})}
-        onSubmit={executeSubmit || (() => {})}
-        loading={executing}
-      />
+      <TopToolBar provider={provider} questionId={question._id} />
       <Box
         sx={{ height: 'calc(100vh - 64px)', overflowY: 'inherit', padding: 1 }}
       >
@@ -88,10 +123,8 @@ const CollaborationPanel = () => {
                   }}
                 >
                   <CollaborationRightPanel
-                    roomId={roomid ? roomid : ''}
                     resizeTrigger={resizeTrigger}
-                    questionId={question._id}
-                    onExecuteReady={handleExecuteReady}
+                    provider={provider!}
                   />
                 </Paper>
               </Panel>

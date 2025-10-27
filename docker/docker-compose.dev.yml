@@ -181,6 +181,7 @@ services:
       - PORT=4040
       - DATABASE_URL=mongodb://history-service-db:27017/history_db
       - USER_SERVICE_URL=http://user-service:4000
+      - REDIS_URL=redis://history-service-redis:6379
     depends_on:
       - history-service-db
     ports:
@@ -196,6 +197,15 @@ services:
     volumes:
       - history-service-db-data:/data/db
       - ../services/historyService/src/database/init:/docker-entrypoint-initdb.d
+
+  history-service-redis:
+    image: redis:8-alpine
+    container_name: history-service-redis
+    restart: unless-stopped
+    ports:
+      - "4042:6379"
+    volumes:
+      - history-service-redis-data:/data
 
   # Code Execution Service
   code-execution-service:
@@ -220,3 +230,4 @@ volumes:
   question-service-db-data:
   matching-service-redis-data:
   history-service-db-data:
+  history-service-redis-data:

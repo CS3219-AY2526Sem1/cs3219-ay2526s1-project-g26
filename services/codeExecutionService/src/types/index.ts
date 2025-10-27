@@ -35,9 +35,40 @@ export interface ExecuteCodeRequest {
   language: string
   code_text: string
   mode: 'run' | 'submit'
+  user_ids: string[]
 }
 
 export interface TestCase {
   input: string
   output: string
+}
+
+export interface Question {
+  title: string
+  difficulty: string
+  categories: string[]
+  test_cases: TestCase[]
+}
+
+export interface CreateSubmissionResult {
+  result: {
+    question_id: string
+    question_title: string
+    categories: string[]
+    difficulty: string
+    code: string
+    language: Language
+    mode: RunMode
+    ticket_id: string
+    overall_result: {
+      result: ExecutionStatus
+      max_memory_used?: number
+      time_taken?: number
+      error?: string
+      output: string | undefined
+      passed_tests: number
+      total_tests: number
+    }
+  }
+  user_ids: string[]
 }

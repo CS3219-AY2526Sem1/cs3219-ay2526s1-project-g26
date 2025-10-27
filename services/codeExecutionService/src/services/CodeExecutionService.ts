@@ -1,5 +1,4 @@
 import { randomUUID, type UUID } from 'crypto'
-import { getTestCases } from './questionService.js'
 import { executeCode } from '../utils/codeExecutor.js'
 import { TIME_LIMIT } from '../config/index.js'
 import {
@@ -7,7 +6,7 @@ import {
   SubmissionResult,
   CodeExecutionOutput,
   Language,
-  RunMode,
+  TestCase,
 } from '../types/index.js'
 import { getLogger } from '../utils/logger.js'
 import os from 'os'
@@ -54,28 +53,11 @@ const LANGUAGE_CONFIG = {
  * @returns SubmissionResult with statistics and status
  */
 export const validateCode = async (
-  question_id: string,
+  testCases: TestCase[],
   language: Language,
-  code_text: string,
-  mode: RunMode
+  code_text: string
 ): Promise<SubmissionResult> => {
-  logger.info(
-    `Starting validation for question ${question_id}, mode: ${mode}, language: ${language}`
-  )
-
-  // Step 1: Get test cases from database
-  const testCases = await getTestCases(question_id, mode)
-  const totalTests = testCases.length
-
-  if (totalTests === 0) {
-    // This should never happen - every question must have test cases
-    logger.error(`No test cases found for question ${question_id}`)
-    throw new Error(`Question ${question_id} has no test cases`)
-  }
-
-  logger.info(`Loaded ${totalTests} test cases`)
-
-  // Step 2: Prepare execution file
+  // Step 1: Prepare execution file
   const id: UUID = randomUUID()
   const baseFilename = `temp_${id}`
 
@@ -147,7 +129,7 @@ export const validateCode = async (
         return {
           status,
           passed_tests: passedTests,
-          total_tests: totalTests,
+          total_tests: testCases.length,
           execution_time: totalExecutionTime,
           memory_used: maxMemoryUsed > 0 ? maxMemoryUsed : undefined,
           error: result.error,
@@ -169,7 +151,7 @@ export const validateCode = async (
         return {
           status: 'Wrong Answer',
           passed_tests: passedTests,
-          total_tests: totalTests,
+          total_tests: testCases.length,
           execution_time: totalExecutionTime,
           memory_used: maxMemoryUsed > 0 ? maxMemoryUsed : undefined,
           output: actualOutput,
@@ -184,7 +166,7 @@ export const validateCode = async (
       return {
         status: 'Runtime Error',
         passed_tests: passedTests,
-        total_tests: totalTests,
+        total_tests: testCases.length,
         execution_time: totalExecutionTime,
         memory_used: maxMemoryUsed > 0 ? maxMemoryUsed : undefined,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -194,7 +176,7 @@ export const validateCode = async (
 
   // Step 5: All test cases passed!
   logger.info(
-    `All ${totalTests} test cases passed! Total execution time: ${totalExecutionTime}ms, Max memory: ${maxMemoryUsed}MB`
+    `All ${testCases.length} test cases passed! Total execution time: ${totalExecutionTime}ms, Max memory: ${maxMemoryUsed}MB`
   )
 
   unlink(sourceFile)
@@ -205,7 +187,7 @@ export const validateCode = async (
   return {
     status: 'Accepted',
     passed_tests: passedTests,
-    total_tests: totalTests,
+    total_tests: testCases.length,
     execution_time: totalExecutionTime,
     memory_used: maxMemoryUsed > 0 ? maxMemoryUsed : undefined,
   }

@@ -10,6 +10,8 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=4040
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
 
   db:
     image: mongo:8.0
@@ -20,5 +22,14 @@ services:
       - history-service-db-data:/data/db
       - ./src/database/init:/docker-entrypoint-initdb.d
 
+  redis:
+    image: redis:8-alpine
+    container_name: history-service-redis
+    restart: unless-stopped
+    ports:
+      - '4021:6379'
+    volumes:
+      - history-service-redis-data:/data
 volumes:
-  history_service-db-data:
+  history-service-db-data:
+  history-service-redis-data:
