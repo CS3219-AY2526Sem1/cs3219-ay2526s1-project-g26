@@ -1,5 +1,4 @@
 import { Router, Request, Response } from 'express'
-import { validateCode } from '../services/codeExecutionService.js'
 import {
   ExecuteCodeRequest,
   Question,
@@ -12,6 +11,7 @@ import {
   createSubmissionResult,
   getQuestionWithTestCases,
 } from '../services/questionService.js'
+import { validateCode } from '../services/codeExecutionService.js'
 
 const router = Router()
 const logger = getLogger('codeExecutionRoute')
