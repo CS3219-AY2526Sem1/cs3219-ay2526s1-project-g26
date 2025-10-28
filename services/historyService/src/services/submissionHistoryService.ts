@@ -5,6 +5,7 @@ import {
   SubmissionHistoryResponse,
   SubmissionSummary,
   SubmissionDetailsResponse,
+  Submission,
 } from '../models/submissionHistoryModel.js'
 import { ObjectId } from 'mongodb'
 import { CreateSubmissionBody } from '../models/submissionHistoryModel.js'
@@ -12,6 +13,9 @@ import redisClient from '../database/redis.js'
 
 const getUserSubmissionsCollection = () =>
   getDb().collection<UserSubmission>('user_submissions')
+
+const getSubmissionsCollection = () =>
+  getDb().collection<Submission>('user_submissions')
 
 export const getUserSubmissions = async (
   userId: string,
