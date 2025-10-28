@@ -1,6 +1,5 @@
 FROM node:18-alpine AS builder
 
-# Install compilers needed for build (if any native dependencies)
 RUN apk add --no-cache g++ python3 make
 
 WORKDIR /app
@@ -17,7 +16,6 @@ RUN ls -la dist/
 
 FROM node:18-alpine
 
-# Install compilers and runtime environments for C++, Python, JavaScript
 RUN apk add --no-cache \
     g++ \
     python3
