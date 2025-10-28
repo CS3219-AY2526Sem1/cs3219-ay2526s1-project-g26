@@ -24,6 +24,16 @@
     ],
     "test_cases": [
       {
+        "input": "4 9\n2 7 11 15",
+        "output": "0 1",
+        "is_hidden": false
+      },
+      {
+        "input": "3 6\n3 2 4",
+        "output": "1 2",
+        "is_hidden": false
+      },
+      {
         "input": "6 4\n18 3 1 1 15 25",
         "output": "1 2",
         "is_hidden": true
@@ -297,6 +307,16 @@
     "constraints": [],
     "hints": [],
     "test_cases": [
+      {
+        "input": "6 2\n3 2 1 5 6 4",
+        "output": "5",
+        "is_hidden": false
+      },
+      {
+        "input": "9 4\n3 2 3 1 2 4 5 5 6",
+        "output": "4",
+        "is_hidden": false
+      },
       {
         "input": "3 1\n48 44 4",
         "output": "48",
@@ -853,6 +873,16 @@
     "hints": [],
     "test_cases": [
       {
+        "input": "4 5\n1 3 5 6",
+        "output": "2",
+        "is_hidden": false
+      },
+      {
+        "input": "4 2\n1 3 5 6",
+        "output": "1",
+        "is_hidden": false
+      },
+      {
         "input": "5 3\n1 2 4 5 6",
         "output": "2",
         "is_hidden": true
@@ -1132,6 +1162,16 @@
     "hints": [],
     "test_cases": [
       {
+        "input": "5\n2 3 1 1 4",
+        "output": "YES",
+        "is_hidden": false
+      },
+      {
+        "input": "5\n3 2 1 0 4",
+        "output": "NO",
+        "is_hidden": false
+      },
+      {
         "input": "5\n2 3 2 1 4",
         "output": "YES",
         "is_hidden": true
@@ -1401,6 +1441,16 @@
     "hints": [],
     "test_cases": [
       {
+        "input": "4 5\n1 1 1 1 0\n1 1 0 1 0\n1 1 0 0 0\n0 0 0 0 0",
+        "output": "1",
+        "is_hidden": false
+      },
+      {
+        "input": "4 5\n1 1 0 0 0 \n1 1 0 0 0\n0 0 1 0 0\n0 0 0 1 1",
+        "output": "3",
+        "is_hidden": false
+      },
+      {
         "input": "3 3\n1 1 0\n0 1 0\n1 0 1",
         "output": "3",
         "is_hidden": true
@@ -1669,6 +1719,16 @@
     "constraints": [],
     "hints": [],
     "test_cases": [
+      {
+        "input": "12\n0 1 0 2 1 0 1 3 2 1 2 1",
+        "output": "6",
+        "is_hidden": false
+      },
+      {
+        "input": "6\n4 2 0 3 2 5",
+        "output": "9",
+        "is_hidden": false
+      },
       {
         "input": "12\n3 1 0 2 1 0 1 2 2 1 2 1",
         "output": "8",
@@ -1944,6 +2004,16 @@
     "hints": [],
     "test_cases": [
       {
+        "input": "5 4\nTFTF\nTFFF\nTFTT\nTFFT\nTFTF",
+        "output": "2",
+        "is_hidden": false
+      },
+      {
+        "input": "3 5\nTFTFT\nTFTFT\nTFTFT",
+        "output": "5",
+        "is_hidden": false
+      },
+      {
         "input": "5 4\nTFTF\nTFFT\nFFTT\nTFFT\nTFTF",
         "output": "3",
         "is_hidden": true
@@ -2213,11 +2283,6 @@
     "hints": ["Use a stack data structure to keep track of open brackets."],
     "test_cases": [
       {
-        "input": "()",
-        "output": "YES",
-        "is_hidden": true
-      },
-      {
         "input": "()[]{}",
         "output": "YES",
         "is_hidden": false
@@ -2231,6 +2296,11 @@
         "input": "([)]",
         "output": "NO",
         "is_hidden": false
+      },
+      {
+        "input": "()",
+        "output": "YES",
+        "is_hidden": true
       },
       {
         "input": "{[]}",
@@ -2753,6 +2823,16 @@
     ],
     "test_cases": [
       {
+        "input": "9\n-2 1 -3 4 -1 2 1 -5 4",
+        "output": "6",
+        "is_hidden": false
+      },
+      {
+        "input": "5\n5 4 -1 7 8",
+        "output": "23",
+        "is_hidden": false
+      },
+      {
         "input": "Of course. Here are the input and C++ solution files for the \"Maximum Subarray\" problem.",
         "output": "23",
         "is_hidden": true
@@ -2761,11 +2841,6 @@
         "input": "Input File: maximum_subarray.in\n9\n-2 1 -3 4 -1 2 1 -5 4",
         "output": "1",
         "is_hidden": true
-      },
-      {
-        "input": "5\n5 4 -1 7 8",
-        "output": "-1",
-        "is_hidden": false
       },
       {
         "input": "1\n1",
@@ -2881,11 +2956,6 @@
         "input": "5\n1 -2 3 -4 5",
         "output": "1",
         "is_hidden": true
-      },
-      {
-        "input": "9\n-2 1 -3 4 -1 2 1 -5 4",
-        "output": "1",
-        "is_hidden": false
       },
       {
         "input": "11\n1 -1 1 -1 1 -1 1 -1 1 -1 1",
@@ -3300,11 +3370,6 @@
         "input": "4\n4 3 2 1",
         "output": "NO",
         "is_hidden": true
-      },
-      {
-        "input": "4\n1 2 3 1",
-        "output": "YES",
-        "is_hidden": false
       },
       {
         "input": "2\n-10 -10",
@@ -4229,77 +4294,77 @@
     "test_cases": [
       {
         "input": "3\n1 2 3\n4 5 6\n7 8 9",
-        "output": "7 4 1",
+        "output": "7 4 1\n8 5 2\n9 6 3",
         "is_hidden": false
       },
       {
         "input": "4\n5 1 9 11\n2 4 8 10\n13 3 6 7\n15 14 12 16",
-        "output": "8 5 2",
+        "output": "15 13 2 5\n14 3 4 1\n12 6 8 9\n16 7 10 11",
         "is_hidden": true
       },
       {
         "input": "1\n1",
-        "output": "9 6 3",
-        "is_hidden": true
-      },
-      {
-        "input": "2\n1 2\n3 4",
-        "output": "15 13 2 5",
-        "is_hidden": true
-      },
-      {
-        "input": "2\n-1 -2\n-3 -4",
-        "output": "14 3 4 1",
-        "is_hidden": true
-      },
-      {
-        "input": "5\n1 2 3 4 5\n6 7 8 9 10\n11 12 13 14 15\n16 17 18 19 20\n21 22 23 24 25",
-        "output": "12 6 8 9",
-        "is_hidden": true
-      },
-      {
-        "input": "3\n0 0 0\n0 0 0\n0 0 0",
-        "output": "16 7 10 11",
-        "is_hidden": true
-      },
-      {
-        "input": "4\n-1 2 -3 4\n5 -6 7 -8\n-9 10 -11 12\n13 -14 15 -16",
         "output": "1",
         "is_hidden": true
       },
       {
+        "input": "2\n1 2\n3 4",
+        "output": "3 1\n4 2",
+        "is_hidden": true
+      },
+      {
+        "input": "2\n-1 -2\n-3 -4",
+        "output": "-3 -1\n-4 -2",
+        "is_hidden": true
+      },
+      {
+        "input": "5\n1 2 3 4 5\n6 7 8 9 10\n11 12 13 14 15\n16 17 18 19 20\n21 22 23 24 25",
+        "output": "21 16 11 6 1\n22 17 12 7 2\n23 18 13 8 3\n24 19 14 9 4\n25 20 15 10 5",
+        "is_hidden": true
+      },
+      {
+        "input": "3\n0 0 0\n0 0 0\n0 0 0",
+        "output": "0 0 0\n0 0 0\n0 0 0",
+        "is_hidden": true
+      },
+      {
+        "input": "4\n-1 2 -3 4\n5 -6 7 -8\n-9 10 -11 12\n13 -14 15 -16",
+        "output": "13 -9 5 -1\n-14 10 -6 2\n15 -11 7 -3\n-16 12 -8 4",
+        "is_hidden": true
+      },
+      {
         "input": "3\n10 20 30\n40 50 60\n70 80 90",
-        "output": "3 1",
+        "output": "70 40 10\n80 50 20\n90 60 30",
         "is_hidden": true
       },
       {
         "input": "5\n1 1 1 1 1\n2 2 2 2 2\n3 3 3 3 3\n4 4 4 4 4\n5 5 5 5 5",
-        "output": "4 2",
+        "output": "5 4 3 2 1\n5 4 3 2 1\n5 4 3 2 1\n5 4 3 2 1\n5 4 3 2 1",
         "is_hidden": true
       },
       {
         "input": "2\n100 200\n300 400",
-        "output": "-3 -1",
+        "output": "300 100\n400 200",
         "is_hidden": true
       },
       {
         "input": "4\n1 0 0 0\n0 1 0 0\n0 0 1 0\n0 0 0 1",
-        "output": "-4 -2",
+        "output": "0 0 0 1\n0 0 1 0\n0 1 0 0\n1 0 0 0",
         "is_hidden": true
       },
       {
         "input": "3\n-9 -8 -7\n-6 -5 -4\n-3 -2 -1",
-        "output": "21 16 11 6 1",
+        "output": "-3 -6 -9\n-2 -5 -8\n-1 -4 -7",
         "is_hidden": true
       },
       {
         "input": "6\n1 2 3 4 5 6\n7 8 9 10 11 12\n13 14 15 16 17 18\n19 20 21 22 23 24\n25 26 27 28 29 30\n31 32 33 34 35 36",
-        "output": "22 17 12 7 2",
+        "output": "31 25 19 13 7 1\n32 26 20 14 8 2\n33 27 21 15 9 3\n34 28 22 16 10 4\n35 29 23 17 11 5\n36 30 24 18 12 6",
         "is_hidden": true
       },
       {
         "input": "2\n0 1\n1 0",
-        "output": "23 18 13 8 3",
+        "output": "1 0\n0 1",
         "is_hidden": true
       }
     ]
@@ -4615,6 +4680,11 @@
         "is_hidden": false
       },
       {
+        "input": "applepenapple\n2\naapl\npen",
+        "output": "NO",
+        "is_hidden": false
+      },
+      {
         "input": "applepenapple\n3\napple\npen\napplepen",
         "output": "YES",
         "is_hidden": true
@@ -4887,257 +4957,257 @@
     "test_cases": [
       {
         "input": "4 7\n2 3 6 7",
-        "output": "2 2 3",
+        "output": "2 2 3\n7",
         "is_hidden": false
       },
       {
         "input": "3 8\n2 3 5",
-        "output": "7",
+        "output": "2 2 2 2\n2 3 3\n3 5",
         "is_hidden": true
       },
       {
         "input": "1 1\n2",
-        "output": "2 2 2 2",
+        "output": "",
         "is_hidden": true
       },
       {
         "input": "2 1\n2 3",
-        "output": "2 3 3",
+        "output": "2 2 2 3\n2 3 4\n3 3 3",
         "is_hidden": true
       },
       {
         "input": "3 9\n2 3 4",
-        "output": "3 5",
+        "output": "\n2 2 2 2 2 2\n2 2 2 2 4\n2 2 2 3 3\n2 2 2 6\n2 2 3 5\n2 2 4 4\n2 3 3 4\n2 4 6\n2 5 5\n3 3 3 3\n3 3 6\n3 4 5\n4 4 4\n6 6",
         "is_hidden": true
       },
       {
         "input": "4 1\n2 3 4 5",
-        "output": "2 2 2 3",
-        "is_hidden": true
-      },
-      {
-        "input": "5 12\n2 3 4 5 6",
-        "output": "2 3 4",
-        "is_hidden": true
-      },
-      {
-        "input": "2 7\n2 3",
-        "output": "3 3 3",
-        "is_hidden": true
-      },
-      {
-        "input": "3 1\n1 2 3",
-        "output": "2 2 2 2 2 2",
-        "is_hidden": true
-      },
-      {
-        "input": "4 15\n2 4 6 8",
-        "output": "2 2 2 2 4",
-        "is_hidden": true
-      },
-      {
-        "input": "1 5\n5",
-        "output": "2 2 2 3 3",
-        "is_hidden": true
-      },
-      {
-        "input": "6 20\n2 4 6 8 10 12",
-        "output": "2 2 2 6",
-        "is_hidden": true
-      },
-      {
-        "input": "2 5\n2 3",
-        "output": "2 2 3 5",
-        "is_hidden": true
-      },
-      {
-        "input": "3 100\n10 20 30",
-        "output": "2 2 4 4",
-        "is_hidden": true
-      },
-      {
-        "input": "4 3\n4 5 6 7",
-        "output": "2 3 3 4",
-        "is_hidden": true
-      },
-      {
-        "input": "5 10\n2 3 5 7 8",
-        "output": "2 4 6",
-        "is_hidden": true
-      },
-      {
-        "input": "2 18\n3 6",
-        "output": "2 5 5",
-        "is_hidden": true
-      },
-      {
-        "input": "3 13\n3 4 5",
-        "output": "3 3 3 3",
-        "is_hidden": true
-      },
-      {
-        "input": "4 25\n5 10 15 20",
-        "output": "3 3 6",
-        "is_hidden": true
-      },
-      {
-        "input": "1 10\n3",
-        "output": "3 4 5",
-        "is_hidden": true
-      },
-      {
-        "input": "5 22\n2 4 5 8 10",
-        "output": "4 4 4",
-        "is_hidden": true
-      },
-      {
-        "input": "2 6\n2 4",
-        "output": "6 6",
-        "is_hidden": true
-      },
-      {
-        "input": "3 11\n2 4 6",
         "output": "2 2 3",
         "is_hidden": true
       },
       {
-        "input": "4 16\n2 4 8 16",
+        "input": "5 12\n2 3 4 5 6",
         "output": "1",
         "is_hidden": true
       },
       {
+        "input": "2 7\n2 3",
+        "output": "\n5",
+        "is_hidden": true
+      },
+      {
+        "input": "3 1\n1 2 3",
+        "output": "2 2 2 2 2 2 2 2 2 2\n2 2 2 2 2 2 2 2 4\n2 2 2 2 2 2 2 6\n2 2 2 2 2 2 4 4\n2 2 2 2 2 2 8\n2 2 2 2 2 4 6\n2 2 2 2 2 10\n2 2 2 2 4 4 4\n2 2 2 2 4 8\n2 2 2 2 6 6\n2 2 2 2 12\n2 2 2 4 4 6\n2 2 2 4 10\n2 2 2 6 8\n2 2 4 4 4 4\n2 2 4 4 8\n2 2 4 6 6\n2 2 4 12\n2 2 6 10\n2 2 8 8\n2 4 4 4 6\n2 4 4 10\n2 4 6 8\n2 6 6 6\n2 6 12\n2 8 10\n4 4 4 4 4\n4 4 4 8\n4 4 6 6\n4 4 12\n4 6 10\n4 8 8\n6 6 8\n8 12\n10 10",
+        "is_hidden": true
+      },
+      {
+        "input": "4 15\n2 4 6 8",
+        "output": "2 3",
+        "is_hidden": true
+      },
+      {
+        "input": "1 5\n5",
+        "output": "10 10 10 10 10 10 10 10 10 10\n10 10 10 10 10 10 10 10 20\n10 10 10 10 10 10 10 30\n10 10 10 10 10 10 20 20\n10 10 10 10 10 20 30\n10 10 10 10 20 20 20\n10 10 10 10 30 30\n10 10 10 20 20 30\n10 10 20 20 20 20\n10 10 20 30 30\n10 20 20 20 30\n10 30 30 30\n20 20 20 20 20\n20 20 30 30",
+        "is_hidden": true
+      },
+      {
+        "input": "6 20\n2 4 6 8 10 12",
+        "output": "\n2 2 2 2 2\n2 2 3 3\n2 3 5\n2 8\n3 7\n5 5",
+        "is_hidden": true
+      },
+      {
+        "input": "2 5\n2 3",
+        "output": "3 3 3 3 3 3\n3 3 3 3 6\n3 3 6 6\n6 6 6",
+        "is_hidden": true
+      },
+      {
+        "input": "3 100\n10 20 30",
+        "output": "3 3 3 4\n3 5 5\n4 4 5",
+        "is_hidden": true
+      },
+      {
+        "input": "4 3\n4 5 6 7",
+        "output": "5 5 5 5 5\n5 5 5 10\n5 5 15\n5 10 10\n5 20\n10 15",
+        "is_hidden": true
+      },
+      {
+        "input": "5 10\n2 3 5 7 8",
+        "output": "\n2 2 2 2 2 2 2 2 2 2 2\n2 2 2 2 2 2 2 2 2 4\n2 2 2 2 2 2 2 4 4\n2 2 2 2 2 2 2 8\n2 2 2 2 2 2 5 5\n2 2 2 2 2 2 10\n2 2 2 2 2 4 4 4\n2 2 2 2 2 4 8\n2 2 2 2 4 5 5\n2 2 2 2 4 10\n2 2 2 4 4 4 4\n2 2 2 4 4 8\n2 2 2 8 8\n2 2 4 4 5 5\n2 2 4 4 10\n2 2 5 5 8\n2 2 8 10\n2 4 4 4 4 4\n2 4 4 4 8\n2 4 8 8\n2 5 5 5 5\n2 5 5 10\n2 10 10\n4 4 4 5 5\n4 4 4 10\n4 5 5 8\n4 8 10",
+        "is_hidden": true
+      },
+      {
+        "input": "2 18\n3 6",
+        "output": "2 2 2\n2 4",
+        "is_hidden": true
+      },
+      {
+        "input": "3 13\n3 4 5",
+        "output": "\n2 2 2 2 2 2 2 2\n2 2 2 2 2 2 4\n2 2 2 2 4 4\n2 2 2 2 8\n2 2 4 4 4\n2 2 4 8\n4 4 4 4\n4 4 8\n8 8\n16",
+        "is_hidden": true
+      },
+      {
+        "input": "4 25\n5 10 15 20",
+        "output": "\n3 3 3 3 3 3 3 3 3 3\n3 3 3 3 3 3 3 3 6\n3 3 3 3 3 3 3 9\n3 3 3 3 3 3 6 6\n3 3 3 3 3 3 12\n3 3 3 3 3 6 9\n3 3 3 3 3 15\n3 3 3 3 6 6 6\n3 3 3 3 6 12\n3 3 3 3 9 9\n3 3 3 6 6 9\n3 3 3 6 15\n3 3 3 9 12\n3 3 6 6 6 6\n3 3 6 6 12\n3 3 6 9 9\n3 3 9 15\n3 3 12 12\n3 6 6 6 9\n3 6 6 15\n3 6 9 12\n3 9 9 9\n3 12 15\n6 6 6 6 6\n6 6 6 12\n6 6 9 9\n6 9 15\n6 12 12\n9 9 12\n15 15",
+        "is_hidden": true
+      },
+      {
+        "input": "1 10\n3",
+        "output": "3 7",
+        "is_hidden": true
+      },
+      {
+        "input": "5 22\n2 4 5 8 10",
+        "output": "\n3 3 3 5\n5 9\n7 7",
+        "is_hidden": true
+      },
+      {
+        "input": "2 6\n2 4",
+        "output": "4 4",
+        "is_hidden": true
+      },
+      {
+        "input": "3 11\n2 4 6",
+        "output": "8 8 8 8 8\n8 8 12 12\n8 10 10 12\n8 12 20\n10 10 10 10\n10 10 20\n10 15 15\n20 20",
+        "is_hidden": true
+      },
+      {
+        "input": "4 16\n2 4 8 16",
+        "output": "5 7",
+        "is_hidden": true
+      },
+      {
         "input": "1 99\n10",
-        "output": "5",
+        "output": "7 7 7\n7 14\n21",
         "is_hidden": true
       },
       {
         "input": "5 30\n3 6 9 12 15",
-        "output": "2 2 2 2 2 2 2 2 2 2",
+        "output": "10 10 10 10 10\n10 10 10 20\n10 10 30\n10 20 20\n20 30\n25 25",
         "is_hidden": true
       },
       {
         "input": "2 10\n3 7",
-        "output": "2 2 2 2 2 2 2 2 4",
+        "output": "\n5 5 5 5 5 5 5\n5 5 5 5 5 10\n5 5 5 5 15\n5 5 5 10 10\n5 5 5 20\n5 5 10 15\n5 5 25\n5 10 10 10\n5 10 20\n5 15 15\n10 10 15\n10 25\n15 20",
         "is_hidden": true
       },
       {
         "input": "3 17\n4 6 8",
-        "output": "2 2 2 2 2 2 2 6",
+        "output": "25 25 25 25\n25 25 50\n50 50",
         "is_hidden": true
       },
       {
         "input": "4 14\n3 5 7 9",
-        "output": "2 2 2 2 2 2 4 4",
+        "output": "5 7 11",
         "is_hidden": true
       },
       {
         "input": "1 8\n4",
-        "output": "2 2 2 2 2 2 8",
+        "output": "2 2 2 2 2 2 2 5\n2 2 2 2 11\n2 2 2 5 8\n2 2 5 5 5\n8 11",
         "is_hidden": true
       },
       {
         "input": "5 40\n8 10 12 15 20",
-        "output": "2 2 2 2 2 4 6",
+        "output": "\n4 4 4 4 4 4 4\n4 4 4 4 4 8\n4 4 4 4 12\n4 4 4 8 8\n4 4 4 16\n4 4 8 12\n4 4 20\n4 8 8 8\n4 8 16\n4 12 12\n8 8 12\n8 20\n12 16",
         "is_hidden": true
       },
       {
         "input": "2 12\n5 7",
-        "output": "2 2 2 2 2 10",
+        "output": "6 8",
         "is_hidden": true
       },
       {
         "input": "3 21\n7 14 21",
-        "output": "2 2 2 2 4 4 4",
+        "output": "11 11 11\n11 22\n33",
         "is_hidden": true
       },
       {
         "input": "4 50\n10 20 25 30",
-        "output": "2 2 2 2 4 8",
+        "output": "10 10 10 10 10 10\n10 10 10 10 20\n10 10 10 30\n10 10 20 20\n10 10 40\n10 20 30\n20 20 20\n20 40\n30 30",
         "is_hidden": true
       },
       {
         "input": "1 100\n101",
-        "output": "2 2 2 2 6 6",
+        "output": "1",
         "is_hidden": true
       },
       {
         "input": "5 35\n5 10 15 20 25",
-        "output": "2 2 2 2 12",
+        "output": "3 3 3 3 3 3 3 3 3\n3 3 3 3 3 3 3 6\n3 3 3 3 3 3 9\n3 3 3 3 3 6 6\n3 3 3 3 3 12\n3 3 3 3 6 9\n3 3 3 3 15\n3 3 3 6 6 6\n3 3 3 6 12\n3 3 3 9 9\n3 3 6 6 9\n3 3 6 15\n3 3 9 12\n3 6 6 6 6\n3 6 6 12\n3 6 9 9\n3 9 15\n3 12 12\n6 6 6 9\n6 6 15\n6 9 12\n9 9 9\n12 15",
         "is_hidden": true
       },
       {
         "input": "2 100\n50 25",
-        "output": "2 2 2 4 4 6",
+        "output": "1",
         "is_hidden": true
       },
       {
         "input": "3 23\n5 7 11",
-        "output": "2 2 2 4 10",
+        "output": "1 1 1 1 1\n1 1 1 2\n1 1 3\n1 2 2\n2 3",
         "is_hidden": true
       },
       {
         "input": "4 19\n2 5 8 11",
-        "output": "2 2 2 6 8",
+        "output": "1 1 1 1 1 1 1 1 1 1\n1 1 1 1 1 1 1 1 2\n1 1 1 1 1 1 1 3\n1 1 1 1 1 1 2 2\n1 1 1 1 1 1 4\n1 1 1 1 1 2 3\n1 1 1 1 2 2 2\n1 1 1 1 2 4\n1 1 1 1 3 3\n1 1 1 2 2 3\n1 1 1 3 4\n1 1 2 2 2 2\n1 1 2 2 4\n1 1 2 3 3\n1 1 4 4\n1 2 2 2 3\n1 2 3 4\n1 3 3 3\n2 2 2 2 2\n2 2 2 4\n2 2 3 3\n2 4 4\n3 3 4",
         "is_hidden": true
       },
       {
         "input": "1 4\n5",
-        "output": "2 2 4 4 4 4",
+        "output": "1 1 1 1 1 1 1 1 1 1",
         "is_hidden": true
       },
       {
         "input": "5 28\n4 8 12 16 20",
-        "output": "2 2 4 4 8",
+        "output": "1 1 1 1 1 1 1 1 1 1 1 1 1 1 1\n1 1 1 1 1 1 1 1 1 1 1 1 1 2\n1 1 1 1 1 1 1 1 1 1 1 1 3\n1 1 1 1 1 1 1 1 1 1 1 2 2\n1 1 1 1 1 1 1 1 1 1 1 4\n1 1 1 1 1 1 1 1 1 1 2 3\n1 1 1 1 1 1 1 1 1 1 5\n1 1 1 1 1 1 1 1 1 2 2 2\n1 1 1 1 1 1 1 1 1 2 4\n1 1 1 1 1 1 1 1 1 3 3\n1 1 1 1 1 1 1 1 2 2 3\n1 1 1 1 1 1 1 1 2 5\n1 1 1 1 1 1 1 1 3 4\n1 1 1 1 1 1 1 2 2 2 2\n1 1 1 1 1 1 1 2 2 4\n1 1 1 1 1 1 1 2 3 3\n1 1 1 1 1 1 1 3 5\n1 1 1 1 1 1 1 4 4\n1 1 1 1 1 1 2 2 2 3\n1 1 1 1 1 1 2 2 5\n1 1 1 1 1 1 2 3 4\n1 1 1 1 1 1 3 3 3\n1 1 1 1 1 1 4 5\n1 1 1 1 1 2 2 2 2 2\n1 1 1 1 1 2 2 2 4\n1 1 1 1 1 2 2 3 3\n1 1 1 1 1 2 3 5\n1 1 1 1 1 2 4 4\n1 1 1 1 1 3 3 4\n1 1 1 1 1 5 5\n1 1 1 1 2 2 2 2 3\n1 1 1 1 2 2 2 5\n1 1 1 1 2 2 3 4\n1 1 1 1 2 3 3 3\n1 1 1 1 2 4 5\n1 1 1 1 3 3 5\n1 1 1 1 3 4 4\n1 1 1 2 2 2 2 2 2\n1 1 1 2 2 2 2 4\n1 1 1 2 2 2 3 3\n1 1 1 2 2 3 5\n1 1 1 2 2 4 4\n1 1 1 2 3 3 4\n1 1 1 2 5 5\n1 1 1 3 3 3 3\n1 1 1 3 4 5\n1 1 1 4 4 4\n1 1 2 2 2 2 2 3\n1 1 2 2 2 2 5\n1 1 2 2 2 3 4\n1 1 2 2 3 3 3\n1 1 2 2 4 5\n1 1 2 3 3 5\n1 1 2 3 4 4\n1 1 3 3 3 4\n1 1 3 5 5\n1 1 4 4 5\n1 2 2 2 2 2 2 2\n1 2 2 2 2 2 4\n1 2 2 2 2 3 3\n1 2 2 2 3 5\n1 2 2 2 4 4\n1 2 2 3 3 4\n1 2 2 5 5\n1 2 3 3 3 3\n1 2 3 4 5\n1 2 4 4 4\n1 3 3 3 5\n1 3 3 4 4\n1 4 5 5\n2 2 2 2 2 2 3\n2 2 2 2 2 5\n2 2 2 2 3 4\n2 2 2 3 3 3\n2 2 2 4 5\n2 2 3 3 5\n2 2 3 4 4\n2 3 3 3 4\n2 3 5 5\n2 4 4 5\n3 3 3 3 3\n3 3 4 5\n3 4 4 4\n5 5 5",
         "is_hidden": true
       },
       {
         "input": "2 14\n6 8",
-        "output": "2 2 4 6 6",
+        "output": "",
         "is_hidden": true
       },
       {
         "input": "3 33\n11 22 33",
-        "output": "2 2 4 12",
+        "output": "",
         "is_hidden": true
       },
       {
         "input": "4 60\n10 20 30 40",
-        "output": "2 2 6 10",
+        "output": "",
         "is_hidden": true
       },
       {
         "input": "1 1\n1",
-        "output": "2 2 8 8",
+        "output": "",
         "is_hidden": true
       },
       {
         "input": "5 27\n3 6 9 12 15",
-        "output": "2 4 4 4 6",
+        "output": "",
         "is_hidden": true
       },
       {
         "input": "2 1\n1 1",
-        "output": "2 4 4 10",
+        "output": "",
         "is_hidden": true
       },
       {
         "input": "3 5\n1 2 3",
-        "output": "2 4 6 8",
+        "output": "",
         "is_hidden": true
       },
       {
         "input": "4 10\n1 2 3 4",
-        "output": "2 6 6 6",
+        "output": "",
         "is_hidden": true
       },
       {
         "input": "1 10\n1",
-        "output": "2 6 12",
+        "output": "",
         "is_hidden": true
       },
       {
         "input": "5 15\n1 2 3 4 5",
-        "output": "2 8 10",
+        "output": "",
         "is_hidden": true
       }
     ]
@@ -5164,6 +5234,16 @@
     "constraints": ["All elements of `nums` are unique."],
     "hints": ["Use a modified binary search to find the inflection point."],
     "test_cases": [
+      {
+        "input": "7\n3 4 5 1 2",
+        "output": "1",
+        "is_hidden": false
+      },
+      {
+        "input": "5\n11 13 15 17",
+        "output": "11",
+        "is_hidden": false
+      },
       {
         "input": "5\n3 4 5 1 2",
         "output": "1",
@@ -6966,11 +7046,6 @@
         "is_hidden": true
       },
       {
-        "input": "7\n-10 9 20 null null 15 7",
-        "output": "42",
-        "is_hidden": false
-      },
-      {
         "input": "9\n10 5 15 null 8 6 20",
         "output": "58",
         "is_hidden": true
@@ -7025,11 +7100,6 @@
     "hints": ["This problem is a variation of the Fibonacci sequence."],
     "test_cases": [
       {
-        "input": "1",
-        "output": "1",
-        "is_hidden": true
-      },
-      {
         "input": "2",
         "output": "2",
         "is_hidden": false
@@ -7038,6 +7108,11 @@
         "input": "3",
         "output": "3",
         "is_hidden": false
+      },
+      {
+        "input": "1",
+        "output": "1",
+        "is_hidden": true
       },
       {
         "input": "4",
@@ -7774,242 +7849,242 @@
     "test_cases": [
       {
         "input": "6\neat\ntea\ntan\nate\nnat\nbat",
-        "output": "bat",
+        "output": "eat tea ate\ntan nat\nbat",
         "is_hidden": false
       },
       {
         "input": "1\na",
-        "output": "tan nat",
+        "output": "a",
         "is_hidden": true
       },
       {
         "input": "2\nab\nba",
-        "output": "eat tea ate",
+        "output": "ab ba",
         "is_hidden": true
       },
       {
         "input": "1\n\"\"",
-        "output": "a",
-        "is_hidden": true
-      },
-      {
-        "input": "3\nabc\nbca\ncab",
-        "output": "ab ba",
-        "is_hidden": true
-      },
-      {
-        "input": "5\napple\npapel\napply\nleppa\nappeal",
         "output": "\"\"",
         "is_hidden": true
       },
       {
-        "input": "10\ncat\ndog\nact\ngod\ntca\nodg\ntac\ngdo\natc\nogd",
+        "input": "3\nabc\nbca\ncab",
         "output": "abc bca cab",
         "is_hidden": true
       },
       {
+        "input": "5\napple\npapel\napply\nleppa\nappeal",
+        "output": "appeal\napply\napple papel leppa",
+        "is_hidden": true
+      },
+      {
+        "input": "10\ncat\ndog\nact\ngod\ntca\nodg\ntac\ngdo\natc\nogd",
+        "output": "dog god odg gdo ogd\ncat act tca tac atc",
+        "is_hidden": true
+      },
+      {
         "input": "4\nstop\npots\ntops\nspot",
-        "output": "appeal",
-        "is_hidden": true
-      },
-      {
-        "input": "3\nlisten\nsilent\nenlist",
-        "output": "apply",
-        "is_hidden": true
-      },
-      {
-        "input": "1\nhello",
-        "output": "apple papel leppa",
-        "is_hidden": true
-      },
-      {
-        "input": "2\nworld\ndlrow",
-        "output": "dog god odg gdo ogd",
-        "is_hidden": true
-      },
-      {
-        "input": "7\nabc\ndef\nghi\nacb\nfed\nihg\nbac",
-        "output": "cat act tca tac atc",
-        "is_hidden": true
-      },
-      {
-        "input": "5\na\nb\nc\nd\ne",
         "output": "stop pots tops spot",
         "is_hidden": true
       },
       {
-        "input": "8\naaaa\nbbbb\ncccc\ndddd\naaaa\nbbbb\ncccc\ndddd",
+        "input": "3\nlisten\nsilent\nenlist",
         "output": "listen silent enlist",
         "is_hidden": true
       },
       {
-        "input": "6\nrace\ncare\nacre\ntear\nrate\neatr",
+        "input": "1\nhello",
         "output": "hello",
         "is_hidden": true
       },
       {
-        "input": "4\nflow\nwolf\nfowl\nlowf",
+        "input": "2\nworld\ndlrow",
         "output": "world dlrow",
         "is_hidden": true
       },
       {
-        "input": "3\nempty\nempty\nempty",
-        "output": "def fed",
+        "input": "7\nabc\ndef\nghi\nacb\nfed\nihg\nbac",
+        "output": "def fed\nghi ihg\nabc acb bac",
         "is_hidden": true
       },
       {
-        "input": "2\nz\nz",
-        "output": "ghi ihg",
+        "input": "5\na\nb\nc\nd\ne",
+        "output": "e\nc\nb\nd\na",
         "is_hidden": true
       },
       {
-        "input": "10\nabcde\nedcba\nbcdea\naedcb\ncdeab\nbacde\ndebac\nacbed\nebdca\ncebad",
-        "output": "abc acb bac",
+        "input": "8\naaaa\nbbbb\ncccc\ndddd\naaaa\nbbbb\ncccc\ndddd",
+        "output": "dddd dddd\ncccc cccc\nbbbb bbbb\naaaa aaaa",
         "is_hidden": true
       },
       {
-        "input": "5\nab\nba\nabc\nbca\nacb",
-        "output": "e",
+        "input": "6\nrace\ncare\nacre\ntear\nrate\neatr",
+        "output": "tear rate eatr\nrace care acre",
         "is_hidden": true
       },
       {
-        "input": "6\naab\naba\nbaa\nbba\nbab\nabb",
-        "output": "c",
-        "is_hidden": true
-      },
-      {
-        "input": "4\nsame\nsame\nemas\nemas",
-        "output": "b",
-        "is_hidden": true
-      },
-      {
-        "input": "3\none\ntwo\nthree",
-        "output": "d",
-        "is_hidden": true
-      },
-      {
-        "input": "7\nearth\nheart\nhater\neathr\ntrahe\nrehat\nthear",
-        "output": "a",
-        "is_hidden": true
-      },
-      {
-        "input": "5\nno\non\nyes\nsey\nesy",
-        "output": "dddd dddd",
-        "is_hidden": true
-      },
-      {
-        "input": "8\ntesting\ningtest\ngentist\nestting\ngistnet\ntseting\ngnitset\nntgiste",
-        "output": "cccc cccc",
-        "is_hidden": true
-      },
-      {
-        "input": "6\napple\npleap\npapel\nleppa\nppale\nappel",
-        "output": "bbbb bbbb",
-        "is_hidden": true
-      },
-      {
-        "input": "4\nword\ndrow\nordw\nwdor",
-        "output": "aaaa aaaa",
-        "is_hidden": true
-      },
-      {
-        "input": "3\na\nb\na",
-        "output": "tear rate eatr",
-        "is_hidden": true
-      },
-      {
-        "input": "2\nx\ny",
-        "output": "race care acre",
-        "is_hidden": true
-      },
-      {
-        "input": "10\ncinema\niceman\nanemic\nmanice\ncenima\nnicema\nmaceni\niceman\nmanice\ncinema",
+        "input": "4\nflow\nwolf\nfowl\nlowf",
         "output": "flow wolf fowl lowf",
         "is_hidden": true
       },
       {
-        "input": "5\nd\nc\nb\na\nd",
+        "input": "3\nempty\nempty\nempty",
         "output": "empty empty empty",
         "is_hidden": true
       },
       {
-        "input": "6\nhello\nolleh\nllohe\neholl\nohell\nlelho",
+        "input": "2\nz\nz",
         "output": "z z",
         "is_hidden": true
       },
       {
-        "input": "4\nsort\nrots\nstor\ntors",
+        "input": "10\nabcde\nedcba\nbcdea\naedcb\ncdeab\nbacde\ndebac\nacbed\nebdca\ncebad",
         "output": "abcde edcba bcdea aedcb cdeab bacde debac acbed ebdca cebad",
         "is_hidden": true
       },
       {
-        "input": "3\nhi\nih\nih",
-        "output": "abc bca acb",
+        "input": "5\nab\nba\nabc\nbca\nacb",
+        "output": "abc bca acb\nab ba",
         "is_hidden": true
       },
       {
-        "input": "2\nup\npu",
-        "output": "ab ba",
+        "input": "6\naab\naba\nbaa\nbba\nbab\nabb",
+        "output": "bba bab abb\naab aba baa",
         "is_hidden": true
       },
       {
-        "input": "10\ntop\npot\nopt\notp\npto\ntpo\npost\nstop\nspot\ntops",
-        "output": "bba bab abb",
-        "is_hidden": true
-      },
-      {
-        "input": "5\ngood\ndoog\ndoggo\ngoddo\nogdog",
-        "output": "aab aba baa",
-        "is_hidden": true
-      },
-      {
-        "input": "6\nqwert\ntrewq\nwretq\ntrewq\ntqwer\nrewqt",
+        "input": "4\nsame\nsame\nemas\nemas",
         "output": "same same emas emas",
         "is_hidden": true
       },
       {
-        "input": "4\nasdf\nfdsa\ndsaf\nsafd",
-        "output": "three",
+        "input": "3\none\ntwo\nthree",
+        "output": "three\ntwo\none",
         "is_hidden": true
       },
       {
-        "input": "3\nzxc\ncxz\nxcz",
-        "output": "two",
-        "is_hidden": true
-      },
-      {
-        "input": "2\nmn\nnm",
-        "output": "one",
-        "is_hidden": true
-      },
-      {
-        "input": "10\na\nb\nc\nd\ne\nf\ng\nh\ni\nj",
+        "input": "7\nearth\nheart\nhater\neathr\ntrahe\nrehat\nthear",
         "output": "earth heart hater eathr trahe rehat thear",
         "is_hidden": true
       },
       {
-        "input": "5\nbanana\nananab\nnanaab\nbanaan\nanbana",
-        "output": "yes sey esy",
+        "input": "5\nno\non\nyes\nsey\nesy",
+        "output": "yes sey esy\nno on",
         "is_hidden": true
       },
       {
-        "input": "6\nstatus\ntatsus\nustats\nsutats\ntsatsu\nssutat",
-        "output": "no on",
-        "is_hidden": true
-      },
-      {
-        "input": "4\nracecar\ncarrace\naracecr\nrraceca",
+        "input": "8\ntesting\ningtest\ngentist\nestting\ngistnet\ntseting\ngnitset\nntgiste",
         "output": "testing ingtest gentist estting gistnet tseting gnitset ntgiste",
         "is_hidden": true
       },
       {
-        "input": "3\nlevel\nevell\nlveel",
+        "input": "6\napple\npleap\npapel\nleppa\nppale\nappel",
         "output": "apple pleap papel leppa ppale appel",
         "is_hidden": true
       },
       {
-        "input": "2\nmadam\nmadam",
+        "input": "4\nword\ndrow\nordw\nwdor",
         "output": "word drow ordw wdor",
+        "is_hidden": true
+      },
+      {
+        "input": "3\na\nb\na",
+        "output": "b\na a",
+        "is_hidden": true
+      },
+      {
+        "input": "2\nx\ny",
+        "output": "y\nx",
+        "is_hidden": true
+      },
+      {
+        "input": "10\ncinema\niceman\nanemic\nmanice\ncenima\nnicema\nmaceni\niceman\nmanice\ncinema",
+        "output": "cinema iceman anemic manice cenima nicema maceni iceman manice cinema",
+        "is_hidden": true
+      },
+      {
+        "input": "5\nd\nc\nb\na\nd",
+        "output": "b\nc\na\nd d",
+        "is_hidden": true
+      },
+      {
+        "input": "6\nhello\nolleh\nllohe\neholl\nohell\nlelho",
+        "output": "hello olleh llohe eholl ohell lelho",
+        "is_hidden": true
+      },
+      {
+        "input": "4\nsort\nrots\nstor\ntors",
+        "output": "sort rots stor tors",
+        "is_hidden": true
+      },
+      {
+        "input": "3\nhi\nih\nih",
+        "output": "hi ih ih",
+        "is_hidden": true
+      },
+      {
+        "input": "2\nup\npu",
+        "output": "up pu",
+        "is_hidden": true
+      },
+      {
+        "input": "10\ntop\npot\nopt\notp\npto\ntpo\npost\nstop\nspot\ntops",
+        "output": "post stop spot tops\ntop pot opt otp pto tpo",
+        "is_hidden": true
+      },
+      {
+        "input": "5\ngood\ndoog\ndoggo\ngoddo\nogdog",
+        "output": "goddo\ndoggo ogdog\ngood doog",
+        "is_hidden": true
+      },
+      {
+        "input": "6\nqwert\ntrewq\nwretq\ntrewq\ntqwer\nrewqt",
+        "output": "qwert trewq wretq trewq tqwer rewqt",
+        "is_hidden": true
+      },
+      {
+        "input": "4\nasdf\nfdsa\ndsaf\nsafd",
+        "output": "asdf fdsa dsaf safd",
+        "is_hidden": true
+      },
+      {
+        "input": "3\nzxc\ncxz\nxcz",
+        "output": "zxc cxz xcz",
+        "is_hidden": true
+      },
+      {
+        "input": "2\nmn\nnm",
+        "output": "mn nm",
+        "is_hidden": true
+      },
+      {
+        "input": "10\na\nb\nc\nd\ne\nf\ng\nh\ni\nj",
+        "output": "j\ng\nf\ni\ne\nc\nh\nb\nd\na",
+        "is_hidden": true
+      },
+      {
+        "input": "5\nbanana\nananab\nnanaab\nbanaan\nanbana",
+        "output": "banana ananab nanaab banaan anbana",
+        "is_hidden": true
+      },
+      {
+        "input": "6\nstatus\ntatsus\nustats\nsutats\ntsatsu\nssutat",
+        "output": "status tatsus ustats sutats tsatsu ssutat",
+        "is_hidden": true
+      },
+      {
+        "input": "4\nracecar\ncarrace\naracecr\nrraceca",
+        "output": "racecar carrace aracecr rraceca",
+        "is_hidden": true
+      },
+      {
+        "input": "3\nlevel\nevell\nlveel",
+        "output": "level evell lveel",
+        "is_hidden": true
+      },
+      {
+        "input": "2\nmadam\nmadam",
+        "output": "madam madam",
         "is_hidden": true
       }
     ]

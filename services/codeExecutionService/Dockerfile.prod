@@ -1,0 +1,38 @@
+FROM node:18-alpine AS builder
+
+# Install compilers needed for build (if any native dependencies)
+RUN apk add --no-cache g++ python3 make
+
+WORKDIR /app
+
+COPY package*.json ./
+COPY tsconfig.json ./
+
+RUN npm ci
+
+COPY src ./src
+
+RUN npx tsc
+RUN ls -la dist/
+
+FROM node:18-alpine
+
+# Install compilers and runtime environments for C++, Python, JavaScript
+RUN apk add --no-cache \
+    g++ \
+    python3
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm ci --omit=dev --ignore-scripts
+
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/src/config ./dist/config
+
+EXPOSE 4050
+
+USER node
+
+CMD ["node", "dist/index.js"]

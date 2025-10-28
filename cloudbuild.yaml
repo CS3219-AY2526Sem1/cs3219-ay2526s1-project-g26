@@ -86,6 +86,24 @@ steps:
         "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/collaboration-service:latest",
       ]
 
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "build",
+        "--no-cache",
+        "-t",
+        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/code-execution-service:latest",
+        "-f",
+        "services/codeExecutionService/Dockerfile.prod",
+        "./services/codeExecutionService",
+      ]
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "push",
+        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/code-execution-service:latest",
+      ]
+
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     entrypoint: gcloud
     args:
@@ -117,6 +135,7 @@ steps:
         "deployment/question-service",
         "deployment/matching-service",
         "deployment/collaboration-service",
+        "deployment/code-execution-service",
       ]
 
 options:

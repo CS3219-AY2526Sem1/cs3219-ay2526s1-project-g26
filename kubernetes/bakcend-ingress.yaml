@@ -42,6 +42,14 @@ spec:
                 port:
                   number: 4030
 
+          - path: /api/execute(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: code-execution-service
+                port:
+                  number: 4050
+
           - path: /ws/collaboration(/|$)(.*)
             pathType: ImplementationSpecific
             backend:

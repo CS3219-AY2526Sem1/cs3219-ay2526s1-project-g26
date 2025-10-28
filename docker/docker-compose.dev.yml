@@ -15,6 +15,7 @@ services:
       - matching-service
       - collaboration-service
       - history-service
+      - code-execution-service
 
   frontend:
     build:
@@ -180,6 +181,7 @@ services:
       - PORT=4040
       - DATABASE_URL=mongodb://history-service-db:27017/history_db
       - USER_SERVICE_URL=http://user-service:4000
+      - REDIS_URL=redis://history-service-redis:6379
     depends_on:
       - history-service-db
     ports:
@@ -196,8 +198,36 @@ services:
       - history-service-db-data:/data/db
       - ../services/historyService/src/database/init:/docker-entrypoint-initdb.d
 
+  history-service-redis:
+    image: redis:8-alpine
+    container_name: history-service-redis
+    restart: unless-stopped
+    ports:
+      - "4042:6379"
+    volumes:
+      - history-service-redis-data:/data
+
+  # Code Execution Service
+  code-execution-service:
+    build:
+      context: ../services/codeExecutionService
+      dockerfile: Dockerfile.dev
+    container_name: code-execution-service
+    volumes:
+      - ../services/codeExecutionService:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=4050
+      - BACKEND_BASE_URL=http://nginx
+    ports:
+      - "4050:4050"
+    stdin_open: true
+    tty: true
+
 volumes:
   user-service-db-data:
   question-service-db-data:
   matching-service-redis-data:
   history-service-db-data:
+  history-service-redis-data:

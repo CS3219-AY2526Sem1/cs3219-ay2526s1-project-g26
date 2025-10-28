@@ -3,7 +3,8 @@ import { API_BASE_URL, HTTP_STATUS } from '../constants/api.ts'
 
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 10000,
+  timeout: 50000,
+  // modified because code execution may take longer than 10000ms
 })
 
 axiosInstance.interceptors.request.use(

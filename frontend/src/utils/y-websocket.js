@@ -120,6 +120,7 @@ messageHandlers[messageAuth] = (
 }
 
 export const messageEventSwitchLanguage = 4
+export const messageEventCodeSubmitted = 5
 
 /**
  *                       data,       callback,  messageType
@@ -135,6 +136,17 @@ messageEventHandlers[messageEventSwitchLanguage] = (
   const language = new TextDecoder().decode(data)
   if (callback) {
     callback(language)
+  }
+}
+
+messageEventHandlers[messageEventCodeSubmitted] = (
+  data,
+  callback,
+  _messageType
+) => {
+  const message = new TextDecoder().decode(data)
+  if (callback) {
+    callback(message)
   }
 }
 
@@ -309,6 +321,7 @@ export class WebsocketProvider extends Observable {
    * @param {boolean} [opts.disableBc] Disable cross-tab BroadcastChannel communication
    * @param {object} callbacks
    * @param {function(string): void} [callbacks.onSwitchLanguage] Callback upon switch language from other users
+   * @param {function(string?): void} [callbacks.onCodeSubmitted] Callback upon a user submits or runs the code
    */
   constructor(
     serverUrl,
@@ -323,7 +336,10 @@ export class WebsocketProvider extends Observable {
       maxBackoffTime = 2500,
       disableBc = false,
     } = {},
-    { onSwitchLanguage = (_language) => {} } = {}
+    {
+      onSwitchLanguage = (_language) => {},
+      onCodeSubmitted = (_msg) => {},
+    } = {}
   ) {
     super()
     // ensure that url is always ends with /
@@ -351,6 +367,7 @@ export class WebsocketProvider extends Observable {
     this.messageEventHandlers = messageEventHandlers.slice()
     this.messageEventCallbacksMap = new Map([
       [messageEventSwitchLanguage, onSwitchLanguage],
+      [messageEventCodeSubmitted, onCodeSubmitted],
     ])
     /**
      * @type {boolean}
