@@ -14,6 +14,7 @@ import NavBarLayout from './layouts/NavBarLayout.tsx'
 import SubmissionsOverview from './pages/SubmissionsOverview.tsx'
 import Home from './pages/Home.tsx'
 import UpdateProfile from './pages/UpdateProfile.tsx'
+import Match from './pages/Match.tsx'
 import CollaborationPanel from './pages/CollaborationPanel.tsx'
 import SubmissionDetail from './pages/SubmissionDetail.tsx'
 
@@ -57,9 +58,13 @@ function App() {
             <Route element={<NavBarLayout />}>
               <Route path="/home" element={<Home />} />
               <Route path="/submissions" element={<SubmissionsOverview />} />
-              <Route path="/collaboration" element={<CollaborationPanel />} />
+              <Route path="/match" element={<Match />} />
               <Route path="/submissions/:id" element={<SubmissionDetail />} />
             </Route>
+            <Route
+              path="/collaboration/:roomid"
+              element={<CollaborationPanel />}
+            />
           </Route>
           <Route path="/update-profile" element={<UpdateProfile />} />
         </Routes>

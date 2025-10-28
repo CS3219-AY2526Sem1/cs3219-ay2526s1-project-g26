@@ -96,6 +96,17 @@ services:
       - history-service-mongodata_prod:/data/db
       - ../services/historyService/src/database/init:/docker-entrypoint-initdb.d
 
+  code-execution-service:
+    image: zengfu0307/peerprep-codeexecutionservice:latest
+    platform: linux/amd64
+    container_name: code_execution_service-prod
+    environment:
+      - NODE_ENV=production
+      - PORT=4050
+      - QUESTION_SERVICE_URL=${QUESTION_SERVICE_URL}
+    ports:
+      - "4050:4050"
+
 volumes:
   user-service-pgdata_prod:
   question-service-mongodata_prod:

@@ -6,6 +6,8 @@ import {
   deleteQuestion,
   getAllQuestions,
   getQuestionById,
+  getAllCategoryAndDifficulty,
+  getQuestionTestCases,
 } from '../services/questionService.js'
 import { authenticate } from '../middleware/auth.js'
 import { AppError } from '../utils/errors.js'
@@ -26,9 +28,30 @@ router.get('/match', authenticate(), async (req, res) => {
   return res.json({ success: true, question })
 })
 
+router.get('/cnd', async (_req, res) => {
+  const { categories, difficulties } = await getAllCategoryAndDifficulty()
+  return res.json({ success: true, categories, difficulties })
+})
+
 router.get('/:id', authenticate(), async (req, res) => {
   const id = req.params.id
   const question = await getQuestionById(id)
+  if (!question) {
+    throw new AppError('Question not found', 404)
+  }
+  return res.json({ success: true, question })
+})
+
+// Special endpoint for code execution service - includes test_cases and no auth required
+router.get('/:id/test-cases', async (req, res) => {
+  const id = req.params.id
+  const { type } = req.query
+
+  if (type !== 'public' && type !== 'private' && type !== 'all') {
+    throw new AppError('Invalid test cases type', 401)
+  }
+
+  const question = await getQuestionTestCases(id, type)
   if (!question) {
     throw new AppError('Question not found', 404)
   }

@@ -1,23 +1,18 @@
-import { Server, Socket } from 'socket.io'
-import { UserManager } from '../database/userManager.js'
-import { UserInfo } from '../models/userInfo.js'
+import { UserStorage } from '../database/userStorage.js'
+import { SocketIdStorage } from '../database/socketIdStorage.js'
+import { getLogger } from '../utils/logger.js'
 
-export async function cancelMatchHandler(
-  io: Server,
-  socket: Socket,
-  userinfo: UserInfo
-): Promise<void> {
-  console.log('cancelMatch event received')
-  const userId = userinfo.id
+const logger = getLogger('cancelMatchHandler')
+
+export async function cancelMatchHandler(userid: string): Promise<void> {
+  logger.info('cancelMatch event received by matching service')
   try {
-    await UserManager.deleteUser(userId)
-    io.to(socket.id).emit('matchCancelled')
-  } catch (error) {
-    if (!(await UserManager.userExist(userId))) {
-      io.to(socket.id).emit('matchCancelled')
-    } else {
-      console.error('Cancel match error: ', error)
-      io.to(socket.id).emit('error', { message: 'Failed to cancel match' })
+    if (!(await UserStorage.userExist(userid))) {
+      throw new Error('User is already not in queue')
     }
+    await UserStorage.removeUser(userid)
+    await SocketIdStorage.removeSocketId(userid)
+  } catch (error) {
+    logger.error('Cancel match error: ', error)
   }
 }

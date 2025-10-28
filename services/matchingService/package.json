@@ -16,10 +16,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/bcrypt": "^6.0.0",
     "@types/morgan": "^1.9.10",
-    "@types/pg": "^8.15.5",
-    "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
@@ -34,7 +31,6 @@
     "@eslint/js": "^9.36.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
-    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.5.2",
     "@types/winston": "^2.4.4",
     "@typescript-eslint/eslint-plugin": "^8.44.1",

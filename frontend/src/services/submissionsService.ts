@@ -2,6 +2,7 @@ import axiosInstance from '../utils/axios.ts'
 import {
   SubmissionDataResponse,
   SubmissionDetail,
+  SubmissionDetail2,
 } from '../types/submissions.ts'
 import { API_ENDPOINTS } from '../constants/api.ts'
 
@@ -11,7 +12,13 @@ export const submissionsService = {
     limit: number
   ): Promise<SubmissionDataResponse> => {
     const response = await axiosInstance.get(
-      `${API_ENDPOINTS.HISTORY.GET_USER_SUBMISSIONS}/${page}/${limit}`
+      `${API_ENDPOINTS.HISTORY.GET_USER_SUBMISSIONS}`,
+      {
+        params: {
+          page,
+          limit,
+        },
+      }
     )
     return response.data.submissions
   },
@@ -30,6 +37,19 @@ export const submissionsService = {
     } catch (error) {
       console.error('Error fetching submission details:', error)
       return null
+    }
+  },
+
+  getSubmissionStatusByTicketId: async (
+    ticketId: string
+  ): Promise<{ success: boolean; result: SubmissionDetail2 } | null> => {
+    const response = await axiosInstance.get(
+      `${API_ENDPOINTS.HISTORY.GET_SUBMISSION_STATUS_WITH_TICKET}/${ticketId}`
+    )
+    if (response.status === 202) {
+      return null
+    } else {
+      return response.data.result
     }
   },
 }

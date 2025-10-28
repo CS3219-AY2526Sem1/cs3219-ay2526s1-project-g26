@@ -1,9 +1,30 @@
 /**
- * Source: https://github.com/yjs/y-websocket-server/blob/main/src/utils.js
+ * This file was modified based on y-websocket source code, originally authored by Kevin Jahns <kevin.jahns@protonmail.com>
+ * under the MIT license. Modified and imported by Wu Zengfu <https://github.com/wuzengfu>.
  *
- * Imported & Modified By: Wu Zengfu
+ * Original Source: https://github.com/yjs/y-websocket-server/blob/v1.4.5/bin/utils.js
  *
- * License: MIT
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2019 Kevin Jahns <kevin.jahns@protonmail.com>.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 
 import * as Y from 'yjs'
@@ -15,31 +36,22 @@ import * as awarenessProtocol from '@y/protocols/awareness'
 import * as encoding from 'lib0/encoding'
 import * as decoding from 'lib0/decoding'
 import * as map from 'lib0/map'
-import * as eventloop from 'lib0/eventloop'
 
 import type { WebSocket } from 'ws'
 import type { IncomingMessage } from 'http'
 import type { Transaction } from 'yjs'
 
-import { callbackHandler, isCallbackSet } from './callback.js'
+import { convertUint8Array } from '../index.js'
+
 import { getLogger } from '../logger.js'
+import { verifySubmission } from '../../services/codeExecutionService.js'
 
 const logger = getLogger('y-websocket')
 
-const CALLBACK_DEBOUNCE_WAIT = parseInt(
-  process.env.CALLBACK_DEBOUNCE_WAIT || '2000'
-)
-const CALLBACK_DEBOUNCE_MAXWAIT = parseInt(
-  process.env.CALLBACK_DEBOUNCE_MAXWAIT || '10000'
-)
-
-const debouncer = eventloop.createDebouncer(
-  CALLBACK_DEBOUNCE_WAIT,
-  CALLBACK_DEBOUNCE_MAXWAIT
-)
-
 const wsReadyStateConnecting = 0
 const wsReadyStateOpen = 1
+const wsReadyStateClosing = 2 // eslint-disable-line
+const wsReadyStateClosed = 3 // eslint-disable-line
 
 // disable gc when using snapshots!
 const gcEnabled = process.env.GC !== 'false' && process.env.GC !== '0'
@@ -73,7 +85,10 @@ export const docs = new Map<string, WSSharedDoc>()
 
 const messageSync = 0
 const messageAwareness = 1
+// const messageAuth = 2
+// const messageQueryAwareness = 3
 const messageEventSwitchLanguage = 4
+const messageEventCodeSubmitted = 5
 
 /**
  * @param {Uint8Array} update
@@ -171,11 +186,6 @@ export class WSSharedDoc extends Y.Doc {
 
     this.on('update', updateHandler as never)
 
-    if (isCallbackSet) {
-      this.on('update', (_update, _origin, doc) => {
-        debouncer(() => callbackHandler(doc as WSSharedDoc))
-      })
-    }
     this.whenInitialized = contentInitializor(this)
   }
 }
@@ -237,6 +247,23 @@ const messageListener = (
           if (socket === conn) return
           socket.send(message)
         })
+        break
+      case messageEventCodeSubmitted:
+        {
+          encoding.writeVarUint(encoder, messageEventCodeSubmitted)
+          const [_, textMessage] = convertUint8Array(message)
+          const data = JSON.parse(textMessage)
+          verifySubmission(data, doc).then((ticketId: string | null) => {
+            encoding.writeVarUint8Array(
+              encoder,
+              new TextEncoder().encode(ticketId || '')
+            )
+            doc.conns.forEach((_: Set<number>, socket: WebSocket) => {
+              socket.send(encoding.toUint8Array(encoder))
+            })
+          })
+        }
+        break
     }
   } catch (err) {
     logger.error(err)

@@ -1,9 +1,30 @@
 /**
- * Source: https://github.com/yjs/y-websocket/blob/35be3431b8db14f07dfaacab5dfa1a4cdec13fac/src/y-websocket.js
+ * This file was modified based on y-websocket source code, originally authored by Kevin Jahns <kevin.jahns@protonmail.com>
+ * under the MIT license. Modified and imported by Wu Zengfu <https://github.com/wuzengfu>.
  *
- * Imported & Modified by: Wu Zengfu
+ * Original Source: https://github.com/yjs/y-websocket/blob/35be3431b8db14f07dfaacab5dfa1a4cdec13fac/src/y-websocket.js
  *
- * License: MIT
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2019 Kevin Jahns <kevin.jahns@protonmail.com>.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 
 /* eslint-env browser */
@@ -99,6 +120,7 @@ messageHandlers[messageAuth] = (
 }
 
 export const messageEventSwitchLanguage = 4
+export const messageEventCodeSubmitted = 5
 
 /**
  *                       data,       callback,  messageType
@@ -114,6 +136,17 @@ messageEventHandlers[messageEventSwitchLanguage] = (
   const language = new TextDecoder().decode(data)
   if (callback) {
     callback(language)
+  }
+}
+
+messageEventHandlers[messageEventCodeSubmitted] = (
+  data,
+  callback,
+  _messageType
+) => {
+  const message = new TextDecoder().decode(data)
+  if (callback) {
+    callback(message)
   }
 }
 
@@ -288,6 +321,7 @@ export class WebsocketProvider extends Observable {
    * @param {boolean} [opts.disableBc] Disable cross-tab BroadcastChannel communication
    * @param {object} callbacks
    * @param {function(string): void} [callbacks.onSwitchLanguage] Callback upon switch language from other users
+   * @param {function(string?): void} [callbacks.onCodeSubmitted] Callback upon a user submits or runs the code
    */
   constructor(
     serverUrl,
@@ -302,7 +336,10 @@ export class WebsocketProvider extends Observable {
       maxBackoffTime = 2500,
       disableBc = false,
     } = {},
-    { onSwitchLanguage = (_language) => {} } = {}
+    {
+      onSwitchLanguage = (_language) => {},
+      onCodeSubmitted = (_msg) => {},
+    } = {}
   ) {
     super()
     // ensure that url is always ends with /
@@ -330,6 +367,7 @@ export class WebsocketProvider extends Observable {
     this.messageEventHandlers = messageEventHandlers.slice()
     this.messageEventCallbacksMap = new Map([
       [messageEventSwitchLanguage, onSwitchLanguage],
+      [messageEventCodeSubmitted, onCodeSubmitted],
     ])
     /**
      * @type {boolean}

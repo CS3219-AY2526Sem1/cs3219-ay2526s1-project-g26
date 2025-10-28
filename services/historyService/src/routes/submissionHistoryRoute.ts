@@ -2,25 +2,28 @@ import { Router } from 'express'
 import {
   getUserSubmission,
   getUserSubmissions,
+  insertSubmission,
 } from '../services/submissionHistoryService.js'
 import { authenticate } from '../middleware/auth.js'
 import { AppError } from '../utils/errors.js'
+import { CreateSubmissionBody } from '../models/submissionHistoryModel.js'
+import redisClient from '../database/redis.js'
 
 const router = Router()
 
-router.get('/submissions/:page/:per_page', authenticate(), async (req, res) => {
+router.get('/', authenticate(), async (req, res) => {
   const id = req.user!.id
-  const pages = parseInt(req.params.page)
-  const perPage = parseInt(req.params.per_page)
+  const page = parseInt((req.query?.page as string) || '1')
+  const limit = parseInt((req.query?.limit as string) || '10')
 
-  const submissions = await getUserSubmissions(id, pages, perPage)
+  const submissions = await getUserSubmissions(id, page, limit)
   if (!submissions) {
     throw new AppError('Submissions not found', 404)
   }
   return res.json({ success: true, submissions })
 })
 
-router.get('/submissions/:submission_id', authenticate(), async (req, res) => {
+router.get('/:submission_id', authenticate(), async (req, res) => {
   const id = req.user!.id
   const submissionId = req.params.submission_id
   const submission = await getUserSubmission(id, submissionId)
@@ -30,12 +33,25 @@ router.get('/submissions/:submission_id', authenticate(), async (req, res) => {
   return res.json({ success: true, submission })
 })
 
-router.post('/submissions', async (req, res) => {
-  // ignore for now until integration with submission-grading service is needed
-  // given that is called by a backend service, removing authenticate for now?
+router.post('/', async (req, res) => {
+  const body = req.body as CreateSubmissionBody
+  await insertSubmission(body)
+  return res.status(204).send()
 })
 
-router.put('/submissions/:submission_id', authenticate(), async (req, res) => {
+router.get('/status/:ticket_id', async (req, res) => {
+  const { ticket_id } = req.params
+  if (!ticket_id) {
+    throw new AppError('Ticket ID is necessary', 401)
+  }
+  const data = await redisClient.get(ticket_id)
+  if (!data) {
+    return res.status(202).send()
+  }
+  return res.status(200).send({ success: true, result: JSON.parse(data) })
+})
+
+router.put('/:submission_id', authenticate(), async (_req, _res) => {
   // ignore for now, not sure if this should neeed authenticate() anyway
 })
 
