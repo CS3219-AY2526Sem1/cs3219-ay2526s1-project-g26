@@ -7,7 +7,6 @@ import {
   SubmissionDetailsResponse,
   Submission,
 } from '../models/submissionHistoryModel.js'
-import { ObjectId } from 'mongodb'
 import { CreateSubmissionBody } from '../models/submissionHistoryModel.js'
 import redisClient from '../database/redis.js'
 
