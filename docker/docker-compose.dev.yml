@@ -161,7 +161,7 @@ services:
       - NODE_ENV=development
       - HOST=0.0.0.0
       - PORT=4030
-      - USER_SERVICE_URL=http://user-service:4000
+      - BACKEND_BASE_URL=http://nginx
     ports:
       - "4030:4030"
     stdin_open: true
