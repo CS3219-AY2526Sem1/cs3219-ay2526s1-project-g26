@@ -1,0 +1,17 @@
+FROM node:18-alpine
+
+# Install compilers and runtime environments for C++, Python, JavaScript
+RUN apk add --no-cache \
+    g++ \
+    python3
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+COPY tsconfig.json ./
+
+EXPOSE 4050
+
+CMD ["npm", "run", "dev"]

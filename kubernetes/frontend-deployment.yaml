@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: asia-southeast1-docker.pkg.dev/peerprep-g26-2025/peerprep/frontend:latest
+          ports:
+            - containerPort: 80
+          envFrom:
+            - secretRef:
+                name: frontend-service-secret

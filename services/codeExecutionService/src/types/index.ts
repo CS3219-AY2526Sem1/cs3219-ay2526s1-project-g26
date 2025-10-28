@@ -1,0 +1,74 @@
+export type ExecutionStatus =
+  | 'In Progress'
+  | 'Accepted'
+  | 'Wrong Answer'
+  | 'Time Limit Exceeded'
+  | 'Memory Limit Exceeded'
+  | 'Runtime Error'
+  | 'Compilation Error'
+
+export type Language = 'cpp' | 'javascript' | 'python'
+
+export type RunMode = 'run' | 'submit'
+
+// Raw output from code execution (used internally by codeExecutor utility)
+export interface CodeExecutionOutput {
+  success: boolean
+  output: string
+  error?: string
+  executionTime: number // Execution time in ms
+  memoryUsed?: number // Memory used in MB
+}
+
+export interface SubmissionResult {
+  status: ExecutionStatus
+  passed_tests: number
+  total_tests: number
+  execution_time?: number
+  memory_used?: number
+  output?: string
+  error?: string
+}
+
+export interface ExecuteCodeRequest {
+  question_id: string
+  language: string
+  code_text: string
+  mode: 'run' | 'submit'
+  user_ids: string[]
+}
+
+export interface TestCase {
+  input: string
+  output: string
+}
+
+export interface Question {
+  title: string
+  difficulty: string
+  categories: string[]
+  test_cases: TestCase[]
+}
+
+export interface CreateSubmissionResult {
+  result: {
+    question_id: string
+    question_title: string
+    categories: string[]
+    difficulty: string
+    code: string
+    language: Language
+    mode: RunMode
+    ticket_id: string
+    overall_result: {
+      result: ExecutionStatus
+      max_memory_used?: number
+      time_taken?: number
+      error?: string
+      output: string | undefined
+      passed_tests: number
+      total_tests: number
+    }
+  }
+  user_ids: string[]
+}
