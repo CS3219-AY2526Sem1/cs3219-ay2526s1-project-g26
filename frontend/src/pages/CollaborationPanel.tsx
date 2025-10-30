@@ -16,6 +16,7 @@ import { RootState } from '../store'
 import submissionService from '../services/submissionsService.ts'
 import { setOpen as setNotificationBarOpen } from '../store/slices/notificationSnackbarSlice.ts'
 import { PeerProfile } from '../types/user.ts'
+import LoadingSkeleton from '../components/common/LoadingSkeleton.tsx'
 
 const CollaborationPanel = () => {
   const me = useSelector((state: RootState) => state.user.user)
@@ -78,24 +79,22 @@ const CollaborationPanel = () => {
       id: me?.id,
       email: me?.email,
     } as PeerProfile)
+    provider.awareness.on('change', () => {
+      const targetClientId: number | undefined = Array.from(
+        provider.awareness.getStates().keys()
+      ).find((val) => val !== provider.awareness.clientID)
+      if (!targetClientId) return
+      const peerInfo: PeerProfile | undefined = provider.awareness
+        .getStates()
+        .get(targetClientId)?.user
+      if (!peerInfo) return
+      setPeerProfile(peerInfo)
+    })
     return () => {
       provider?.destroy()
       ydoc.destroy()
     }
   }, [ydoc, roomid, dispatch, me])
-
-  useEffect(() => {
-    if (!provider) return
-    provider.awareness.on('update', () => {
-      if (provider.awareness.getStates().size !== 2) return
-      const peerInfo: PeerProfile = Array.from(
-        provider.awareness.getStates().values()
-      )
-        .map((val) => val.user)
-        .find((userInfo) => userInfo.id !== me?.id)
-      setPeerProfile(peerInfo)
-    })
-  }, [provider, me])
 
   if (!question) {
     return <Box>No Question has been supplied.</Box>
@@ -109,6 +108,10 @@ const CollaborationPanel = () => {
       () => void setResizeTrigger(Date.now()),
       100
     )
+  }
+
+  if (!peerProfile) {
+    return <LoadingSkeleton />
   }
 
   return (
