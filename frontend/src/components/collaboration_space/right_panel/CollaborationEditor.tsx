@@ -1,3 +1,5 @@
+import './cursor-override.css'
+
 import { WebsocketProvider } from '../../../utils/y-websocket.js'
 import { MonacoBinding } from 'y-monaco'
 

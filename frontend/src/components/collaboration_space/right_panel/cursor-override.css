@@ -1,0 +1,12 @@
+.yRemoteSelection {
+    opacity: 0.8;
+    background-color: #b86d7d;
+    margin-right: -1px;
+}
+
+.yRemoteSelectionHead {
+    position: absolute;
+    box-sizing: border-box;
+    height: 100%;
+    border-left: 2px solid #b86d7d;
+}
