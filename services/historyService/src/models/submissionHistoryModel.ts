@@ -1,7 +1,6 @@
 import { type ObjectId } from 'mongodb'
 
 export type ResultLabel =
-  | 'In Progress'
   | 'Accepted'
   | 'Wrong Answer'
   | 'Time Limit Exceeded'
@@ -23,24 +22,15 @@ export interface ResultInformation {
 }
 
 export interface Submission {
-  // _id: string | ObjectId // ObjectId includes timestamp info already
+  question_id: string
   question_title: string
   categories: string[]
-
+  difficulty: string
   code: string
-  difficulty: string
   language: Language
+  mode: RunMode
+  ticket_id: string
   overall_result: ResultInformation
-  test_case_results?: ResultInformation[]
-}
-
-export interface SubmissionSummary {
-  submission_id: string
-  title: string
-  submission_time: string
-  overall_status: string
-  difficulty: string
-  language: Language
 }
 
 export interface UserSubmission {
@@ -48,19 +38,28 @@ export interface UserSubmission {
   submission_id: string | ObjectId
 }
 
+export interface SubmissionSummary {
+  question_title: string
+  submission_time: string
+  difficulty: string
+  language: Language
+  overall_status: string
+}
+
 export interface SubmissionHistoryResponse {
   submissions: SubmissionSummary[]
   total: number
 }
 
+// Todo: Check if this needs to be altered to match with frontend better
 export interface SubmissionDetailsResponse {
   title: string
   submission_time: string
-  language: string
+  language: Language
   code: string
 
-  status: 'Passed' | 'Failed'
-  difficulty: 'Easy' | 'Medium' | 'Hard'
+  status: string
+  difficulty: string
   categories: string[]
   memory: string
   runtime: string
@@ -69,16 +68,6 @@ export interface SubmissionDetailsResponse {
 }
 
 export interface CreateSubmissionBody {
-  result: {
-    question_id: string
-    question_title: string
-    categories: string[]
-    difficulty: string
-    code: string
-    language: Language
-    mode: RunMode
-    ticket_id: string
-    overall_result: ResultInformation
-  }
+  result: Submission
   user_ids: string[]
 }

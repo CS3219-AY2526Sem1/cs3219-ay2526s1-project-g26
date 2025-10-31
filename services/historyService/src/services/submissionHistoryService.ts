@@ -14,7 +14,7 @@ const getUserSubmissionsCollection = () =>
   getDb().collection<UserSubmission>('user_submissions')
 
 const getSubmissionsCollection = () =>
-  getDb().collection<Submission>('user_submissions')
+  getDb().collection<Submission>('submissions')
 
 export const getUserSubmissions = async (
   userId: string,
@@ -22,45 +22,52 @@ export const getUserSubmissions = async (
   limit: number
 ): Promise<SubmissionHistoryResponse> => {
   const pipeline = [
-    { $match: { user_id: userId } },
+    {
+      $match: {
+        user_id: userId,
+      },
+    },
+    { $sort: { _id: -1 } },
+    { $skip: page * limit },
+    { $limit: limit },
+    {
+      $addFields: {
+        submission_obj_id: { $toObjectId: '$submission_id' },
+        mode: '$mode',
+      },
+    },
+    {
+      $lookup: {
+        from: 'submissions',
+        localField: 'submission_obj_id',
+        foreignField: '_id',
+        as: 'submissionDetails',
+      },
+    },
+    { $unwind: '$submissionDetails' },
+    {
+      $project: {
+        _id: 0,
+        mode: '$submissionDetails.mode',
+        submission_id: { $toString: '$submissionDetails._id' },
+        title: '$submissionDetails.question_title',
+        submission_time: {
+          $dateToString: {
+            format: '%Y-%m-%d %H:%M',
+            date: { $toDate: '$submissionDetails._id' },
+            timezone: "+08:00" // hardcode for now
+          },
+        },
+        overall_status: '$submissionDetails.overall_result.result',
+        difficulty: '$submissionDetails.difficulty',
+        language: '$submissionDetails.language',
+      },
+    },
+    { $match: { mode: 'submit' } },
     {
       $facet: {
+        data: [{ $project: { mode: 0 } }],
         metadata: [{ $count: 'total' }],
-        data: [
-          { $sort: { _id: -1 } },
-          { $skip: page * limit },
-          { $limit: limit },
-          {
-            $addFields: {
-              submission_obj_id: { $toObjectId: '$submission_id' },
-            },
-          },
-          {
-            $lookup: {
-              from: 'submissions',
-              localField: 'submission_obj_id',
-              foreignField: '_id',
-              as: 'submissionDetails',
-            },
-          },
-          { $unwind: '$submissionDetails' },
-          {
-            $project: {
-              _id: 0,
-              submission_id: { $toString: '$submissionDetails._id' },
-              title: '$submissionDetails.question_title',
-              submission_time: {
-                $dateToString: {
-                  format: '%Y-%m-%d %H:%M',
-                  date: { $toDate: '$submissionDetails._id' },
-                },
-              },
-              overall_status: '$submissionDetails.overall_result.result',
-              difficulty: '$submissionDetails.difficulty',
-              language: '$submissionDetails.language',
-            },
-          },
-        ],
       },
     },
   ]
@@ -68,13 +75,14 @@ export const getUserSubmissions = async (
     .aggregate(pipeline)
     .toArray()
 
+  console.log(result)
+
   const submissions = (result?.data as SubmissionSummary[]) ?? []
   const total = result?.metadata[0]?.total ?? 0
 
   return { submissions, total }
 }
 
-// update whatever you want out of this yourself when integrating with the frontend
 export const getUserSubmission = async (
   userId: string,
   submissionId: string
@@ -86,6 +94,7 @@ export const getUserSubmission = async (
         submission_id: submissionId,
       },
     },
+    // Should not be needed since ObjectID is unique?
     { $limit: 1 },
     {
       $addFields: {
@@ -101,16 +110,16 @@ export const getUserSubmission = async (
       },
     },
     { $unwind: '$submissionDetails' },
-    // Should not be needed since ObjectID is unique?
-    { $limit: 1 },
     {
       $project: {
         _id: 0,
+        mode: '$submissionDetails.mode',
         title: '$submissionDetails.question_title',
         submission_time: {
           $dateToString: {
             format: '%Y-%m-%d %H:%M',
             date: { $toDate: '$submissionDetails._id' },
+            timezone: "+08:00" // hardcode for now
           },
         },
         language: '$submissionDetails.language',
@@ -142,11 +151,16 @@ export const getUserSubmission = async (
           '$submissionDetails.overall_result.additional_information',
       },
     },
+    { $match: { mode: 'submit' } },
+    { $project: { mode: 0 } },
   ]
 
   const [submission] = await getUserSubmissionsCollection()
     .aggregate(pipeline)
     .toArray()
+
+  console.log(submission)
+
   if (!submission) {
     throw new AppError('Submission not found', 404)
   }
@@ -166,4 +180,6 @@ export const insertSubmission = async (data: CreateSubmissionBody) => {
     { user_id: data.user_ids[0], submission_id: submissionId },
     { user_id: data.user_ids[1], submission_id: submissionId },
   ])
+
+  console.log(await getUserSubmissionsCollection().find().toArray())
 }

@@ -52,8 +52,4 @@ router.get('/status/:ticket_id', async (req, res) => {
   return res.status(200).send({ success: true, result: JSON.parse(data) })
 })
 
-router.put('/:submission_id', authenticate(), async (_req, _res) => {
-  // ignore for now, not sure if this should need authenticate() anyway
-})
-
 export default router
