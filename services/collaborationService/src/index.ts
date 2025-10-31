@@ -10,6 +10,9 @@ import { PORT } from './config/index.js'
 import { parseInt } from 'lib0/number'
 import hasValidToken from './utils/y-websocket/hasValidToken.js'
 import errorHandler from './middleware/errorHandler.js'
+import { getLogger } from './utils/logger.js'
+
+const logger = getLogger('collaboration-service')
 
 const app = express()
 app.use(express.json())
@@ -36,5 +39,5 @@ server.on('upgrade', (request, socket, head) => {
 
 const HOST = process.env.HOST || '0.0.0.0'
 server.listen(parseInt(PORT), HOST, () => {
-  console.log(`Server running at http://${HOST}:${PORT}`)
+  logger.info(`Server running at http://${HOST}:${PORT}`)
 })

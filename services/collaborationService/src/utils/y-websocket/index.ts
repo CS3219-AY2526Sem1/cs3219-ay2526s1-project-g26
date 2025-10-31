@@ -44,7 +44,8 @@ import type { Transaction } from 'yjs'
 import { convertUint8Array } from '../index.js'
 
 import { getLogger } from '../logger.js'
-import { verifySubmission } from '../../services/codeExecutionService.js'
+import { submitVerificationJob } from '../../services/codeExecutionService.js'
+import { randomUUID } from 'crypto'
 
 const logger = getLogger('y-websocket')
 
@@ -250,18 +251,21 @@ const messageListener = (
         break
       case messageEventCodeSubmitted:
         {
-          encoding.writeVarUint(encoder, messageEventCodeSubmitted)
+          const ticketId = randomUUID()
+          const replyEncoder = encoding.createEncoder()
+          encoding.writeVarUint(replyEncoder, messageEventCodeSubmitted)
+          encoding.writeVarUint8Array(
+            replyEncoder,
+            new TextEncoder().encode(ticketId)
+          )
+          doc.conns.forEach((_: Set<number>, socket: WebSocket) => {
+            socket.send(encoding.toUint8Array(replyEncoder))
+          })
+
           const [_, textMessage] = convertUint8Array(message)
           const data = JSON.parse(textMessage)
-          verifySubmission(data, doc).then((ticketId: string | null) => {
-            encoding.writeVarUint8Array(
-              encoder,
-              new TextEncoder().encode(ticketId || '')
-            )
-            doc.conns.forEach((_: Set<number>, socket: WebSocket) => {
-              socket.send(encoding.toUint8Array(encoder))
-            })
-          })
+
+          submitVerificationJob(data, doc, ticketId)
         }
         break
     }

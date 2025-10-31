@@ -11,6 +11,7 @@ services:
       - NODE_ENV=production
       - PORT=4050
       - BACKEND_BASE_URL=http://nginx
+      - KAFKA_BROKERS=${KAFKA_BROKERS}
     cap_add:
       - SYS_PTRACE
     security_opt:
