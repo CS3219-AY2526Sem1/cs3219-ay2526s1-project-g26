@@ -55,7 +55,7 @@ export const getUserSubmissions = async (
           $dateToString: {
             format: '%Y-%m-%d %H:%M',
             date: { $toDate: '$submissionDetails._id' },
-            timezone: "+08:00" // hardcode for now
+            timezone: '+08:00' // hardcode for now
           },
         },
         overall_status: '$submissionDetails.overall_result.result',
@@ -74,8 +74,6 @@ export const getUserSubmissions = async (
   const [result] = await getUserSubmissionsCollection()
     .aggregate(pipeline)
     .toArray()
-
-  console.log(result)
 
   const submissions = (result?.data as SubmissionSummary[]) ?? []
   const total = result?.metadata[0]?.total ?? 0
@@ -119,7 +117,7 @@ export const getUserSubmission = async (
           $dateToString: {
             format: '%Y-%m-%d %H:%M',
             date: { $toDate: '$submissionDetails._id' },
-            timezone: "+08:00" // hardcode for now
+            timezone: '+08:00' // hardcode for now
           },
         },
         language: '$submissionDetails.language',
@@ -159,8 +157,6 @@ export const getUserSubmission = async (
     .aggregate(pipeline)
     .toArray()
 
-  console.log(submission)
-
   if (!submission) {
     throw new AppError('Submission not found', 404)
   }
@@ -180,6 +176,4 @@ export const insertSubmission = async (data: CreateSubmissionBody) => {
     { user_id: data.user_ids[0], submission_id: submissionId },
     { user_id: data.user_ids[1], submission_id: submissionId },
   ])
-
-  console.log(await getUserSubmissionsCollection().find().toArray())
 }
