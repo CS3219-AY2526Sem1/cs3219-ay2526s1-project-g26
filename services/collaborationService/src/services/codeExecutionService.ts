@@ -1,3 +1,4 @@
+import { KAFKA } from '../constants/index.js'
 import { producer } from '../kafka/index.js'
 import { getLogger } from '../utils/logger.js'
 import { type WSSharedDoc } from '../utils/y-websocket/index.js'
@@ -22,7 +23,7 @@ export const submitVerificationJob = async (
     }
 
     await producer.send({
-      topic: 'code-submissions',
+      topic: KAFKA.SUBMIT_CODE_MESSAGE_NAME,
       messages: [
         {
           key: ticketId,
