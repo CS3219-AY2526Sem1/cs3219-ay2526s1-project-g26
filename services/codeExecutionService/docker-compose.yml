@@ -6,7 +6,7 @@ services:
     container_name: code-execution-service-prod
     restart: unless-stopped
     ports:
-      - "4050:4050"
+      - '4050:4050'
     environment:
       - NODE_ENV=production
       - PORT=4050
