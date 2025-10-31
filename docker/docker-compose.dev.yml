@@ -94,7 +94,7 @@ services:
       - NODE_ENV=development
       - PORT=4010
       - DATABASE_URL=mongodb://question-service-db:27017/questions_db
-      - USER_SERVICE_URL=http://user-service:4000
+      - BACKEND_BASE_URL=http://nginx
     depends_on:
       - question-service-db
     ports:
@@ -183,10 +183,12 @@ services:
       - NODE_ENV=development
       - PORT=4040
       - DATABASE_URL=mongodb://history-service-db:27017/history_db
-      - USER_SERVICE_URL=http://user-service:4000
+      - BACKEND_BASE_URL=http://nginx
       - REDIS_URL=redis://history-service-redis:6379
+      - KAFKA_BROKERS=kafka:9092
     depends_on:
       - history-service-db
+      - kafka
     ports:
       - "4040:4040"
     stdin_open: true

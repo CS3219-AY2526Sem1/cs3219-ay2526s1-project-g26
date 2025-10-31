@@ -6,12 +6,12 @@ services:
     container_name: question-service-prod
     restart: unless-stopped
     ports:
-      - '4010:4010'
+      - "4010:4010"
     environment:
       - NODE_ENV=production
       - PORT=4010
       - DATABASE_URL=mongodb://question-service-db:27017/questions_db
-      - USER_SERVICE_URL=${USER_SERVICE_URL}
+      - BACKEND_BASE_URL=${BACKEND_BASE_URL}
     depends_on:
       - db
 
@@ -19,7 +19,7 @@ services:
     image: mongo:8.0
     container_name: question-service-db
     ports:
-      - '4011:27017'
+      - "4011:27017"
     volumes:
       - question-service-db-data:/data/db
       - ./src/database/init:/docker-entrypoint-initdb.d
