@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  communication-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - "3007:3007"
+    environment:
+      - FRONTEND_URL=http://localhost:3000
+    restart: unless-stopped
