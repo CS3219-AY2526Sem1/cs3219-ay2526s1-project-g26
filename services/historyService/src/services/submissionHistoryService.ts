@@ -28,8 +28,6 @@ export const getUserSubmissions = async (
       },
     },
     { $sort: { _id: -1 } },
-    { $skip: page * limit },
-    { $limit: limit },
     {
       $addFields: {
         submission_obj_id: { $toObjectId: '$submission_id' },
@@ -64,6 +62,8 @@ export const getUserSubmissions = async (
       },
     },
     { $match: { mode: 'submit' } },
+    { $skip: page * limit },
+    { $limit: limit },
     {
       $facet: {
         data: [{ $project: { mode: 0 } }],
