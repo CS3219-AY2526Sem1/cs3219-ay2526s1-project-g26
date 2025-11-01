@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: communication-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: communication-service
+  template:
+    metadata:
+      labels:
+        app: communication-service
+    spec:
+      containers:
+      - name: communication-service
+        image: communication-service:latest
+        ports:
+        - containerPort: 3007
+        env:
+        - name: FRONTEND_URL
+          value: "https://your-frontend-domain.com"  # Update with your frontend URL
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: communication-service
+spec:
+  selector:
+    app: communication-service
+  ports:
+    - port: 80
+      targetPort: 3007
+  type: ClusterIP

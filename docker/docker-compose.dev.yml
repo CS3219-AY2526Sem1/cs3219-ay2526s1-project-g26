@@ -14,6 +14,7 @@ services:
       - question-service
       - matching-service
       - collaboration-service
+      - communication-service
       - history-service
       - code-execution-service
 
@@ -30,6 +31,9 @@ services:
     environment:
       - REACT_APP_API_BASE_URL=http://localhost
       - REACT_APP_WEBSOCKET_BASE_URL=ws://localhost/ws
+      - REACT_APP_COMMUNICATION_SERVICE_URL=http://localhost
+      - WDS_SOCKET_PORT=0
+      - NODE_ENV=development
     stdin_open: true
     tty: true
 
@@ -224,6 +228,23 @@ services:
       - "4050:4050"
     stdin_open: true
     tty: true
+
+  # Communication Service
+  communication-service:
+    build:
+      context: ../services/communicationService
+      dockerfile: Dockerfile.dev
+    container_name: communication-service
+    volumes:
+      - ../services/communicationService:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=3007
+      - FRONTEND_URL=http://localhost:3000
+    ports:
+      - "3007:3007"
+    restart: unless-stopped
 
 volumes:
   user-service-db-data:
