@@ -51,7 +51,7 @@ export interface SubmissionHistoryResponse {
   total: number
 }
 
-// Todo: Check if this needs to be altered to match with frontend better
+// Todo: Alter this to fit with frontend new schema
 export interface SubmissionDetailsResponse {
   title: string
   submission_time: string

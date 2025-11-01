@@ -4,7 +4,7 @@ import { Box, Card, CardContent, Typography, Chip } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import Editor from '@monaco-editor/react'
 import { submissionsService } from '../services/submissionsService'
-import { SubmissionDetailResponse } from '../types/submissions'
+import { SubmissionDetail } from '../types/submissions'
 import LoadingSkeleton from '../components/common/LoadingSkeleton'
 
 // Helper function to map language names to Monaco Editor language identifiers
@@ -48,7 +48,7 @@ const SubmissionResult: React.FC = () => {
   const { id } = useParams<{ id: string }>()
 
   const [submissionData, setSubmissionData] =
-    useState<SubmissionDetailResponse | null>(null)
+    useState<SubmissionDetail | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
