@@ -67,6 +67,9 @@ const SubmissionResult: React.FC = () => {
         const submission = await submissionsService.fetchSubmissionById(id)
         if (submission) {
           setSubmissionData(submission)
+          // Debugging: Unclear what is going on here, some languages produce errors
+          // while others don't
+          console.log(getMonacoLanguage(submission.language))
         } else {
           setError(`Submission with ID "${id}" not found`)
         }
@@ -243,14 +246,14 @@ const SubmissionResult: React.FC = () => {
                     color="text.secondary"
                     sx={{ fontWeight: 500 }}
                   >
-                    Algorithms:{' '}
+                    Categories:{' '}
                   </Typography>
                   <Typography
                     component="span"
                     variant="body2"
                     sx={{ color: '#1f2328' }}
                   >
-                    {submissionData.algorithms.join(', ')}
+                    {submissionData.categories.join(', ')}
                   </Typography>
                 </Typography>
                 <Typography variant="body2" sx={{ ml: 2 }}>

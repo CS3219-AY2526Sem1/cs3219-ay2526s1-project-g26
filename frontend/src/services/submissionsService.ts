@@ -23,21 +23,11 @@ export const submissionsService = {
     return response.data.submissions
   },
 
-  fetchSubmissionById: async (id: string): Promise<SubmissionDetail | null> => {
-    try {
-      const url = 'https://dummyjson.com/c/cee9-e073-40bb-bc51'
-      const response = await axiosInstance.get<{
-        mockSubmissionsData: SubmissionDetail[]
-      }>(url)
-      return (
-        response.data.mockSubmissionsData.find(
-          (sub) => sub.submission_id === id
-        ) || null
-      )
-    } catch (error) {
-      console.error('Error fetching submission details:', error)
-      return null
-    }
+  fetchSubmissionById: async (id: string): Promise<SubmissionDetail> => {
+    const response = await axiosInstance.get(
+      `${API_ENDPOINTS.HISTORY.GET_SUBMISSION_BY_ID}${id}`
+    )
+    return response.data.submission
   },
 
   getSubmissionStatusByTicketId: async (

@@ -16,16 +16,17 @@ export interface SubmissionDataResponse {
 export interface SubmissionDetail {
   submission_id: string
   title: string
-  difficulty: 'Easy' | 'Medium' | 'Hard'
-  language: string
   submission_time: string
-  overall_status: string
-  status: 'Passed' | 'Failed'
-  runtime?: string
-  memory?: string
-  algorithms: string[]
-  error_message?: string
+  language: string
   code: string
+
+  status: 'Passed' | 'Failed'
+  difficulty: 'easy' | 'medium' | 'hard'
+  categories: string[]
+  memory: string
+  runtime: string
+
+  error_message?: string
 }
 
 // new schema

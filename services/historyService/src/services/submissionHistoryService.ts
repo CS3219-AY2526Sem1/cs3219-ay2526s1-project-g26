@@ -2,19 +2,19 @@ import { getDb } from '../database/index.js'
 import { AppError } from '../utils/errors.js'
 import {
   UserSubmission,
-  Submission,
   SubmissionHistoryResponse,
   SubmissionSummary,
-  SingleSubmissionHistoryResponse,
+  SubmissionDetailsResponse,
+  Submission,
 } from '../models/submissionHistoryModel.js'
-import { ObjectId } from 'mongodb'
 import { CreateSubmissionBody } from '../models/submissionHistoryModel.js'
 import redisClient from '../database/redis.js'
 
-const getSubmissionsCollection = () =>
-  getDb().collection<Submission>('submissions')
 const getUserSubmissionsCollection = () =>
   getDb().collection<UserSubmission>('user_submissions')
+
+const getSubmissionsCollection = () =>
+  getDb().collection<Submission>('submissions')
 
 export const getUserSubmissions = async (
   userId: string,
@@ -22,45 +22,52 @@ export const getUserSubmissions = async (
   limit: number
 ): Promise<SubmissionHistoryResponse> => {
   const pipeline = [
-    { $match: { user_id: userId } },
+    {
+      $match: {
+        user_id: userId,
+      },
+    },
+    { $sort: { _id: -1 } },
+    {
+      $addFields: {
+        submission_obj_id: { $toObjectId: '$submission_id' },
+        mode: '$mode',
+      },
+    },
+    {
+      $lookup: {
+        from: 'submissions',
+        localField: 'submission_obj_id',
+        foreignField: '_id',
+        as: 'submissionDetails',
+      },
+    },
+    { $unwind: '$submissionDetails' },
+    {
+      $project: {
+        _id: 0,
+        mode: '$submissionDetails.mode',
+        submission_id: { $toString: '$submissionDetails._id' },
+        title: '$submissionDetails.question_title',
+        submission_time: {
+          $dateToString: {
+            format: '%Y-%m-%d %H:%M',
+            date: { $toDate: '$submissionDetails._id' },
+            timezone: '+08:00', // hardcode for now
+          },
+        },
+        overall_status: '$submissionDetails.overall_result.result',
+        difficulty: '$submissionDetails.difficulty',
+        language: '$submissionDetails.language',
+      },
+    },
+    { $match: { mode: 'submit' } },
+    { $skip: page * limit },
+    { $limit: limit },
     {
       $facet: {
+        data: [{ $project: { mode: 0 } }],
         metadata: [{ $count: 'total' }],
-        data: [
-          { $sort: { _id: -1 } },
-          { $skip: page * limit },
-          { $limit: limit },
-          {
-            $addFields: {
-              submission_obj_id: { $toObjectId: '$submission_id' },
-            },
-          },
-          {
-            $lookup: {
-              from: 'submissions',
-              localField: 'submission_obj_id',
-              foreignField: '_id',
-              as: 'submissionDetails',
-            },
-          },
-          { $unwind: '$submissionDetails' },
-          {
-            $project: {
-              _id: 0,
-              submission_id: { $toString: '$submissionDetails._id' },
-              title: '$submissionDetails.question_title',
-              submission_time: {
-                $dateToString: {
-                  format: '%Y-%m-%d %H:%M',
-                  date: { $toDate: '$submissionDetails._id' },
-                },
-              },
-              overall_status: '$submissionDetails.overall_result.result',
-              difficulty: '$submissionDetails.difficulty',
-              language: '$submissionDetails.language',
-            },
-          },
-        ],
       },
     },
   ]
@@ -73,41 +80,87 @@ export const getUserSubmissions = async (
 
   return { submissions, total }
 }
-// update whatever you want out of this yourself when integrating with the frontend
+
 export const getUserSubmission = async (
   userId: string,
   submissionId: string
-): Promise<SingleSubmissionHistoryResponse> => {
-  const userSubmissions = await getUserSubmissionsCollection()
-    .find(
-      {
+): Promise<SubmissionDetailsResponse> => {
+  const pipeline = [
+    {
+      $match: {
         user_id: userId,
         submission_id: submissionId,
       },
-      {
-        projection: {
-          _id: 0,
-          user_id: 0,
-        },
-      }
-    )
-    .limit(1)
-    .toArray()
-
-  const submissions = await getSubmissionsCollection()
-    .find({
-      _id: {
-        $in: userSubmissions.map(
-          (submission) => new ObjectId(submission.submission_id)
-        ),
+    },
+    // Should not be needed since ObjectID is unique?
+    { $limit: 1 },
+    {
+      $addFields: {
+        submission_obj_id: { $toObjectId: '$submission_id' },
       },
-    })
+    },
+    {
+      $lookup: {
+        from: 'submissions',
+        localField: 'submission_obj_id',
+        foreignField: '_id',
+        as: 'submissionDetails',
+      },
+    },
+    { $unwind: '$submissionDetails' },
+    {
+      $project: {
+        _id: 0,
+        mode: '$submissionDetails.mode',
+        title: '$submissionDetails.question_title',
+        submission_time: {
+          $dateToString: {
+            format: '%Y-%m-%d %H:%M',
+            date: { $toDate: '$submissionDetails._id' },
+            timezone: '+08:00', // hardcode for now
+          },
+        },
+        language: '$submissionDetails.language',
+        code: '$submissionDetails.code',
+        status: {
+          $cond: {
+            if: {
+              $eq: ['$submissionDetails.overall_result.result', 'Accepted'],
+            },
+            then: 'Passed',
+            else: 'Failed',
+          },
+        },
+        difficulty: '$submissionDetails.difficulty',
+        categories: '$submissionDetails.categories',
+        runtime: {
+          $concat: [
+            { $toString: '$submissionDetails.overall_result.time_taken' },
+            ' ms',
+          ],
+        },
+        memory: {
+          $concat: [
+            { $toString: '$submissionDetails.overall_result.max_memory_used' },
+            ' MB',
+          ],
+        },
+        error_message:
+          '$submissionDetails.overall_result.additional_information',
+      },
+    },
+    { $match: { mode: 'submit' } },
+    { $project: { mode: 0 } },
+  ]
+
+  const [submission] = await getUserSubmissionsCollection()
+    .aggregate(pipeline)
     .toArray()
 
-  if (submissions.length === 0) {
-    throw new AppError('Requested submission not found', 404)
+  if (!submission) {
+    throw new AppError('Submission not found', 404)
   }
-  return { submission: submissions[0] }
+  return submission as SubmissionDetailsResponse
 }
 
 export const insertSubmission = async (data: CreateSubmissionBody) => {
