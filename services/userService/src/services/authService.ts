@@ -4,7 +4,6 @@ import pool from '../database/index.js'
 import { AppError } from '../utils/errors.js'
 import jwt, { JwtPayload, SignOptions } from 'jsonwebtoken'
 import * as Config from '../config/index.js'
-import crypto from 'crypto'
 import { sendEmail } from '../utils/email.js'
 
 const isValidPassword = (password: string): boolean => {
