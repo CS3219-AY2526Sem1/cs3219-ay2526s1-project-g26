@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import authService from '../services/authService'
 import {
@@ -11,6 +11,7 @@ import {
   Alert,
   CircularProgress,
 } from '@mui/material'
+import { AxiosError } from 'axios'
 
 interface LocationState {
   email?: string
@@ -44,11 +45,13 @@ export default function ResetPassword() {
           })
         }, 1500) // 延迟 1.5s 让用户看到提示
       }
-    } catch (err: any) {
-      setMessage(
-        err.response?.data?.message ||
-          'Failed to reset password. Please try again.'
-      )
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        setMessage(
+          err.response?.data?.message ||
+            'Failed to reset password. Please try again.'
+        )
+      }
     } finally {
       setIsSubmitting(false)
     }

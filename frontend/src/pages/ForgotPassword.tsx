@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import authService from '../services/authService'
 import {
@@ -11,6 +11,7 @@ import {
   Alert,
   CircularProgress,
 } from '@mui/material'
+import { AxiosError } from 'axios'
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('')
@@ -29,10 +30,12 @@ export default function ForgotPassword() {
         // 成功后跳转 reset 页面
         navigate('/reset-password', { state: { email } })
       }
-    } catch (err: any) {
-      setMessage(
-        err.response?.data?.message || 'Request failed. Please try again.'
-      )
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        setMessage(
+          err.response?.data?.message || 'Request failed. Please try again.'
+        )
+      }
     } finally {
       setIsSubmitting(false)
     }
