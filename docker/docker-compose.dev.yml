@@ -1,4 +1,3 @@
-version: '3.9'
 name: peerprep-dev
 
 services:
@@ -6,13 +5,17 @@ services:
     image: nginx:stable-alpine
     container_name: nginx-dev
     ports:
-      - '80:80'
+      - "80:80"
     volumes:
       - ./nginx/nginx.dev.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
       - frontend
       - user-service
       - question-service
+      - matching-service
+      - collaboration-service
+      - history-service
+      - code-execution-service
 
   frontend:
     build:
@@ -20,12 +23,13 @@ services:
       dockerfile: Dockerfile.dev
     container_name: frontend
     ports:
-      - '3000:3000'
+      - "3000:3000"
     volumes:
       - ../frontend:/app
       - /app/node_modules
     environment:
-      - REACT_APP_API_BASE_URL=http://localhost/api
+      - REACT_APP_API_BASE_URL=http://localhost
+      - REACT_APP_WEBSOCKET_BASE_URL=ws://localhost/ws
     stdin_open: true
     tty: true
 
@@ -35,7 +39,7 @@ services:
       dockerfile: Dockerfile
     container_name: docs
     ports:
-      - '3005:3000'
+      - "3005:3000"
     volumes:
       - ../docs:/app
 
@@ -48,17 +52,23 @@ services:
     volumes:
       - ../services/userService:/app
       - /app/node_modules
-    env_file:
-      - ../services/.env
     environment:
       - PORT=4000
-      - DATABASE_URL=postgresql://postgres:postgres@user-service-db:5432/users_db
       - JWT_SECRET=4fa01f2f08d88986b2cc1e0c3d35ae63
       - JWT_EXPIRES_IN=14d
+      - DB_USER=postgres
+      - DB_NAME=users_db
+      - DB_HOST=user-service-db
+      - DB_PASSWORD=postgres
+      - DB_PORT=5432
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
     depends_on:
       - user-service-db
     ports:
-      - '4000:4000'
+      - "4000:4000"
     stdin_open: true
     tty: true
 
@@ -70,7 +80,7 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=users_db
     ports:
-      - '4001:5432'
+      - "4001:5432"
     volumes:
       - user-service-db-data:/var/lib/postgresql/data
       - ../services/userService/src/database/init:/docker-entrypoint-initdb.d
@@ -87,28 +97,141 @@ services:
     environment:
       - NODE_ENV=development
       - PORT=4010
-      - DATABASE_URL=postgresql://postgres:postgres@question-service-db:5432/questions_db
-      - JWT_SECRET=4fa01f2f08d88986b2cc1e0c3d35ae63
+      - DATABASE_URL=mongodb://question-service-db:27017/questions_db
+      - USER_SERVICE_URL=http://user-service:4000
     depends_on:
       - question-service-db
     ports:
-      - '4010:4010'
+      - "4010:4010"
     stdin_open: true
     tty: true
 
   question-service-db:
-    image: postgres:16-alpine
+    image: mongo:8.0
     container_name: question-service-db
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=questions_db
     ports:
-      - '4011:5432'
+      - "4011:27017"
     volumes:
-      - question-service-db-data:/var/lib/postgresql/data
+      - question-service-db-data:/data/db
       - ../services/questionService/src/database/init:/docker-entrypoint-initdb.d
+
+  question-service-question-generator:
+    build:
+      context: ../services/questionService/questionGenerator
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ../services/questionService/questionGenerator:/app
+
+  # Matching Service
+  matching-service:
+    build:
+      context: ../services/matchingService
+      dockerfile: Dockerfile.dev
+    container_name: matching-service
+    volumes:
+      - ../services/matchingService:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=4020
+      - REDIS_URL=redis://matching-service-redis:6379
+      - BACKEND_BASE_URL=http://nginx
+    depends_on:
+      - matching-service-redis
+    ports:
+      - "4020:4020"
+    stdin_open: true
+    tty: true
+
+  matching-service-redis:
+    image: redis:8-alpine
+    container_name: matching-service-redis
+    restart: unless-stopped
+    ports:
+      - "4021:6379"
+    volumes:
+      - matching-service-redis-data:/data
+
+  # Collaboration Service
+  collaboration-service:
+    build:
+      context: ../services/collaborationService
+      dockerfile: Dockerfile.dev
+    container_name: collaboration-service
+    volumes:
+      - ../services/collaborationService:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - HOST=0.0.0.0
+      - PORT=4030
+      - BACKEND_BASE_URL=http://nginx
+    ports:
+      - "4030:4030"
+    stdin_open: true
+    tty: true
+
+  # History Service
+  history-service:
+    build:
+      context: ../services/historyService
+      dockerfile: Dockerfile.dev
+    container_name: history-service
+    volumes:
+      - ../services/historyService:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=4040
+      - DATABASE_URL=mongodb://history-service-db:27017/history_db
+      - USER_SERVICE_URL=http://user-service:4000
+      - REDIS_URL=redis://history-service-redis:6379
+    depends_on:
+      - history-service-db
+    ports:
+      - "4040:4040"
+    stdin_open: true
+    tty: true
+
+  history-service-db:
+    image: mongo:8.0
+    container_name: history-service-db
+    ports:
+      - "4041:27017"
+    volumes:
+      - history-service-db-data:/data/db
+      - ../services/historyService/src/database/init:/docker-entrypoint-initdb.d
+
+  history-service-redis:
+    image: redis:8-alpine
+    container_name: history-service-redis
+    restart: unless-stopped
+    ports:
+      - "4042:6379"
+    volumes:
+      - history-service-redis-data:/data
+
+  # Code Execution Service
+  code-execution-service:
+    build:
+      context: ../services/codeExecutionService
+      dockerfile: Dockerfile.dev
+    container_name: code-execution-service
+    volumes:
+      - ../services/codeExecutionService:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=4050
+      - BACKEND_BASE_URL=http://nginx
+    ports:
+      - "4050:4050"
+    stdin_open: true
+    tty: true
 
 volumes:
   user-service-db-data:
   question-service-db-data:
+  matching-service-redis-data:
+  history-service-db-data:
+  history-service-redis-data:

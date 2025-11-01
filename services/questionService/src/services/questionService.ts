@@ -1,35 +1,291 @@
-import pool from '../database/index.js'
+import { getDb } from '../database/index.js'
 import { AppError } from '../utils/errors.js'
-import { Question } from '../models/questionModel.js'
+import {
+  Question,
+  CreateQuestionInput,
+  type MatchedQuestion,
+  TestCase,
+} from '../models/questionModel.js'
+import { ensureArray } from '../utils/index.js'
+import { type Document, ObjectId, type UpdateFilter, WithoutId } from 'mongodb'
 
+const getQuestionCollection = () => getDb().collection<Question>('questions')
+
+/**
+ * Finds the best matching question from the database based on difficulty and categories.
+ *
+ * This function calculates a similarity score for each question in the collection based on the provided criteria.
+ * The score is weighted: 40% for a matching difficulty and 60% for matching categories.
+ * The category match score is calculated as `(intersection of categories) / (number of user-provided categories)`.
+ * It then identifies all questions with the highest score and randomly selects one to return.
+ * This ensures that if multiple questions are an equally good match, the user receives a varied experience.
+ *
+ * @param difficulty - The desired difficulty level ('easy', 'medium', 'hard').
+ * @param categories - A comma-separated string of desired categories (e.g., 'array,string,hash-table').
+ * @returns A promise that resolves to the question object that best matches the criteria, containing a subset of fields.
+ * @throws {AppError} Throws an error if the questions collection is empty and no question can be returned.
+ */
 export const getMatchingQuestion = async (
   difficulty: string,
   categories: string
-): Promise<Question> => {
+): Promise<MatchedQuestion> => {
   const categoriesArray = categories
     ? (categories as string).split(',').map((c) => c.trim())
     : []
 
-  const query = `
-      SELECT q.id, q.title, d.level AS difficulty, q.constraints, q.examples, q.hints
-      FROM questions q
-               JOIN difficulties d ON q.difficulty_id = d.id
-               LEFT JOIN (SELECT qc.question_id, COUNT(*) AS match_count
-                          FROM question_categories qc
-                                   JOIN categories c ON qc.category_id = c.id
-                          WHERE c.name = ANY ($2)
-                          GROUP BY qc.question_id) matches ON q.id = matches.question_id
-      WHERE d.level = $1
-        AND q.is_active = true
-      ORDER BY COALESCE(matches.match_count, 0) DESC, RANDOM()
-      LIMIT 1
-  `
-  const values =
-    categoriesArray.length > 0 ? [difficulty, categoriesArray] : [difficulty]
-  const result = await pool.query(query, values)
+  const pipeline: Document[] = [
+    {
+      $addFields: {
+        similarityScore: {
+          $add: [
+            {
+              $cond: {
+                if: { $eq: ['$difficulty', difficulty] },
+                then: 0.4,
+                else: 0,
+              },
+            },
+            categoriesArray.length > 0
+              ? {
+                  $multiply: [
+                    {
+                      $divide: [
+                        {
+                          $size: {
+                            $setIntersection: ['$categories', categoriesArray],
+                          },
+                        },
+                        categoriesArray.length,
+                      ],
+                    },
+                    0.6,
+                  ],
+                }
+              : 0,
+          ],
+        },
+      },
+    },
+    {
+      $sort: {
+        similarityScore: -1,
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        maxScore: { $first: '$similarityScore' },
+        questions: { $push: '$$ROOT' },
+      },
+    },
+    {
+      $unwind: '$questions',
+    },
+    {
+      $match: {
+        $expr: {
+          $eq: ['$questions.similarityScore', '$maxScore'],
+        },
+      },
+    },
+    {
+      $replaceRoot: {
+        newRoot: '$questions',
+      },
+    },
+    {
+      $sample: {
+        size: 1,
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        description: 1,
+        title: 1,
+        difficulty: 1,
+        categories: 1,
+        hints: 1,
+        constraints: 1,
+        examples: 1,
+      },
+    },
+  ]
 
-  if (result.rows.length === 0) {
-    throw new AppError('No matching question found', 404)
+  const questions = await getQuestionCollection()
+    .aggregate<MatchedQuestion>(pipeline)
+    .toArray()
+
+  if (!questions || questions.length === 0) {
+    throw new AppError('No questions available in the database.', 404)
   }
-  return result.rows[0]
+
+  return questions[0]
+}
+
+export const getQuestionById = async (id: string): Promise<Question | null> => {
+  const question = await getQuestionCollection().findOne(
+    {
+      _id: new ObjectId(id),
+    },
+    { projection: { test_cases: 0, is_active: 0 } }
+  )
+  if (!question) {
+    throw new AppError('Question not found', 404)
+  }
+  return question
+}
+
+export const getQuestionTestCases = async (
+  id: string,
+  type: 'public' | 'private' | 'all'
+): Promise<Partial<Question>> => {
+  const pipeline = [
+    {
+      $match: { _id: new ObjectId(id) },
+    },
+    {
+      $project: {
+        _id: 0,
+        title: 1,
+        difficulty: 1,
+        categories: 1,
+        test_cases: {
+          $map: {
+            input: {
+              $filter: {
+                input: '$test_cases',
+                as: 'tc',
+                ...(type !== 'all'
+                  ? {
+                      cond: { $eq: ['$$tc.is_hidden', type === 'private'] },
+                    }
+                  : { cond: {} }),
+              },
+            },
+            as: 'tc',
+            in: {
+              input: '$$tc.input',
+              output: '$$tc.output',
+            },
+          },
+        },
+      },
+    },
+  ]
+  const results = (
+    await getQuestionCollection().aggregate(pipeline).toArray()
+  )[0] as Question
+  return results
+}
+
+export const getAllQuestions = async (
+  limit: number,
+  offset: number
+): Promise<{ questions: Partial<Question>[]; total: number }> => {
+  const questions = await getQuestionCollection()
+    .find(
+      {},
+      {
+        projection: {
+          _id: 1,
+          title: 1,
+          difficulty: 1,
+          categories: 1,
+        },
+      }
+    )
+    .sort({ created_at: -1 })
+    .skip(offset)
+    .limit(limit)
+    .toArray()
+  const total = await getQuestionCollection().countDocuments()
+
+  return {
+    questions,
+    total,
+  }
+}
+
+export const getAllCategoryAndDifficulty = async (): Promise<{
+  categories: string[]
+  difficulties: string[]
+}> => {
+  const db = getDb()
+
+  const categoriesCollection = db.collection('categories')
+  const difficultiesCollection = db.collection('difficulties')
+
+  const categoriesDocs = await categoriesCollection
+    .find<{ name: string }>({}, { projection: { _id: 0, name: 1 } })
+    .toArray()
+
+  const difficultiesDocs = await difficultiesCollection
+    .find<{ level: string }>({}, { projection: { _id: 0, level: 1 } })
+    .toArray()
+
+  const categories = categoriesDocs.map((doc: { name: string }) => doc.name)
+  const difficulties = difficultiesDocs.map(
+    (doc: { level: string }) => doc.level
+  )
+
+  return { categories, difficulties }
+}
+
+export const updateQuestion = async (
+  id: string,
+  data: Partial<CreateQuestionInput>
+): Promise<Question> => {
+  const updateData: UpdateFilter<Question> = { $set: {} as Partial<Question> }
+
+  for (const key of Object.keys(data) as (keyof CreateQuestionInput)[]) {
+    const value = data[key]
+    if (value !== undefined) {
+      // @ts-expect-error passed
+      updateData.$set[key] = value as Question[keyof Question]
+    }
+  }
+
+  const result = await getQuestionCollection().findOneAndUpdate(
+    { _id: new ObjectId(id) },
+    updateData,
+    { returnDocument: 'after' }
+  )
+
+  if (!result) {
+    throw new AppError('Question not found', 404)
+  }
+
+  return result
+}
+
+export const createQuestion = async (
+  data: CreateQuestionInput
+): Promise<Question> => {
+  const newQuestion: WithoutId<Question> = {
+    ...data,
+    constraints: ensureArray(data.constraints!),
+    examples: ensureArray<{
+      input: string
+      output: string
+    }>(data.examples!),
+    hints: ensureArray(data.hints!),
+    categories: ensureArray(data.categories),
+    test_cases: ensureArray<TestCase>(data.test_cases),
+    is_active: data.is_active ?? true,
+  }
+
+  const result = await getQuestionCollection().insertOne(
+    newQuestion as Question
+  )
+  return { ...newQuestion, _id: (result.insertedId as ObjectId).toHexString() }
+}
+
+export const deleteQuestion = async (id: string): Promise<void> => {
+  const result = await getQuestionCollection().deleteOne({
+    _id: new ObjectId(id),
+  })
+  if (result.deletedCount === 0) {
+    throw new AppError('Question not found', 404)
+  }
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { lazy, useState } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Login from './pages/Login'
 import SignUp from './pages/SignUp'
@@ -11,10 +11,18 @@ import { RootState } from './store'
 import { Navigate, Outlet } from 'react-router-dom'
 import LoadingSkeleton from './components/common/LoadingSkeleton.tsx'
 import NavBarLayout from './layouts/NavBarLayout.tsx'
-import Submissions from './pages/Submissions.tsx'
+import SubmissionsOverview from './pages/SubmissionsOverview.tsx'
 import Home from './pages/Home.tsx'
-import ForgotPassword from './pages/ForgotPassword'
-import ResetPassword from './pages/ResetPassword'
+import UpdateProfile from './pages/UpdateProfile.tsx'
+import Match from './pages/Match.tsx'
+import CollaborationPanel from './pages/CollaborationPanel.tsx'
+import SubmissionDetail from './pages/SubmissionDetail.tsx'
+import ForgotPassword from './pages/ForgotPassword.tsx'
+import ResetPassword from './pages/ResetPassword.tsx'
+
+const NotificationSnackbar = lazy(
+  () => import('./components/common/NotificationSnackbar.tsx')
+)
 
 const ProtectedRoutes = () => {
   const dispatch = useDispatch()
@@ -42,23 +50,31 @@ const ProtectedRoutes = () => {
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Navigate to={'home'} />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<SignUp />} />
-
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-
-        <Route element={<ProtectedRoutes />}>
-          <Route element={<NavBarLayout />}>
-            <Route path="/home" element={<Home />} />
-            <Route path="/submissions" element={<Submissions />} />
+    <>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Navigate to={'home'} />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route element={<ProtectedRoutes />}>
+            <Route element={<NavBarLayout />}>
+              <Route path="/home" element={<Home />} />
+              <Route path="/submissions" element={<SubmissionsOverview />} />
+              <Route path="/match" element={<Match />} />
+              <Route path="/submissions/:id" element={<SubmissionDetail />} />
+            </Route>
+            <Route
+              path="/collaboration/:roomid"
+              element={<CollaborationPanel />}
+            />
           </Route>
-        </Route>
-      </Routes>
-    </Router>
+          <Route path="/update-profile" element={<UpdateProfile />} />
+        </Routes>
+      </Router>
+      <NotificationSnackbar />
+    </>
   )
 }
 

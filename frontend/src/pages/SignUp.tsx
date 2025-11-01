@@ -1,5 +1,7 @@
 import React from 'react'
+import { useDispatch } from 'react-redux'
 import { useForm, Controller, SubmitHandler } from 'react-hook-form'
+import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import {
@@ -14,7 +16,7 @@ import {
   CircularProgress,
   Stack,
 } from '@mui/material'
-import { Link as RouterLink, useNavigate } from 'react-router-dom'
+
 import { authService } from '../services/authService'
 import {
   RegisterFormDataClient,
@@ -22,28 +24,9 @@ import {
   UserSlice,
 } from '../types/auth'
 import { isAxiosError } from 'axios'
-import { useDispatch } from 'react-redux'
-import { loginSuccess } from '../store/slices/userSlice.ts'
 
-const registerSchema = yup.object({
-  full_name: yup
-    .string()
-    .required('Full name is required')
-    .min(2, 'Full name must be at least 2 characters')
-    .max(50, 'Full name must be less than 50 characters'),
-  email: yup
-    .string()
-    .email('Please enter a valid email address')
-    .required('Email is required'),
-  password: yup
-    .string()
-    .min(6, 'Password must be at least 6 characters')
-    .required('Password is required'),
-  confirmPassword: yup
-    .string()
-    .oneOf([yup.ref('password')], 'Passwords must match')
-    .required('Please confirm your password'),
-})
+import { loginSuccess } from '../store/slices/userSlice.ts'
+import userSchema from '../utils/userDetailsValidation.ts'
 
 const SignUp = () => {
   const dispatch = useDispatch()
@@ -55,7 +38,7 @@ const SignUp = () => {
     formState: { errors, isSubmitting },
     setError,
   } = useForm<RegisterFormDataClient>({
-    resolver: yupResolver(registerSchema),
+    resolver: yupResolver(userSchema),
     defaultValues: {
       full_name: '',
       email: '',
@@ -69,7 +52,7 @@ const SignUp = () => {
       const { confirmPassword: _, ...registerData } = data
 
       const result: RegisterResponse = await authService.register(registerData)
-
+      console.log(result)
       localStorage.setItem('authToken', result.token as string)
       dispatch(loginSuccess(result.user as UserSlice))
       navigate('/home')
@@ -81,7 +64,10 @@ const SignUp = () => {
             err.response?.data?.message ||
             'Registration failed. Please try again.',
         })
+      } else if (err instanceof yup.ValidationError) {
+        // just catch the error here, nothing needs to be done
       }
+      console.log(err)
     }
   }
 
