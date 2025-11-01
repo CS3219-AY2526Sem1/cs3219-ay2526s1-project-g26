@@ -75,7 +75,7 @@ const CollaborationPanel = () => {
       provider?.destroy()
       ydoc.destroy()
     }
-  }, [ydoc, roomid, dispatch])
+  }, [ydoc, roomid, dispatch, uid])
 
   if (!question) {
     return <Box>No Question has been supplied.</Box>
