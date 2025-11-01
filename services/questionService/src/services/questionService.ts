@@ -20,7 +20,7 @@ const getQuestionCollection = () => getDb().collection<Question>('questions')
  * It then identifies all questions with the highest score and randomly selects one to return.
  * This ensures that if multiple questions are an equally good match, the user receives a varied experience.
  *
- * @param difficulty - The desired difficulty level ('Easy', 'Medium', 'Hard').
+ * @param difficulty - The desired difficulty level ('easy', 'medium', 'hard').
  * @param categories - A comma-separated string of desired categories (e.g., 'array,string,hash-table').
  * @returns A promise that resolves to the question object that best matches the criteria, containing a subset of fields.
  * @throws {AppError} Throws an error if the questions collection is empty and no question can be returned.

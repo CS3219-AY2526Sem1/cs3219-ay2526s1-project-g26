@@ -55,7 +55,7 @@ export const getUserSubmissions = async (
           $dateToString: {
             format: '%Y-%m-%d %H:%M',
             date: { $toDate: '$submissionDetails._id' },
-            timezone: '+08:00' // hardcode for now
+            timezone: '+08:00', // hardcode for now
           },
         },
         overall_status: '$submissionDetails.overall_result.result',
@@ -117,7 +117,7 @@ export const getUserSubmission = async (
           $dateToString: {
             format: '%Y-%m-%d %H:%M',
             date: { $toDate: '$submissionDetails._id' },
-            timezone: '+08:00' // hardcode for now
+            timezone: '+08:00', // hardcode for now
           },
         },
         language: '$submissionDetails.language',

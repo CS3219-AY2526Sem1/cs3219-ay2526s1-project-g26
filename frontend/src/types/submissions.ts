@@ -21,7 +21,7 @@ export interface SubmissionDetail {
   code: string
 
   status: 'Passed' | 'Failed'
-  difficulty: 'Easy' | 'Medium' | 'Hard'
+  difficulty: 'easy' | 'medium' | 'hard'
   categories: string[]
   memory: string
   runtime: string
