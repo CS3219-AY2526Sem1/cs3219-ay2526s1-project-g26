@@ -47,8 +47,9 @@ const SubmissionResult: React.FC = () => {
   // Get the submission id from URL parameters
   const { id } = useParams<{ id: string }>()
 
-  const [submissionData, setSubmissionData] =
-    useState<SubmissionDetail | null>(null)
+  const [submissionData, setSubmissionData] = useState<SubmissionDetail | null>(
+    null
+  )
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
