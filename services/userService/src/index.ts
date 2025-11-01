@@ -15,17 +15,20 @@ import { PORT } from './config/index.js'
 const logger = getLogger('app')
 const app = express()
 
+app.use(cors())
 app.use(
   morgan('tiny', {
     stream: { write: logger.http.bind(logger) },
   })
 )
-app.use(cors())
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 app.use('/auth', authRoute)
 app.use('/profile', authenticate, profileRoute)
+
+app.use('/user/auth', authRoute)
 
 app.get('/', (_req: Request, res: Response) => {
   res.send('Hello from Express + TypeScript!')

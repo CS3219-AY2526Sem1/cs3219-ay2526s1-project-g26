@@ -61,6 +61,10 @@ services:
       - DB_HOST=user-service-db
       - DB_PASSWORD=postgres
       - DB_PORT=5432
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
     depends_on:
       - user-service-db
     ports:

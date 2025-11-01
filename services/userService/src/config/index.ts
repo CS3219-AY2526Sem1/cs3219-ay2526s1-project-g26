@@ -8,3 +8,9 @@ export const DB_HOST = process.env.DB_HOST || 'localhost'
 export const DB_USER = process.env.DB_USER || 'postgres'
 export const DB_NAME = process.env.DB_NAME || 'user_db'
 export const DB_PASSWORD = process.env.DB_PASSWORD || 'postgres'
+export const SMTP = {
+  HOST: process.env.SMTP_HOST || '',
+  PORT: process.env.SMTP_PORT || '587',
+  USER: process.env.SMTP_USER || 'peerprep',
+  PASS: process.env.SMTP_PASS || '',
+}

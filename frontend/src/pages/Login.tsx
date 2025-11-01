@@ -139,7 +139,12 @@ const Login = () => {
                 mt: 1,
               }}
             >
-              <Link href="#" underline="hover">
+              <Link
+                component="button"
+                variant="body2"
+                onClick={() => navigate('/forgot-password')}
+                underline="hover"
+              >
                 Forgot password?
               </Link>
             </Box>
