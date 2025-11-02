@@ -16,6 +16,7 @@ services:
       - collaboration-service
       - history-service
       - code-execution-service
+      - ai-service
 
   frontend:
     build:
@@ -232,6 +233,21 @@ services:
       - kafka
     stdin_open: true
     tty: true
+
+  # AI Service
+  ai-service:
+    build:
+      context: ../services/aiService
+      dockerfile: Dockerfile.dev
+    container_name: ai-service
+    volumes:
+      - ../services/aiService:/code
+    environment:
+      - BACKEND_BASE_URL=http://nginx
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    ports:
+      - "4060:4060"
+    restart: unless-stopped
 
   # Kafka / Zookeeper
   zookeeper:

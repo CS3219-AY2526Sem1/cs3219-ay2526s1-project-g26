@@ -1,13 +1,17 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react'
 import { Paper, Box } from '@mui/material'
-import QuestionPanel from '../components/question/QuestionPanel'
+import LeftPanel from '../components/collaboration_space/left_panel'
 import CollaborationRightPanel from '../components/collaboration_space/right_panel'
 import StyledPanelResizeHandle from '../components/collaboration_space/StyledPanelResizeHandle'
 import { PanelGroup, Panel } from 'react-resizable-panels'
 import TopToolBar from '../components/collaboration_space/TopToolBar'
 import { useLocation, useParams } from 'react-router-dom'
 import { WEBSOCKET_BASE_URL, WEBSOCKET_URL } from '../constants/api.ts'
-import { setSelectedLanguage } from '../store/slices/collaborationSlice.ts'
+import {
+  setSelectedLanguage,
+  setTargetTranslatedLanguage,
+  setTranslatedCode,
+} from '../store/slices/collaborationSlice.ts'
 import * as Y from 'yjs'
 import { useDispatch, useSelector } from 'react-redux'
 import { WebsocketProvider } from '../utils/y-websocket.js'
@@ -17,6 +21,7 @@ import submissionService from '../services/submissionsService.ts'
 import { setOpen as setNotificationBarOpen } from '../store/slices/notificationSnackbarSlice.ts'
 import { PeerProfile } from '../types/user.ts'
 import LoadingSkeleton from '../components/common/LoadingSkeleton.tsx'
+import { DEFAULT_LANGUAGE } from '../constants/collaboration_editor.ts'
 
 const CollaborationPanel = () => {
   const me = useSelector((state: RootState) => state.user.user)
@@ -25,7 +30,7 @@ const CollaborationPanel = () => {
   const { roomid } = useParams<{ roomid: string }>()
   const location = useLocation()
   const question = location.state?.question
-  const [provider, setProvider] = useState<WebsocketProvider | null>(null)
+  const [provider, setProvider] = useState<WebsocketProvider | undefined>()
   const dispatch = useDispatch()
   const ydoc = useMemo(() => new Y.Doc(), [])
   const [peerProfile, setPeerProfile] = useState<PeerProfile | null>(null)
@@ -35,8 +40,11 @@ const CollaborationPanel = () => {
       if (resizeTimerRef.current) {
         clearTimeout(resizeTimerRef.current)
       }
+      dispatch(setSelectedLanguage(DEFAULT_LANGUAGE))
+      dispatch(setTargetTranslatedLanguage(null))
+      dispatch(setTranslatedCode(null))
     }
-  }, [])
+  }, [dispatch])
 
   useEffect(() => {
     if (!roomid) return
@@ -126,7 +134,18 @@ const CollaborationPanel = () => {
       >
         <PanelGroup direction={'horizontal'}>
           <Panel defaultSize={50} minSize={20} maxSize={80}>
-            <QuestionPanel question={question || undefined} />
+            <Paper
+              elevation={1}
+              sx={{
+                height: '100%',
+                borderRadius: 2,
+                border: '1px solid',
+                borderColor: 'divider',
+                overflow: 'hidden',
+              }}
+            >
+              <LeftPanel question={question || undefined} provider={provider} />
+            </Paper>
           </Panel>
 
           <StyledPanelResizeHandle />

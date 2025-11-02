@@ -28,7 +28,7 @@ import BackgroundLetterAvatar from '../common/BackgroundLetterAvatar.tsx'
 import { PeerProfile } from '../../types/user.ts'
 
 interface TopToolBarProps {
-  provider: WebsocketProvider | null
+  provider: WebsocketProvider | undefined
   questionId: string | null
   peerProfile: PeerProfile | null
 }
