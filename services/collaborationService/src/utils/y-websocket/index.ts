@@ -271,6 +271,7 @@ const messageListener = (
             socket.send(message)
           })
         }
+        break
     }
   } catch (err) {
     logger.error(err)
