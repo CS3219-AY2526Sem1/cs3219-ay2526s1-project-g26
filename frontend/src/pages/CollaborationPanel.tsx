@@ -70,7 +70,7 @@ const CollaborationPanel = () => {
         },
         onExit: (id) => {
           const peerId = id
-          if (peerId != uid) {
+          if (peerId !== uid) {
             dispatch(
               setNotificationBarOpen({
                 message: 'Session ended by peer',
