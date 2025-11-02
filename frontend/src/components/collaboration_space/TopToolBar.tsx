@@ -6,7 +6,6 @@ import {
   Button,
   Box,
   IconButton,
-  Avatar,
   AvatarGroup,
   Tooltip,
   CircularProgress,
@@ -25,14 +24,17 @@ import {
 } from '../../utils/y-websocket'
 import { setIsCodeExecuting } from '../../store/slices/collaborationSlice'
 import * as encoding from 'lib0/encoding'
+import BackgroundLetterAvatar from '../common/BackgroundLetterAvatar.tsx'
+import { PeerProfile } from '../../types/user.ts'
 
 interface TopToolBarProps {
-  provider: WebsocketProvider | null
+  provider: WebsocketProvider | undefined
   questionId: string | null
+  peerProfile: PeerProfile | null
 }
 
 const TopToolBar = (props: TopToolBarProps) => {
-  const uid = useSelector((state: RootState) => state.user.user?.id)
+  const me = useSelector((state: RootState) => state.user.user)
   const dispatch = useDispatch()
   const [isMuted, setIsMuted] = useState(false)
   const { isCodeExecuting, selectedLanguage } = useSelector(
@@ -46,7 +48,7 @@ const TopToolBar = (props: TopToolBarProps) => {
   const handleExit = () => {
     const encoder = encoding.createEncoder()
     encoding.writeVarUint(encoder, messageEventSessionExit)
-    encoding.writeVarUint8Array(encoder, new TextEncoder().encode(uid))
+    encoding.writeVarUint8Array(encoder, new TextEncoder().encode(me?.id))
     props.provider?.ws?.send(encoding.toUint8Array(encoder))
   }
 
@@ -148,16 +150,18 @@ const TopToolBar = (props: TopToolBarProps) => {
             minWidth: '150px',
           }}
         >
-          <AvatarGroup max={2}>
-            <Tooltip title="You">
-              <Avatar alt="You" sx={{ bgcolor: 'deepOrange.500' }}>
-                W
-              </Avatar>
+          <AvatarGroup max={2} spacing="medium">
+            <Tooltip title="Me">
+              <BackgroundLetterAvatar
+                content={me?.full_name || ''}
+                alt={'My profile icon'}
+              />
             </Tooltip>
-            <Tooltip title="Peer">
-              <Avatar alt="Peer" sx={{ bgcolor: 'deepPurple.500' }}>
-                P
-              </Avatar>
+            <Tooltip title={props.peerProfile?.fullName || ''}>
+              <BackgroundLetterAvatar
+                alt="Peer's profile icon"
+                content={props.peerProfile?.fullName || ''}
+              />
             </Tooltip>
           </AvatarGroup>
 
