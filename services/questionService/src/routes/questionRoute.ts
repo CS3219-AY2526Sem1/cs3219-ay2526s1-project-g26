@@ -14,7 +14,7 @@ import { AppError } from '../utils/errors.js'
 
 const router = Router()
 
-router.get('/match', authenticate(), async (req, res) => {
+router.get('/match', async (req, res) => {
   const { difficulty, categories } = req.query
 
   if (!difficulty) {

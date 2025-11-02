@@ -48,7 +48,7 @@ const CollaborationPanel = () => {
   }, [dispatch])
 
   useEffect(() => {
-    if (!roomid) return
+    if (!roomid || !me) return
     const provider = new WebsocketProvider(
       `${WEBSOCKET_BASE_URL}${WEBSOCKET_URL.COLLABORATION}`,
       roomid,
