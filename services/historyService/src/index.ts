@@ -10,6 +10,7 @@ import historyRoute from './routes/submissionHistoryRoute.js'
 import errorHandler from './middleware/errorHandler.js'
 import { PORT } from './config/index.js'
 import { connectDB } from './database/index.js'
+import { runConsumer } from './services/consumerService.js'
 
 const logger = getLogger('app')
 const app = express()
@@ -30,4 +31,9 @@ app.use(errorHandler)
 
 app.listen(PORT, () => {
   logger.info(`Server running on port ${PORT}`)
+})
+
+runConsumer().catch((err) => {
+  logger.error('Kafka consumer failed to start', err)
+  process.exit(1)
 })
