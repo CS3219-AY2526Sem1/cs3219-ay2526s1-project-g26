@@ -27,7 +27,7 @@ import { setIsCodeExecuting } from '../../store/slices/collaborationSlice'
 import * as encoding from 'lib0/encoding'
 
 interface TopToolBarProps {
-  provider: WebsocketProvider | null
+  provider: WebsocketProvider | undefined
   questionId: string | null
 }
 
