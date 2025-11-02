@@ -90,6 +90,7 @@ const messageAwareness = 1
 // const messageQueryAwareness = 3
 const messageEventSwitchLanguage = 4
 const messageEventCodeSubmitted = 5
+const messageEventSessionExit = 6
 
 /**
  * @param {Uint8Array} update
@@ -266,6 +267,13 @@ const messageListener = (
           const data = JSON.parse(textMessage)
 
           submitVerificationJob(data, doc, ticketId)
+        }
+        break
+      case messageEventSessionExit:
+        {
+          doc.conns.forEach((_: Set<number>, socket: WebSocket) => {
+            socket.send(message)
+          })
         }
         break
     }
