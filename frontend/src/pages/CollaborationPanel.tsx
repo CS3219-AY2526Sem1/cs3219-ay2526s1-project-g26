@@ -5,7 +5,7 @@ import CollaborationRightPanel from '../components/collaboration_space/right_pan
 import StyledPanelResizeHandle from '../components/collaboration_space/StyledPanelResizeHandle'
 import { PanelGroup, Panel } from 'react-resizable-panels'
 import TopToolBar from '../components/collaboration_space/TopToolBar'
-import { useLocation, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { WEBSOCKET_BASE_URL, WEBSOCKET_URL } from '../constants/api.ts'
 import { setSelectedLanguage } from '../store/slices/collaborationSlice.ts'
 import * as Y from 'yjs'
@@ -25,6 +25,7 @@ const CollaborationPanel = () => {
   const question = location.state?.question
   const [provider, setProvider] = useState<WebsocketProvider | null>(null)
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const ydoc = useMemo(() => new Y.Doc(), [])
 
   useEffect(() => {
@@ -67,6 +68,20 @@ const CollaborationPanel = () => {
           }, 500)
           setTimeout(() => clearInterval(n), 30000)
         },
+        onExit: (id) => {
+          const peerId = id
+          if (peerId != uid) {
+            dispatch(
+              setNotificationBarOpen({
+                message: 'Session ended by peer',
+                severity: 'info',
+              })
+            )
+          }
+          provider?.destroy()
+          ydoc.destroy()
+          navigate(-1)
+        },
       }
     )
     setProvider(provider)
@@ -75,7 +90,7 @@ const CollaborationPanel = () => {
       provider?.destroy()
       ydoc.destroy()
     }
-  }, [ydoc, roomid, dispatch])
+  }, [ydoc, roomid, uid, navigate, dispatch])
 
   if (!question) {
     return <Box>No Question has been supplied.</Box>

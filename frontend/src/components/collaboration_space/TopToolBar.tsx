@@ -16,11 +16,11 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import ExitToAppIcon from '@mui/icons-material/ExitToApp'
 import MicIcon from '@mui/icons-material/Mic'
 import MicOffIcon from '@mui/icons-material/MicOff'
-import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../../store'
 import {
   messageEventCodeSubmitted,
+  messageEventSessionExit,
   WebsocketProvider,
 } from '../../utils/y-websocket'
 import { setIsCodeExecuting } from '../../store/slices/collaborationSlice'
@@ -32,8 +32,8 @@ interface TopToolBarProps {
 }
 
 const TopToolBar = (props: TopToolBarProps) => {
+  const uid = useSelector((state: RootState) => state.user.user?.id)
   const dispatch = useDispatch()
-  const navigate = useNavigate()
   const [isMuted, setIsMuted] = useState(false)
   const { isCodeExecuting, selectedLanguage } = useSelector(
     (state: RootState) => state.collaboration
@@ -44,7 +44,10 @@ const TopToolBar = (props: TopToolBarProps) => {
   }
 
   const handleExit = () => {
-    navigate(-1)
+    const encoder = encoding.createEncoder()
+    encoding.writeVarUint(encoder, messageEventSessionExit)
+    encoding.writeVarUint8Array(encoder, new TextEncoder().encode(uid))
+    props.provider?.ws?.send(encoding.toUint8Array(encoder))
   }
 
   const onRun = () => {
