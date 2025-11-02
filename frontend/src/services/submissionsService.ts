@@ -2,7 +2,6 @@ import axiosInstance from '../utils/axios.ts'
 import {
   SubmissionDataResponse,
   SubmissionDetail,
-  SubmissionDetail2,
 } from '../types/submissions.ts'
 import { API_ENDPOINTS } from '../constants/api.ts'
 
@@ -24,15 +23,16 @@ export const submissionsService = {
   },
 
   fetchSubmissionById: async (id: string): Promise<SubmissionDetail> => {
-    const response = await axiosInstance.get(
-      `${API_ENDPOINTS.HISTORY.GET_SUBMISSION_BY_ID}${id}`
-    )
+    const response = await axiosInstance.get<{
+      success: boolean
+      submission: SubmissionDetail
+    }>(`${API_ENDPOINTS.HISTORY.GET_SUBMISSION_BY_ID}${id}`)
     return response.data.submission
   },
 
   getSubmissionStatusByTicketId: async (
     ticketId: string
-  ): Promise<{ success: boolean; result: SubmissionDetail2 } | null> => {
+  ): Promise<SubmissionDetail | null> => {
     const response = await axiosInstance.get(
       `${API_ENDPOINTS.HISTORY.GET_SUBMISSION_STATUS_WITH_TICKET}/${ticketId}`
     )

@@ -92,8 +92,6 @@ export const getUserSubmission = async (
         submission_id: submissionId,
       },
     },
-    // Should not be needed since ObjectID is unique?
-    { $limit: 1 },
     {
       $addFields: {
         submission_obj_id: { $toObjectId: '$submission_id' },
@@ -111,46 +109,21 @@ export const getUserSubmission = async (
     {
       $project: {
         _id: 0,
+        question_id: '$submissionDetails.question_id',
         mode: '$submissionDetails.mode',
-        title: '$submissionDetails.question_title',
+        question_title: '$submissionDetails.question_title',
         submission_time: {
           $dateToString: {
-            format: '%Y-%m-%d %H:%M',
             date: { $toDate: '$submissionDetails._id' },
-            timezone: '+08:00', // hardcode for now
           },
         },
         language: '$submissionDetails.language',
         code: '$submissionDetails.code',
-        status: {
-          $cond: {
-            if: {
-              $eq: ['$submissionDetails.overall_result.result', 'Accepted'],
-            },
-            then: 'Passed',
-            else: 'Failed',
-          },
-        },
         difficulty: '$submissionDetails.difficulty',
         categories: '$submissionDetails.categories',
-        runtime: {
-          $concat: [
-            { $toString: '$submissionDetails.overall_result.time_taken' },
-            ' ms',
-          ],
-        },
-        memory: {
-          $concat: [
-            { $toString: '$submissionDetails.overall_result.max_memory_used' },
-            ' MB',
-          ],
-        },
-        error_message:
-          '$submissionDetails.overall_result.additional_information',
+        overall_result: '$submissionDetails.overall_result',
       },
     },
-    { $match: { mode: 'submit' } },
-    { $project: { mode: 0 } },
   ]
 
   const [submission] = await getUserSubmissionsCollection()

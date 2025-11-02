@@ -53,18 +53,15 @@ export interface SubmissionHistoryResponse {
 
 // Todo: Alter this to fit with frontend new schema
 export interface SubmissionDetailsResponse {
-  title: string
+  question_id: string
+  mode: RunMode
+  question_title: string
   submission_time: string
   language: Language
   code: string
-
-  status: string
   difficulty: string
   categories: string[]
-  memory: string
-  runtime: string
-
-  error_message?: string
+  overall_result: ResultInformation
 }
 
 export interface CreateSubmissionBody {

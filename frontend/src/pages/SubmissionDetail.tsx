@@ -1,22 +1,18 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { Box, Card, CardContent, Typography, Chip } from '@mui/material'
+import {
+  Box,
+  Card,
+  CardContent,
+  Typography,
+  Chip,
+  Divider,
+} from '@mui/material'
 import { styled } from '@mui/material/styles'
 import Editor from '@monaco-editor/react'
 import { submissionsService } from '../services/submissionsService'
 import { SubmissionDetail } from '../types/submissions'
 import LoadingSkeleton from '../components/common/LoadingSkeleton'
-
-// Helper function to map language names to Monaco Editor language identifiers
-const getMonacoLanguage = (language: string): string => {
-  const languageMap: { [key: string]: string } = {
-    Python: 'python',
-    JavaScript: 'javascript',
-    Java: 'java',
-    'C++': 'cpp',
-  }
-  return languageMap[language] || 'plaintext'
-}
 
 // Styled components
 const StyledCard = styled(Card)(({ theme }) => ({
@@ -27,6 +23,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
   borderRadius: 8,
   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
   padding: theme.spacing(4),
+  height: '100%',
 }))
 
 const ProblemTitle = styled(Typography)({
@@ -67,9 +64,6 @@ const SubmissionResult: React.FC = () => {
         const submission = await submissionsService.fetchSubmissionById(id)
         if (submission) {
           setSubmissionData(submission)
-          // Debugging: Unclear what is going on here, some languages produce errors
-          // while others don't
-          console.log(getMonacoLanguage(submission.language))
         } else {
           setError(`Submission with ID "${id}" not found`)
         }
@@ -132,160 +126,201 @@ const SubmissionResult: React.FC = () => {
   }
 
   return (
-    <Box sx={{ backgroundColor: '#f8f9fa', minHeight: '100vh', py: 3 }}>
+    <Box sx={{ height: '100vh', py: 3 }}>
       <StyledCard>
-        <CardContent sx={{ p: 0 }}>
-          {/* Header Section */}
+        <CardContent
+          sx={{
+            p: 0,
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
           <Box
             sx={{
               display: 'flex',
+              flexDirection: 'row',
               justifyContent: 'space-between',
-              alignItems: 'flex-start',
-              mb: 4,
             }}
           >
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <ProblemTitle variant="h4">{submissionData.title}</ProblemTitle>
-              <Chip
-                label={`Difficulty: ${submissionData.difficulty}`}
-                color={
-                  getDifficultyColor(submissionData.difficulty) as
-                    | 'success'
-                    | 'warning'
-                    | 'error'
-                }
-                size="small"
-                sx={{ fontWeight: 600 }}
-              />
-            </Box>
-            <StatusText
+            {/* Left Section (Question & Stats) */}
+            <Box
               sx={{
-                color:
-                  submissionData.status === 'Passed' ? '#28a745' : '#dc3545',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-start',
+                flexDirection: 'column',
+                gap: 2,
               }}
             >
-              {submissionData.status}
-            </StatusText>
-          </Box>
-
-          {/* Stats Section */}
-          <Box sx={{ mb: 3 }}>
-            <Box>
-              {submissionData.status === 'Passed' ? (
-                <>
-                  <Typography variant="body2" sx={{ mb: 1 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <ProblemTitle variant="h4">
+                  {submissionData.question_title}
+                </ProblemTitle>
+                <Chip
+                  label={`Difficulty: ${submissionData.difficulty}`}
+                  color={
+                    getDifficultyColor(submissionData.difficulty) as
+                      | 'success'
+                      | 'warning'
+                      | 'error'
+                  }
+                  size="small"
+                  sx={{ fontWeight: 600 }}
+                />
+              </Box>
+              <Box>
+                {submissionData.overall_result.result === 'Accepted' ? (
+                  <>
+                    <Typography variant="body2" sx={{ mb: 1 }}>
+                      <Typography
+                        component="span"
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ fontWeight: 500 }}
+                      >
+                        Runtime:{' '}
+                      </Typography>
+                      <Typography
+                        component="span"
+                        variant="body2"
+                        sx={{ color: '#1f2328' }}
+                      >
+                        {submissionData.overall_result.time_taken} ms
+                      </Typography>
+                    </Typography>
+                    <Typography variant="body2" sx={{ mb: 1 }}>
+                      <Typography
+                        component="span"
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ fontWeight: 500 }}
+                      >
+                        Memory:{' '}
+                      </Typography>
+                      <Typography
+                        component="span"
+                        variant="body2"
+                        sx={{ color: '#1f2328' }}
+                      >
+                        {submissionData.overall_result.max_memory_used} mb
+                      </Typography>
+                    </Typography>
+                  </>
+                ) : (
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      mb: 2,
+                      color: '#d73a49',
+                      fontWeight: 500,
+                      backgroundColor: '#ffeef0',
+                      padding: 2,
+                      borderRadius: 1,
+                      border: '1px solid #fdaeb7',
+                    }}
+                  >
                     <Typography
                       component="span"
                       variant="body2"
-                      color="text.secondary"
-                      sx={{ fontWeight: 500 }}
+                      sx={{ fontWeight: 600, display: 'block', mb: 1 }}
                     >
-                      Runtime:{' '}
+                      Error:
                     </Typography>
-                    <Typography
-                      component="span"
-                      variant="body2"
-                      sx={{ color: '#1f2328' }}
-                    >
-                      {submissionData.runtime}
-                    </Typography>
+                    {submissionData.overall_result.error ||
+                      submissionData.overall_result.output}
                   </Typography>
-                  <Typography variant="body2" sx={{ mb: 1 }}>
-                    <Typography
-                      component="span"
-                      variant="body2"
-                      color="text.secondary"
-                      sx={{ fontWeight: 500 }}
-                    >
-                      Memory:{' '}
-                    </Typography>
-                    <Typography
-                      component="span"
-                      variant="body2"
-                      sx={{ color: '#1f2328' }}
-                    >
-                      {submissionData.memory}
-                    </Typography>
-                  </Typography>
-                </>
-              ) : (
-                <Typography
-                  variant="body2"
+                )}
+                <Box
                   sx={{
-                    mb: 2,
-                    color: '#d73a49',
-                    fontWeight: 500,
-                    backgroundColor: '#ffeef0',
-                    padding: 2,
-                    borderRadius: 1,
-                    border: '1px solid #fdaeb7',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    mb: 0,
                   }}
                 >
-                  <Typography
-                    component="span"
-                    variant="body2"
-                    sx={{ fontWeight: 600, display: 'block', mb: 1 }}
-                  >
-                    Error:
+                  <Typography variant="body2">
+                    <Typography
+                      component="span"
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ fontWeight: 500 }}
+                    >
+                      Categories:{' '}
+                    </Typography>
+                    <Typography
+                      component="span"
+                      variant="body2"
+                      sx={{ color: '#1f2328' }}
+                    >
+                      {submissionData.categories.join(', ')}
+                    </Typography>
                   </Typography>
-                  {submissionData.error_message}
-                </Typography>
-              )}
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  mb: 0,
-                }}
-              >
-                <Typography variant="body2">
-                  <Typography
-                    component="span"
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ fontWeight: 500 }}
-                  >
-                    Categories:{' '}
-                  </Typography>
-                  <Typography
-                    component="span"
-                    variant="body2"
-                    sx={{ color: '#1f2328' }}
-                  >
-                    {submissionData.categories.join(', ')}
-                  </Typography>
-                </Typography>
-                <Typography variant="body2" sx={{ ml: 2 }}>
-                  <Typography
-                    component="span"
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ fontWeight: 500 }}
-                  >
-                    Date Submitted:{' '}
-                  </Typography>
-                  <Typography
-                    component="span"
-                    variant="body2"
-                    sx={{ color: '#1f2328' }}
-                  >
-                    {submissionData.submission_time}
-                  </Typography>
-                </Typography>
+                </Box>
               </Box>
             </Box>
+
+            {/* Right Section (Status & Date) */}
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                textAlign: 'right',
+              }}
+            >
+              <Box>
+                <StatusText
+                  sx={{
+                    color:
+                      submissionData.overall_result.result === 'Accepted'
+                        ? '#28a745'
+                        : '#dc3545',
+                  }}
+                >
+                  {submissionData.overall_result.result}
+                </StatusText>
+                <Typography>
+                  <strong>
+                    {submissionData.overall_result.passed_tests} /{' '}
+                    {submissionData.overall_result.total_tests}{' '}
+                  </strong>
+                  cases passed
+                </Typography>
+              </Box>
+              <Typography variant="body2">
+                <Typography
+                  component="span"
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ fontWeight: 500 }}
+                >
+                  Submitted at:{' '}
+                </Typography>
+                <Typography
+                  component="span"
+                  variant="body2"
+                  sx={{ color: '#1f2328' }}
+                >
+                  {new Date(submissionData.submission_time).toLocaleString()}
+                </Typography>
+              </Typography>
+            </Box>
           </Box>
+
+          <Divider sx={{ my: 3 }} />
 
           {/* Code Section */}
           <Box
             sx={{
-              mt: 5,
-              pt: 4,
-              borderTop: '1px solid #e1e4e8',
+              display: 'flex',
+              flexDirection: 'column',
+              flexGrow: 1,
+              minHeight: 0,
+              gap: 2,
             }}
           >
-            <Box sx={{ mb: 2, display: 'flex', gap: 1, alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
               <Typography
                 variant="body2"
                 color="text.secondary"
@@ -301,21 +336,19 @@ const SubmissionResult: React.FC = () => {
               sx={{
                 border: '1px solid #e1e4e8',
                 borderRadius: 2,
-                overflow: 'hidden',
-                height: 400,
+                flexGrow: 1,
               }}
             >
               <Editor
-                language={getMonacoLanguage(submissionData.language)}
+                language={submissionData.language}
                 value={submissionData.code}
                 options={{
                   readOnly: true,
                   domReadOnly: true,
-                  minimap: { enabled: false },
+                  minimap: { enabled: true },
                   scrollBeyondLastLine: false,
                   automaticLayout: true,
                   wordWrap: 'on',
-                  theme: 'vs-light',
                 }}
               />
             </Box>
