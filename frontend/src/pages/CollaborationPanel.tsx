@@ -19,10 +19,12 @@ import { setIsCodeExecuting } from '../store/slices/collaborationSlice.ts'
 import { RootState } from '../store'
 import submissionService from '../services/submissionsService.ts'
 import { setOpen as setNotificationBarOpen } from '../store/slices/notificationSnackbarSlice.ts'
+import { PeerProfile } from '../types/user.ts'
+import LoadingSkeleton from '../components/common/LoadingSkeleton.tsx'
 import { DEFAULT_LANGUAGE } from '../constants/collaboration_editor.ts'
 
 const CollaborationPanel = () => {
-  const uid = useSelector((state: RootState) => state.user.user?.id)
+  const me = useSelector((state: RootState) => state.user.user)
   const [resizeTrigger, setResizeTrigger] = useState<number | null>(null)
   const resizeTimerRef = useRef<NodeJS.Timeout | null>(null)
   const { roomid } = useParams<{ roomid: string }>()
@@ -31,6 +33,7 @@ const CollaborationPanel = () => {
   const [provider, setProvider] = useState<WebsocketProvider | undefined>()
   const dispatch = useDispatch()
   const ydoc = useMemo(() => new Y.Doc(), [])
+  const [peerProfile, setPeerProfile] = useState<PeerProfile | null>(null)
 
   useEffect(() => {
     return () => {
@@ -78,12 +81,28 @@ const CollaborationPanel = () => {
       }
     )
     setProvider(provider)
-    provider.awareness.setLocalStateField('id', uid)
+    provider.awareness.setLocalStateField('id', me?.id)
+    provider.awareness.setLocalStateField('user', {
+      fullName: me?.full_name,
+      id: me?.id,
+      email: me?.email,
+    } as PeerProfile)
+    provider.awareness.on('change', () => {
+      const targetClientId: number | undefined = Array.from(
+        provider.awareness.getStates().keys()
+      ).find((val) => val !== provider.awareness.clientID)
+      if (!targetClientId) return
+      const peerInfo: PeerProfile | undefined = provider.awareness
+        .getStates()
+        .get(targetClientId)?.user
+      if (!peerInfo) return
+      setPeerProfile(peerInfo)
+    })
     return () => {
       provider?.destroy()
       ydoc.destroy()
     }
-  }, [ydoc, roomid, dispatch, uid])
+  }, [ydoc, roomid, dispatch, me, uid])
 
   if (!question) {
     return <Box>No Question has been supplied.</Box>
@@ -99,9 +118,17 @@ const CollaborationPanel = () => {
     )
   }
 
+  if (!peerProfile) {
+    return <LoadingSkeleton />
+  }
+
   return (
     <>
-      <TopToolBar provider={provider} questionId={question._id} />
+      <TopToolBar
+        provider={provider}
+        questionId={question._id}
+        peerProfile={peerProfile}
+      />
       <Box
         sx={{ height: 'calc(100vh - 64px)', overflowY: 'inherit', padding: 1 }}
       >
@@ -142,6 +169,7 @@ const CollaborationPanel = () => {
                   }}
                 >
                   <CollaborationRightPanel
+                    peerProfile={peerProfile}
                     resizeTrigger={resizeTrigger}
                     provider={provider!}
                   />

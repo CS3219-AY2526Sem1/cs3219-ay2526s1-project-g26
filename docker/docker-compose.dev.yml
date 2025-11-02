@@ -95,7 +95,7 @@ services:
       - NODE_ENV=development
       - PORT=4010
       - DATABASE_URL=mongodb://question-service-db:27017/questions_db
-      - USER_SERVICE_URL=http://user-service:4000
+      - BACKEND_BASE_URL=http://nginx
     depends_on:
       - question-service-db
     ports:
@@ -163,8 +163,11 @@ services:
       - HOST=0.0.0.0
       - PORT=4030
       - BACKEND_BASE_URL=http://nginx
+      - KAFKA_BROKERS=kafka:9092
     ports:
       - "4030:4030"
+    depends_on:
+      - kafka
     stdin_open: true
     tty: true
 
@@ -181,10 +184,12 @@ services:
       - NODE_ENV=development
       - PORT=4040
       - DATABASE_URL=mongodb://history-service-db:27017/history_db
-      - USER_SERVICE_URL=http://user-service:4000
+      - BACKEND_BASE_URL=http://nginx
       - REDIS_URL=redis://history-service-redis:6379
+      - KAFKA_BROKERS=kafka:9092
     depends_on:
       - history-service-db
+      - kafka
     ports:
       - "4040:4040"
     stdin_open: true
@@ -221,8 +226,11 @@ services:
       - NODE_ENV=development
       - PORT=4050
       - BACKEND_BASE_URL=http://nginx
+      - KAFKA_BROKERS=kafka:9092
     ports:
       - "4050:4050"
+    depends_on:
+      - kafka
     stdin_open: true
     tty: true
 
@@ -240,6 +248,31 @@ services:
     ports:
       - "4060:4060"
     restart: unless-stopped
+
+  # Kafka / Zookeeper
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.4
+    hostname: zookeeper
+    ports:
+      - "4101:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.4
+    hostname: kafka
+    ports:
+      - "4100:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:4100
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - zookeeper
 
 volumes:
   user-service-db-data:
