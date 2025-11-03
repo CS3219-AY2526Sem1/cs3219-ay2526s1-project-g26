@@ -27,6 +27,7 @@ export const API_ENDPOINTS = {
   AI: {
     CODE_TRANSLATE: '/api/ai/code-translate',
   },
+  COMMUNICATION: '/api/communication',
 } as const
 
 export const WEBSOCKET_BASE_URL =

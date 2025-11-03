@@ -136,6 +136,23 @@ steps:
         "push",
         "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/ai-service:latest",
       ]
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "build",
+        "--no-cache",
+        "-t",
+        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/communication-service:latest",
+        "-f",
+        "services/communicationService/Dockerfile.prod",
+        "./services/communicationService",
+      ]
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "push",
+        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/communication-service:latest",
+      ]
 
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     entrypoint: gcloud
@@ -171,6 +188,7 @@ steps:
         "deployment/code-execution-service",
         "deployment/history-service",
         "deployment/ai-service",
+        "deployment/communication-service",
       ]
 
 options:

@@ -143,6 +143,7 @@ const CollaborationPanel = () => {
         provider={provider}
         questionId={question._id}
         peerProfile={peerProfile}
+        roomId={roomid}
       />
       <Box
         sx={{ height: 'calc(100vh - 64px)', overflowY: 'inherit', padding: 1 }}

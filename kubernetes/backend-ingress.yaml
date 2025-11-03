@@ -73,3 +73,11 @@ spec:
                 name: ai-service
                 port:
                   number: 4060
+
+          - path: /api/communication(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: communication-service
+                port:
+                  number: 4070

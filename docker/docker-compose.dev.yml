@@ -14,6 +14,7 @@ services:
       - question-service
       - matching-service
       - collaboration-service
+      - communication-service
       - history-service
       - code-execution-service
       - ai-service
@@ -31,6 +32,7 @@ services:
     environment:
       - REACT_APP_API_BASE_URL=http://localhost
       - REACT_APP_WEBSOCKET_BASE_URL=ws://localhost/ws
+      - NODE_ENV=development
     stdin_open: true
     tty: true
 
@@ -273,6 +275,22 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     depends_on:
       - zookeeper
+
+  # Communication Service
+  communication-service:
+    build:
+      context: ../services/communicationService
+      dockerfile: Dockerfile.dev
+    container_name: communication-service
+    volumes:
+      - ../services/communicationService:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=4070
+    ports:
+      - "4070:4070"
+    restart: unless-stopped
 
 volumes:
   user-service-db-data:
