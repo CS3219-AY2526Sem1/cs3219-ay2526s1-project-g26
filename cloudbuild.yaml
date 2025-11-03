@@ -125,6 +125,23 @@ steps:
         "build",
         "--no-cache",
         "-t",
+        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/ai-service:latest",
+        "-f",
+        "services/aiService/Dockerfile.prod",
+        "./services/aiService",
+      ]
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "push",
+        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/ai-service:latest",
+      ]
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "build",
+        "--no-cache",
+        "-t",
         "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/communication-service:latest",
         "-f",
         "services/communicationService/Dockerfile.prod",
@@ -170,6 +187,7 @@ steps:
         "deployment/collaboration-service",
         "deployment/code-execution-service",
         "deployment/history-service",
+        "deployment/ai-service",
         "deployment/communication-service",
       ]
 

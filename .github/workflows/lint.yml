@@ -147,6 +147,28 @@ jobs:
       - name: Run Prettier check
         run: npm run format:check
 
+  lint-aiservice:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: services/aiService
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          pip install black isort
+      - name: Run isort
+        run: |
+          isort --check-only --diff --profile black .
+      - name: Run Black
+        run: |
+          black --check --diff .
+
   lint-communicationservice:
     runs-on: ubuntu-latest
     defaults:

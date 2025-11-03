@@ -7,7 +7,7 @@ services:
       - .:/app
       - /app/node_modules
     ports:
-      - "4070:4070"
+      - '4070:4070'
     restart: unless-stopped
     environment:
       - NODE_ENV=production

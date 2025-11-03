@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ai-service
+  template:
+    metadata:
+      labels:
+        app: ai-service
+    spec:
+      containers:
+        - name: ai-service
+          image: asia-southeast1-docker.pkg.dev/peerprep-g26-2025/peerprep/ai-service:latest
+          ports:
+            - containerPort: 4060
+          envFrom:
+            - secretRef:
+                name: ai-service-secret

@@ -66,6 +66,14 @@ spec:
                 port:
                   number: 4050
 
+          - path: /api/ai(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: ai-service
+                port:
+                  number: 4060
+
           - path: /api/communication(/|$)(.*)
             pathType: ImplementationSpecific
             backend:
