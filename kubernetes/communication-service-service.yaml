@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: communication-service
+  annotations:
+    cloud.google.com/backend-config: '{"ports": {"4030":"websocket-backendconfig"}}'
+spec:
+  selector:
+    app: communication-service
+  ports:
+    - protocol: TCP
+      port: 4070
+      targetPort: 4070
+  type: ClusterIP

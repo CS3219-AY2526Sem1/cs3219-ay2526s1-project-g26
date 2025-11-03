@@ -65,3 +65,11 @@ spec:
                 name: code-execution-service
                 port:
                   number: 4050
+
+          - path: /api/communication(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: communication-service
+                port:
+                  number: 4070

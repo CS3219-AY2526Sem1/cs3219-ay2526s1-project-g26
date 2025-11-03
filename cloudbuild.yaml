@@ -119,6 +119,23 @@ steps:
         "push",
         "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/history-service:latest",
       ]
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "build",
+        "--no-cache",
+        "-t",
+        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/communication-service:latest",
+        "-f",
+        "services/communicationService/Dockerfile.prod",
+        "./services/communicationService",
+      ]
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "push",
+        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/communication-service:latest",
+      ]
 
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     entrypoint: gcloud
@@ -136,7 +153,7 @@ steps:
     env:
       - "CLOUDSDK_COMPUTE_REGION=$_GCP_REGION"
       - "CLOUDSDK_CONTAINER_CLUSTER=$_GKE_NAME"
-    args: [ "apply", "-f", "kubernetes/" ]
+    args: ["apply", "-f", "kubernetes/"]
 
   - name: "gcr.io/cloud-builders/kubectl"
     env:
@@ -152,7 +169,8 @@ steps:
         "deployment/matching-service",
         "deployment/collaboration-service",
         "deployment/code-execution-service",
-        "deployment/history-service"
+        "deployment/history-service",
+        "deployment/communication-service",
       ]
 
 options:
