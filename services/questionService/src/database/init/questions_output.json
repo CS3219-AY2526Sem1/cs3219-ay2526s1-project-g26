@@ -2647,8 +2647,8 @@
         "is_hidden": true
       },
       {
-        "input": "7\n1 2 3 4 5 6 7\n5\n5 1 2 3 5",
-        "output": "1 2 3 4 5 5 1 2 3 5 6 7",
+        "input": "7\n1 2 3 4 5 6 7\n5\n0 1 2 3 5",
+        "output": "0 1 1 2 2 3 3 4 5 5 6 7",
         "is_hidden": true
       },
       {

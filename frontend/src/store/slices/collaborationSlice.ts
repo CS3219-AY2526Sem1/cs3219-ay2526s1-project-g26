@@ -6,12 +6,16 @@ interface CollaborationState {
   selectedLanguage: string
   isCodeExecuting: boolean
   submissionResult: ExecuteCodeResponse | null
+  targetTranslatedLanguage: string | null
+  translatedCode: string | null
 }
 
 const initialState: CollaborationState = {
   selectedLanguage: DEFAULT_LANGUAGE,
   isCodeExecuting: false,
   submissionResult: null,
+  targetTranslatedLanguage: null,
+  translatedCode: null,
 }
 
 const collaborationSlice = createSlice({
@@ -34,9 +38,23 @@ const collaborationSlice = createSlice({
       state.submissionResult = action.payload
       state.isCodeExecuting = false
     },
+    setTargetTranslatedLanguage: (
+      state,
+      action: PayloadAction<string | null>
+    ) => {
+      state.targetTranslatedLanguage = action.payload
+    },
+    setTranslatedCode: (state, action: PayloadAction<string | null>) => {
+      state.translatedCode = action.payload
+    },
   },
 })
 
-export const { setSelectedLanguage, setIsCodeExecuting, setSubmissionResult } =
-  collaborationSlice.actions
+export const {
+  setSelectedLanguage,
+  setIsCodeExecuting,
+  setSubmissionResult,
+  setTargetTranslatedLanguage,
+  setTranslatedCode,
+} = collaborationSlice.actions
 export default collaborationSlice.reducer

@@ -8,15 +8,20 @@ import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../../../store'
 import { DEFAULT_LANGUAGE } from '../../../constants/collaboration_editor.ts'
 import { setSelectedLanguage } from '../../../store/slices/collaborationSlice.ts'
+import { PeerProfile } from '../../../types/user.ts'
+import { ScopedCssBaseline } from '@mui/material'
+import { stringToColor } from '../../../utils'
 
 type CollaborationEditorProps = {
   provider: WebsocketProvider | null
   resizeTrigger: number | null
+  peerProfile: PeerProfile | null
 }
 
 const CollaborationEditor = ({
   provider,
   resizeTrigger,
+  peerProfile,
 }: CollaborationEditorProps) => {
   const dispatch = useDispatch()
   const [editor, setEditor] =
@@ -54,19 +59,36 @@ const CollaborationEditor = ({
   )
 
   return (
-    <Editor
-      defaultLanguage={DEFAULT_LANGUAGE}
-      language={selectedLanguage}
-      options={{
-        minimap: { enabled: false },
-        scrollBeyondLastLine: false,
-        automaticLayout: false,
-        wordWrap: 'on',
+    <ScopedCssBaseline
+      sx={{
+        '& .yRemoteSelection': {
+          opacity: 0.8,
+          backgroundColor: stringToColor(peerProfile?.fullName || ' '),
+          marginRight: -1,
+        },
+        '& .yRemoteSelectionHead': {
+          position: 'absolute',
+          boxSizing: 'border-box',
+          height: '100%',
+          borderLeft: `2px solid ${stringToColor(peerProfile?.fullName || ' ')}`,
+        },
+        height: '100%',
       }}
-      onMount={(editor) => {
-        setEditor(editor)
-      }}
-    />
+    >
+      <Editor
+        defaultLanguage={DEFAULT_LANGUAGE}
+        language={selectedLanguage}
+        options={{
+          minimap: { enabled: false },
+          scrollBeyondLastLine: false,
+          automaticLayout: false,
+          wordWrap: 'on',
+        }}
+        onMount={(editor) => {
+          setEditor(editor)
+        }}
+      />
+    </ScopedCssBaseline>
   )
 }
 

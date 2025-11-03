@@ -2,8 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: code-execution-service
-  labels:
-    app: code-execution-service
 spec:
   replicas: 1
   selector:
@@ -15,33 +13,10 @@ spec:
         app: code-execution-service
     spec:
       containers:
-      - name: code-execution-service
-        image: zengfu0307/peerprep-codeexecutionservice:latest
-        ports:
-        - containerPort: 4050
-        env:
-        - name: NODE_ENV
-          value: "production"
-        - name: PORT
-          value: "4050"
-        - name: QUESTION_SERVICE_URL
-          value: "http://question-service:4010"
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "250m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 4050
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 4050
-          initialDelaySeconds: 5
-          periodSeconds: 5
+        - name: code-execution-service
+          image: asia-southeast1-docker.pkg.dev/peerprep-g26-2025/peerprep/code-execution-service:latest
+          ports:
+            - containerPort: 4050
+          envFrom:
+            - secretRef:
+                name: code-execution-service-secret
