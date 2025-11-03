@@ -24,6 +24,7 @@ export const API_ENDPOINTS = {
   CODE_EXECUTION: {
     EXECUTE: '/api/code-execution/execute',
   },
+  COMMUNICATION: '/api/communication',
 } as const
 
 export const WEBSOCKET_BASE_URL =

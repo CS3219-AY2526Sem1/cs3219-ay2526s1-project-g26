@@ -31,8 +31,6 @@ services:
     environment:
       - REACT_APP_API_BASE_URL=http://localhost
       - REACT_APP_WEBSOCKET_BASE_URL=ws://localhost/ws
-      - REACT_APP_COMMUNICATION_SERVICE_URL=http://localhost
-      - WDS_SOCKET_PORT=0
       - NODE_ENV=development
     stdin_open: true
     tty: true
@@ -240,10 +238,9 @@ services:
       - /app/node_modules
     environment:
       - NODE_ENV=development
-      - PORT=3007
-      - FRONTEND_URL=http://localhost:3000
+      - PORT=4070
     ports:
-      - "3007:3007"
+      - "4070:4070"
     restart: unless-stopped
 
 volumes:

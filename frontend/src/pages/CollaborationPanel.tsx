@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react'
-import { Paper, Box, Stack } from '@mui/material'
+import { Paper, Box } from '@mui/material'
 import QuestionPanel from '../components/question/QuestionPanel'
 import CollaborationRightPanel from '../components/collaboration_space/right_panel'
 import StyledPanelResizeHandle from '../components/collaboration_space/StyledPanelResizeHandle'
@@ -7,7 +7,6 @@ import { PanelGroup, Panel } from 'react-resizable-panels'
 import TopToolBar from '../components/collaboration_space/TopToolBar'
 import { useLocation, useParams } from 'react-router-dom'
 import { WEBSOCKET_BASE_URL, WEBSOCKET_URL } from '../constants/api.ts'
-import { VoiceChat } from '../components/VoiceChat'
 import { setSelectedLanguage } from '../store/slices/collaborationSlice.ts'
 import * as Y from 'yjs'
 import { useDispatch, useSelector } from 'react-redux'
@@ -93,75 +92,67 @@ const CollaborationPanel = () => {
   }
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      <TopToolBar provider={provider} questionId={question._id} />
-      <Box sx={{ flexGrow: 1, p: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
-        <Paper 
-          elevation={1} 
-          sx={{ 
-            p: 1, 
-            borderRadius: 2,
-            border: '1px solid',
-            borderColor: 'divider'
-          }}
-        >
-          <VoiceChat roomId={roomid || ''} />
-        </Paper>
+    <>
+      <TopToolBar
+        provider={provider}
+        questionId={question._id}
+        roomId={roomid}
+      />
+      <Box
+        sx={{ height: 'calc(100vh - 64px)', overflowY: 'inherit', padding: 1 }}
+      >
+        <PanelGroup direction={'horizontal'}>
+          <Panel defaultSize={50} minSize={20} maxSize={80}>
+            <QuestionPanel question={question || undefined} />
+          </Panel>
 
-        <Box sx={{ flexGrow: 1 }}>
-          <PanelGroup direction="horizontal">
-            <Panel defaultSize={50} minSize={20} maxSize={80}>
-              <QuestionPanel question={question || undefined} />
-            </Panel>
+          <StyledPanelResizeHandle />
 
-            <StyledPanelResizeHandle />
-
-            <Panel defaultSize={50} maxSize={80} minSize={20}>
-              <PanelGroup direction="vertical">
-                <Panel
-                  defaultSize={85}
-                  maxSize={95}
-                  minSize={20}
-                  onResize={handleResize}
+          <Panel defaultSize={50} maxSize={80} minSize={20}>
+            <PanelGroup direction={'vertical'}>
+              <Panel
+                defaultSize={85}
+                maxSize={95}
+                minSize={20}
+                onResize={handleResize}
+              >
+                <Paper
+                  elevation={1}
+                  sx={{
+                    height: '100%',
+                    borderRadius: 2,
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    overflow: 'hidden',
+                  }}
                 >
-                  <Paper
-                    elevation={1}
-                    sx={{
-                      height: '100%',
-                      borderRadius: 2,
-                      border: '1px solid',
-                      borderColor: 'divider',
-                      overflow: 'hidden',
-                    }}
-                  >
-                    <CollaborationRightPanel
-                      resizeTrigger={resizeTrigger}
-                      provider={provider!}
-                    />
-                  </Paper>
-                </Panel>
+                  <CollaborationRightPanel
+                    resizeTrigger={resizeTrigger}
+                    provider={provider!}
+                  />
+                </Paper>
+              </Panel>
 
-                <StyledPanelResizeHandle />
+              <StyledPanelResizeHandle />
 
-                <Panel defaultSize={15} minSize={5} maxSize={80}>
-                  <Paper
-                    elevation={1}
-                    sx={{
-                      height: '100%',
-                      borderRadius: 2,
-                      border: '1px solid',
-                      borderColor: 'divider',
-                    }}
-                  >
-                    Test Case Panel (Reserved)
-                  </Paper>
-                </Panel>
-              </PanelGroup>
-            </Panel>
-          </PanelGroup>
-        </Box>
+              <Panel defaultSize={15} minSize={5} maxSize={80}>
+                <Paper
+                  elevation={1}
+                  sx={{
+                    height: '100%',
+                    borderRadius: 2,
+                    border: '1px solid',
+                    borderColor: 'divider',
+                  }}
+                >
+                  Test Case Panel (Reserved)
+                </Paper>
+              </Panel>
+            </PanelGroup>
+          </Panel>
+        </PanelGroup>
       </Box>
-    </Box>
+    </>
   )
 }
 
