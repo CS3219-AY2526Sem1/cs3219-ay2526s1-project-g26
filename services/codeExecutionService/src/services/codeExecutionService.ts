@@ -43,6 +43,50 @@ const LANGUAGE_CONFIG = {
 }
 
 /**
+ * Normalize output string for comparison
+ * Handles multi-line outputs by:
+ * - Normalizing line endings (convert \r\n to \n)
+ * - Trimming trailing whitespace from each line
+ * - Removing empty lines
+ *
+ * @param output - The output string to normalize
+ * @returns Array of normalized lines
+ */
+const normalizeOutput = (output: string): string[] => {
+  return output
+    .replace(/\r\n/g, '\n')
+    .split('\n')
+    .map((line) => line.trimEnd())
+    .filter((line) => line.length > 0)
+}
+
+/**
+ * Compare two outputs for equality
+ * Tries exact match first, then sorted match (for order-independent outputs)
+ *
+ * @param actual - Actual output from code execution
+ * @param expected - Expected output from test case
+ * @returns true if outputs match
+ */
+const compareOutputs = (actual: string, expected: string): boolean => {
+  const actualLines = normalizeOutput(actual)
+  const expectedLines = normalizeOutput(expected)
+
+  if (actualLines.length !== expectedLines.length) {
+    return false
+  }
+
+  const exactMatch = actualLines.every((line, i) => line === expectedLines[i])
+  if (exactMatch) {
+    return true
+  }
+
+  const actualSorted = [...actualLines].sort()
+  const expectedSorted = [...expectedLines].sort()
+  return actualSorted.every((line, i) => line === expectedSorted[i])
+}
+
+/**
  * Validate user code against test cases
  * This is the CORE BUSINESS LOGIC that orchestrates the entire code execution flow
  *
@@ -138,14 +182,14 @@ export const validateCode = async (
       }
 
       // Step 4: Compare actual output with expected output
-      const actualOutput = result.output.trim()
-      const expectedOutput = testCase.output.trim()
+      const actualOutput = result.output
+      const expectedOutput = testCase.output
 
-      if (actualOutput === expectedOutput) {
+      if (compareOutputs(actualOutput, expectedOutput)) {
         passedTests++
       } else {
         logger.info(
-          `Test case ${i + 1} failed - Wrong Answer. Expected: "${expectedOutput}", Got: "${actualOutput}"`
+          `Test case ${i + 1} failed - Wrong Answer. Expected: "${expectedOutput.trim()}", Got: "${actualOutput.trim()}"`
         )
 
         return {
