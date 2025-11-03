@@ -135,8 +135,16 @@ export const validateCode = async (
         error: `Compilation Error: ${error.stderr || errorMessage}`,
         execution_time: 0,
         memory_used: 0,
-        total_tests: 0,
+        total_tests: testCases.length,
         passed_tests: 0,
+        test_case_details:
+          testCases.length > 0
+            ? {
+                input: testCases[0].input,
+                expected_output: testCases[0].output,
+                actual_output: '',
+              }
+            : undefined,
       }
     }
   }
@@ -145,6 +153,9 @@ export const validateCode = async (
   let passedTests = 0
   let totalExecutionTime = 0
   let maxMemoryUsed = 0
+  let lastTestCaseInput = ''
+  let lastExpectedOutput = ''
+  let lastActualOutput = ''
 
   for (let i = 0; i < testCases.length; i++) {
     const testCase = testCases[i]
@@ -163,6 +174,11 @@ export const validateCode = async (
         maxMemoryUsed = result.memoryUsed
       }
 
+      // Track last test case details
+      lastTestCaseInput = testCase.input
+      lastExpectedOutput = testCase.output
+      lastActualOutput = result.output
+
       // Step 3: Check if execution failed
       if (!result.success) {
         const status = determineErrorStatus(result.error)
@@ -178,6 +194,11 @@ export const validateCode = async (
           memory_used: maxMemoryUsed > 0 ? maxMemoryUsed : undefined,
           error: result.error,
           output: result.output || undefined,
+          test_case_details: {
+            input: testCase.input,
+            expected_output: testCase.output,
+            actual_output: result.output || '',
+          },
         }
       }
 
@@ -199,6 +220,11 @@ export const validateCode = async (
           execution_time: totalExecutionTime,
           memory_used: maxMemoryUsed > 0 ? maxMemoryUsed : undefined,
           output: actualOutput,
+          test_case_details: {
+            input: testCase.input,
+            expected_output: expectedOutput,
+            actual_output: actualOutput,
+          },
         }
       }
     } catch (error) {
@@ -214,6 +240,11 @@ export const validateCode = async (
         execution_time: totalExecutionTime,
         memory_used: maxMemoryUsed > 0 ? maxMemoryUsed : undefined,
         error: error instanceof Error ? error.message : 'Unknown error',
+        test_case_details: {
+          input: testCase.input,
+          expected_output: testCase.output,
+          actual_output: '',
+        },
       }
     }
   }
@@ -234,6 +265,11 @@ export const validateCode = async (
     total_tests: testCases.length,
     execution_time: totalExecutionTime,
     memory_used: maxMemoryUsed > 0 ? maxMemoryUsed : undefined,
+    test_case_details: {
+      input: lastTestCaseInput,
+      expected_output: lastExpectedOutput,
+      actual_output: lastActualOutput,
+    },
   }
 }
 

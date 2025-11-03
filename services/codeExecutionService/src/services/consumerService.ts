@@ -74,6 +74,7 @@ export const runConsumer = async () => {
               output: submissionResult.output,
               passed_tests: submissionResult.passed_tests,
               total_tests: submissionResult.total_tests,
+              test_case_details: submissionResult.test_case_details,
             },
           },
           user_ids,

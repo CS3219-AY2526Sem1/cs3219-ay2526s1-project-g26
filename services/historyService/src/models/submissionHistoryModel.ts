@@ -11,6 +11,12 @@ export type ResultLabel =
 export type Language = 'cpp' | 'javascript' | 'python'
 export type RunMode = 'run' | 'submit'
 
+export interface TestCaseDetails {
+  input: string
+  expected_output: string
+  actual_output: string
+}
+
 export interface ResultInformation {
   result: ResultLabel
   max_memory_used?: number // in MB
@@ -19,6 +25,7 @@ export interface ResultInformation {
   output: string | undefined
   passed_tests: number
   total_tests: number
+  test_case_details?: TestCaseDetails
 }
 
 export interface Submission {
