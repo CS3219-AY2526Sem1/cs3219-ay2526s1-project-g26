@@ -14,6 +14,12 @@ export interface ExecuteCodeRequest {
   mode: 'run' | 'submit'
 }
 
+export interface TestCaseDetails {
+  input: string
+  expected_output: string
+  actual_output: string
+}
+
 export interface ExecuteCodeResponse {
   status: ExecutionStatus
   passed_tests: number
@@ -22,4 +28,5 @@ export interface ExecuteCodeResponse {
   memory_used?: number
   output?: string
   error?: string
+  test_case_details?: TestCaseDetails
 }

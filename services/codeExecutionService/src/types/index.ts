@@ -20,6 +20,12 @@ export interface CodeExecutionOutput {
   memoryUsed?: number // Memory used in MB
 }
 
+export interface TestCaseDetails {
+  input: string
+  expected_output: string
+  actual_output: string
+}
+
 export interface SubmissionResult {
   status: ExecutionStatus
   passed_tests: number
@@ -28,6 +34,7 @@ export interface SubmissionResult {
   memory_used?: number
   output?: string
   error?: string
+  test_case_details?: TestCaseDetails
 }
 
 export interface ExecuteCodeRequest {

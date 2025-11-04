@@ -43,6 +43,50 @@ const LANGUAGE_CONFIG = {
 }
 
 /**
+ * Normalize output string for comparison
+ * Handles multi-line outputs by:
+ * - Normalizing line endings (convert \r\n to \n)
+ * - Trimming trailing whitespace from each line
+ * - Removing empty lines
+ *
+ * @param output - The output string to normalize
+ * @returns Array of normalized lines
+ */
+const normalizeOutput = (output: string): string[] => {
+  return output
+    .replace(/\r\n/g, '\n')
+    .split('\n')
+    .map((line) => line.trimEnd())
+    .filter((line) => line.length > 0)
+}
+
+/**
+ * Compare two outputs for equality
+ * Tries exact match first, then sorted match (for order-independent outputs)
+ *
+ * @param actual - Actual output from code execution
+ * @param expected - Expected output from test case
+ * @returns true if outputs match
+ */
+const compareOutputs = (actual: string, expected: string): boolean => {
+  const actualLines = normalizeOutput(actual)
+  const expectedLines = normalizeOutput(expected)
+
+  if (actualLines.length !== expectedLines.length) {
+    return false
+  }
+
+  const exactMatch = actualLines.every((line, i) => line === expectedLines[i])
+  if (exactMatch) {
+    return true
+  }
+
+  const actualSorted = [...actualLines].sort()
+  const expectedSorted = [...expectedLines].sort()
+  return actualSorted.every((line, i) => line === expectedSorted[i])
+}
+
+/**
  * Validate user code against test cases
  * This is the CORE BUSINESS LOGIC that orchestrates the entire code execution flow
  *
@@ -91,8 +135,16 @@ export const validateCode = async (
         error: `Compilation Error: ${error.stderr || errorMessage}`,
         execution_time: 0,
         memory_used: 0,
-        total_tests: 0,
+        total_tests: testCases.length,
         passed_tests: 0,
+        test_case_details:
+          testCases.length > 0
+            ? {
+                input: testCases[0].input,
+                expected_output: testCases[0].output,
+                actual_output: '',
+              }
+            : undefined,
       }
     }
   }
@@ -101,6 +153,9 @@ export const validateCode = async (
   let passedTests = 0
   let totalExecutionTime = 0
   let maxMemoryUsed = 0
+  let lastTestCaseInput = ''
+  let lastExpectedOutput = ''
+  let lastActualOutput = ''
 
   for (let i = 0; i < testCases.length; i++) {
     const testCase = testCases[i]
@@ -119,6 +174,11 @@ export const validateCode = async (
         maxMemoryUsed = result.memoryUsed
       }
 
+      // Track last test case details
+      lastTestCaseInput = testCase.input
+      lastExpectedOutput = testCase.output
+      lastActualOutput = result.output
+
       // Step 3: Check if execution failed
       if (!result.success) {
         const status = determineErrorStatus(result.error)
@@ -134,18 +194,23 @@ export const validateCode = async (
           memory_used: maxMemoryUsed > 0 ? maxMemoryUsed : undefined,
           error: result.error,
           output: result.output || undefined,
+          test_case_details: {
+            input: testCase.input,
+            expected_output: testCase.output,
+            actual_output: result.output || '',
+          },
         }
       }
 
       // Step 4: Compare actual output with expected output
-      const actualOutput = result.output.trim()
-      const expectedOutput = testCase.output.trim()
+      const actualOutput = result.output
+      const expectedOutput = testCase.output
 
-      if (actualOutput === expectedOutput) {
+      if (compareOutputs(actualOutput, expectedOutput)) {
         passedTests++
       } else {
         logger.info(
-          `Test case ${i + 1} failed - Wrong Answer. Expected: "${expectedOutput}", Got: "${actualOutput}"`
+          `Test case ${i + 1} failed - Wrong Answer. Expected: "${expectedOutput.trim()}", Got: "${actualOutput.trim()}"`
         )
 
         return {
@@ -155,6 +220,11 @@ export const validateCode = async (
           execution_time: totalExecutionTime,
           memory_used: maxMemoryUsed > 0 ? maxMemoryUsed : undefined,
           output: actualOutput,
+          test_case_details: {
+            input: testCase.input,
+            expected_output: expectedOutput,
+            actual_output: actualOutput,
+          },
         }
       }
     } catch (error) {
@@ -170,6 +240,11 @@ export const validateCode = async (
         execution_time: totalExecutionTime,
         memory_used: maxMemoryUsed > 0 ? maxMemoryUsed : undefined,
         error: error instanceof Error ? error.message : 'Unknown error',
+        test_case_details: {
+          input: testCase.input,
+          expected_output: testCase.output,
+          actual_output: '',
+        },
       }
     }
   }
@@ -190,6 +265,11 @@ export const validateCode = async (
     total_tests: testCases.length,
     execution_time: totalExecutionTime,
     memory_used: maxMemoryUsed > 0 ? maxMemoryUsed : undefined,
+    test_case_details: {
+      input: lastTestCaseInput,
+      expected_output: lastExpectedOutput,
+      actual_output: lastActualOutput,
+    },
   }
 }
 
