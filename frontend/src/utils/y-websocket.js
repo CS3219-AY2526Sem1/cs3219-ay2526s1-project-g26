@@ -121,6 +121,7 @@ messageHandlers[messageAuth] = (
 
 export const messageEventSwitchLanguage = 4
 export const messageEventCodeSubmitted = 5
+export const messageEventSessionExit = 6
 
 /**
  *                       data,       callback,  messageType
@@ -140,6 +141,17 @@ messageEventHandlers[messageEventSwitchLanguage] = (
 }
 
 messageEventHandlers[messageEventCodeSubmitted] = (
+  data,
+  callback,
+  _messageType
+) => {
+  const message = new TextDecoder().decode(data)
+  if (callback) {
+    callback(message)
+  }
+}
+
+messageEventHandlers[messageEventSessionExit] = (
   data,
   callback,
   _messageType
@@ -322,6 +334,7 @@ export class WebsocketProvider extends Observable {
    * @param {object} callbacks
    * @param {function(string): void} [callbacks.onSwitchLanguage] Callback upon switch language from other users
    * @param {function(string?): void} [callbacks.onCodeSubmitted] Callback upon a user submits or runs the code
+   * @param {function(string): void} [callbacks.onExit] Callback upon a user exiting
    */
   constructor(
     serverUrl,
@@ -339,6 +352,7 @@ export class WebsocketProvider extends Observable {
     {
       onSwitchLanguage = (_language) => {},
       onCodeSubmitted = (_msg) => {},
+      onExit = (_id) => {},
     } = {}
   ) {
     super()
@@ -368,6 +382,7 @@ export class WebsocketProvider extends Observable {
     this.messageEventCallbacksMap = new Map([
       [messageEventSwitchLanguage, onSwitchLanguage],
       [messageEventCodeSubmitted, onCodeSubmitted],
+      [messageEventSessionExit, onExit],
     ])
     /**
      * @type {boolean}

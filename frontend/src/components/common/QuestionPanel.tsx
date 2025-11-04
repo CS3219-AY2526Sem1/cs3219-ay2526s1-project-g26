@@ -1,7 +1,6 @@
 import React from 'react'
 import {
   Box,
-  Paper,
   Typography,
   Chip,
   Divider,
@@ -115,17 +114,7 @@ const QuestionPanel: React.FC<QuestionPanelProps> = ({
   }
 
   return (
-    <Paper
-      elevation={1}
-      sx={{
-        height: '100%',
-        borderRadius: 2,
-        border: '1px solid',
-        borderColor: 'divider',
-        padding: 2,
-        overflow: 'auto',
-      }}
-    >
+    <Box sx={{ padding: 1 }}>
       {/* title and difficulty */}
       <Stack direction="row" spacing={2} alignItems="center" mb={2}>
         <Typography variant="h5" component="h1" fontWeight="bold">
@@ -360,7 +349,7 @@ const QuestionPanel: React.FC<QuestionPanelProps> = ({
             </AccordionDetails>
           </Accordion>
         )}
-    </Paper>
+    </Box>
   )
 }
 
