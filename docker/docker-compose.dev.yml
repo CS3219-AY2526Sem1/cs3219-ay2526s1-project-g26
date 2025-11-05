@@ -98,6 +98,7 @@ services:
       - PORT=4010
       - DATABASE_URL=mongodb://question-service-db:27017/questions_db
       - BACKEND_BASE_URL=http://nginx
+      - REDIS_URL=redis://question-service-redis:6379
     depends_on:
       - question-service-db
     ports:
@@ -113,6 +114,15 @@ services:
     volumes:
       - question-service-db-data:/data/db
       - ../services/questionService/src/database/init:/docker-entrypoint-initdb.d
+
+  question-service-redis:
+    image: redis:8-alpine
+    container_name: question-service-redis
+    restart: unless-stopped
+    ports:
+      - "4012:6379"
+    volumes:
+      - question-service-redis-data:/data
 
   question-service-question-generator:
     build:
@@ -295,6 +305,7 @@ services:
 volumes:
   user-service-db-data:
   question-service-db-data:
+  question-service-redis-data:
   matching-service-redis-data:
   history-service-db-data:
   history-service-redis-data:

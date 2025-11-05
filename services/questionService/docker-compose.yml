@@ -12,6 +12,7 @@ services:
       - PORT=4010
       - DATABASE_URL=mongodb://question-service-db:27017/questions_db
       - BACKEND_BASE_URL=${BACKEND_BASE_URL}
+      - REDIS_URL=redis://redis:6379
     depends_on:
       - db
 
@@ -24,5 +25,15 @@ services:
       - question-service-db-data:/data/db
       - ./src/database/init:/docker-entrypoint-initdb.d
 
+  redis:
+    image: redis:8-alpine
+    container_name: question-service-redis
+    restart: unless-stopped
+    ports:
+      - '4012:6379'
+    volumes:
+      - question-service-redis-data:/data
+
 volumes:
   question_service-db-data:
+  question-service-redis-data:
