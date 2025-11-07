@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import {
+  getRoomSubmissions,
   getUserSubmission,
   getUserSubmissions,
 } from '../services/submissionHistoryService.js'
@@ -41,6 +42,18 @@ router.get('/status/:ticket_id', authenticate(), async (req, res) => {
     return res.status(202).send()
   }
   return res.status(200).send({ success: true, result: JSON.parse(data) })
+})
+
+router.get('/room/:room_id', authenticate(), async (req, res) => {
+  const roomId = req.params.room_id
+  const page = parseInt((req.query?.page as string) || '1')
+  const limit = parseInt((req.query?.limit as string) || '10')
+
+  const submissions = await getRoomSubmissions(roomId, page, limit)
+  if (!submissions) {
+    throw new AppError('Invalid room id', 404)
+  }
+  return res.json({ success: true, submissions })
 })
 
 export default router
