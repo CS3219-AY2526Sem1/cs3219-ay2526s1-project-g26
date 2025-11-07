@@ -19,8 +19,9 @@ export const API_ENDPOINTS = {
   },
   HISTORY: {
     GET_USER_SUBMISSIONS: '/api/history/submissions',
-    GET_SUBMISSION_BY_ID: '/api/history/submissions/',
+    GET_SUBMISSION_BY_ID: '/api/history/submissions',
     GET_SUBMISSION_STATUS_WITH_TICKET: '/api/history/submissions/status',
+    GET_ROOM_SUBMISSIONS: '/api/history/room'
   },
   CODE_EXECUTION: {
     EXECUTE: '/api/code-execution/execute',
