@@ -2,9 +2,6 @@ import React from 'react'
 import { Box, Alert, Button, CircularProgress } from '@mui/material'
 import type { MatchState } from '../../types/matchState'
 
-const sessionDurationAlert =
-  'Collaborative session will last 30 minutes for Easy, 45 minutes for Medium and 60 minutes for Hard'
-
 export const Submission = ({
   checkedTopics,
   checkedDifficulties,
