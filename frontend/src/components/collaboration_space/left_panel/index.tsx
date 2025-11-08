@@ -4,6 +4,7 @@ import { Question } from '../../../types/question.ts'
 import { Box, Tab, Tabs } from '@mui/material'
 import CodeTranslationPanel from './CodeTranslationPanel'
 import { type WebsocketProvider } from '../../../utils/y-websocket'
+import SubmissionsPanel from './SubmissionsPanel.tsx'
 
 // Source: https://mui.com/material-ui/react-tabs/
 interface TabPanelProps {
@@ -35,6 +36,7 @@ function CustomTabPanel(props: TabPanelProps) {
 
 interface LeftPanelProps {
   question: Question | undefined
+  roomId: string | undefined
   provider: WebsocketProvider | undefined
 }
 
@@ -72,7 +74,7 @@ const LeftPanel = (props: LeftPanelProps) => {
         <CodeTranslationPanel provider={props.provider} />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
-        Submissions Page (Reserved)
+        <SubmissionsPanel roomId={props.roomId} provider={props.provider} />
       </CustomTabPanel>
     </Box>
   )

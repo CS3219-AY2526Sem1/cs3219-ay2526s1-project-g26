@@ -26,7 +26,7 @@ export const submissionsService = {
     const response = await axiosInstance.get<{
       success: boolean
       submission: SubmissionDetail
-    }>(`${API_ENDPOINTS.HISTORY.GET_SUBMISSION_BY_ID}${id}`)
+    }>(`${API_ENDPOINTS.HISTORY.GET_SUBMISSION_BY_ID}/${id}`)
     return response.data.submission
   },
 
@@ -41,6 +41,23 @@ export const submissionsService = {
     } else {
       return response.data.result
     }
+  },
+
+  fetchRoomSubmissions: async (
+    roomId: string,
+    page: number,
+    limit: number
+  ): Promise<SubmissionDataResponse> => {
+    const response = await axiosInstance.get(
+      `${API_ENDPOINTS.HISTORY.GET_ROOM_SUBMISSIONS}/${roomId}`,
+      {
+        params: {
+          page,
+          limit,
+        },
+      }
+    )
+    return response.data.submissions
   },
 }
 

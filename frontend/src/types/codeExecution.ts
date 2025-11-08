@@ -12,6 +12,7 @@ export interface ExecuteCodeRequest {
   language: string
   code_text: string
   mode: 'run' | 'submit'
+  room_id: string
 }
 
 export interface TestCaseDetails {

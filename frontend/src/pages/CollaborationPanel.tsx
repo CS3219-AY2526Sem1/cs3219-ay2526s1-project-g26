@@ -160,7 +160,7 @@ const CollaborationPanel = () => {
                 overflow: 'hidden',
               }}
             >
-              <LeftPanel question={question || undefined} provider={provider} />
+              <LeftPanel question={question || undefined} roomId={roomid || undefined} provider={provider} />
             </Paper>
           </Panel>
 

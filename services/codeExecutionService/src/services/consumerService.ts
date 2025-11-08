@@ -35,10 +35,10 @@ export const runConsumer = async () => {
           message.value.toString()
         )
 
-        const { ticket_id, question_id, language, code_text, mode, user_ids } =
+        const { ticket_id, question_id, language, code_text, mode, room_id, user_ids } =
           job
 
-        if (!ticket_id || !question_id || !language || !code_text || !mode) {
+        if (!ticket_id || !room_id || !question_id || !language || !code_text || !mode) {
           logger.warn('Missing required fields in Kafka message', job)
           return
         }
@@ -77,6 +77,7 @@ export const runConsumer = async () => {
               test_case_details: submissionResult.test_case_details,
             },
           },
+          room_id,
           user_ids,
         }
 
