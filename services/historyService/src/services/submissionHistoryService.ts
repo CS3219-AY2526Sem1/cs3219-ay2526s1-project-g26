@@ -170,7 +170,7 @@ export const getRoomSubmissions = async (
         title: '$submissionDetails.question_title',
         submission_time: {
           $dateToString: {
-            format: '%Y-%m-%d %H:%M',
+            format: '%Y-%m-%d %H:%M UTC',
             date: { $toDate: '$submissionDetails._id' },
           },
         },
