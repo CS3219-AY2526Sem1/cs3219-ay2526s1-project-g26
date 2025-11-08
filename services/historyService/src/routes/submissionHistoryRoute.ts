@@ -44,7 +44,7 @@ router.get('/status/:ticket_id', authenticate(), async (req, res) => {
   return res.status(200).send({ success: true, result: JSON.parse(data) })
 })
 
-router.get('/room/:room_id', authenticate(), async (req, res) => {
+router.get('/rooms/:room_id', authenticate(), async (req, res) => {
   const roomId = req.params.room_id
   const page = parseInt((req.query?.page as string) || '0')
   const limit = parseInt((req.query?.limit as string) || '10')
