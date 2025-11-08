@@ -145,7 +145,7 @@ export class UserStorage {
     const waitingTime = Math.round((currTime - targetUser.timeJoined) / 1000) // Time waited in seconds
 
     const A = Number(overlapTopics.length >= 1) // 1 bit
-    const T = waitingTime >= 5 ? 1 : 0 // 1 bit
+    const T = waitingTime >= 120 ? 1 : 0 // 1 bit
     const B = Number(overlapDifficulties.length >= 1) // 1 bit
     const C = overlapTopics.length // 5 bits
     const D = overlapDifficulties.length // 2 bits
