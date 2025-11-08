@@ -17,9 +17,9 @@ const router = Router()
 router.get('/match', async (req, res) => {
   const { difficulty, categories } = req.query
 
-  if (!difficulty) {
-    return res.status(400).json({ error: 'Difficulty is required' })
-  }
+  // if (!difficulty) {
+  //   return res.status(400).json({ error: 'Difficulty is required' })
+  // }
 
   const question = await getMatchingQuestion(
     difficulty as string,

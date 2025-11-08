@@ -76,7 +76,7 @@ export class UserStorage {
     let score: number = -1
     let target = null
     users.forEach((targetUserInfo) => {
-      const targetUserScore = this.calculateSimilarityScore(
+      const targetUserScore = this.calculateScore(
         userInfo,
         targetUserInfo,
         currTime
@@ -87,11 +87,16 @@ export class UserStorage {
       }
     })
 
-    if (!((score >>> 20) & 1)) {
+    if (!((score >>> 21) & 1)) {
       return null
     }
 
-    // If second bit of score is 0 after checking first digit above
+    // If waiting time more than 2min, skip difficulty check and match
+    if ((score >>> 20) & 1) {
+      return target
+    }
+
+    // If third bit of score is 0 after checking first digit above
     // then no one else has overlapping difficulties
     if (!((score >>> 19) & 1)) {
       return null
@@ -120,7 +125,7 @@ export class UserStorage {
   }
 
   // Returns similarity score between recently joined user and targetUser in the storage
-  private static calculateSimilarityScore(
+  private static calculateScore(
     user: UserInfo,
     targetUser: UserStorageFields,
     currTime: number
@@ -137,16 +142,15 @@ export class UserStorage {
     const overlapDifficulties = user1Difficulties.filter((diff) =>
       user2Difficulties.includes(diff)
     )
+    const waitingTime = Math.round((currTime - targetUser.timeJoined) / 1000) // Time waited in seconds
 
     const A = Number(overlapTopics.length >= 1) // 1 bit
+    const T = waitingTime >= 5 ? 1 : 0 // 1 bit
     const B = Number(overlapDifficulties.length >= 1) // 1 bit
     const C = overlapTopics.length // 5 bits
     const D = overlapDifficulties.length // 2 bits
-    const E = Math.min(
-      Math.round((currTime - targetUser.timeJoined) / 1000),
-      3600
-    ) // 12 bits - time waited in seconds up tp max of 1 hour
+    const E = Math.min(waitingTime, 3600) // 12 bits - time waited in seconds up to max of 1 hour
 
-    return (A << 20) + (B << 19) + (C << 14) + (D << 12) + E
+    return (A << 21) + (T << 20) + (B << 19) + (C << 14) + (D << 12) + E
   }
 }
