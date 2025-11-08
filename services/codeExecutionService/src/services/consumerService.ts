@@ -42,7 +42,7 @@ export const runConsumer = async () => {
           code_text,
           mode,
           room_id,
-          user_ids 
+          user_ids,
         } = job
 
         if (

@@ -212,12 +212,12 @@ export const insertSubmission = async (data: CreateSubmissionBody) => {
     {
       user_id: data.user_ids[0],
       submission_id: submissionId,
-      room_id: data.room_id
+      room_id: data.room_id,
     },
     {
       user_id: data.user_ids[1],
       submission_id: submissionId,
-      room_id: data.room_id
+      room_id: data.room_id,
     },
   ])
 }
