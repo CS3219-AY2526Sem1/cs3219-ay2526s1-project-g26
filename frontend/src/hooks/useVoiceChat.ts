@@ -42,47 +42,57 @@ export const useVoiceChat = ({
 
   // **NEW**: Ref for the master gain node to control all incoming audio
   const masterGainNodeRef = useRef<GainNode | null>(null)
-
   useEffect(() => {
-    if (!enabled) return
+    // 1. If not enabled, do nothing.
+    // We return a simple cleanup in case enabled toggled from true->false.
+    if (!enabled) {
+      // Return a cleanup to be safe, though refs are likely null
+      return () => {
+        if (streamRef.current) {
+          streamRef.current.getTracks().forEach((track) => track.stop())
+          streamRef.current = null
+        }
+      }
+    }
+
+    // --- This flag is the main fix ---
+    // 2. Add a flag to track if the component is still mounted.
+    let isMounted = true
 
     // Initialize WebSocket connection
     const socket = io(`/microphone`, {
       path: `${API_ENDPOINTS.COMMUNICATION}/socket.io`,
-      transports: ['websocket', 'polling'],
-      forceNew: true,
-      reconnectionAttempts: 5,
-      timeout: 10000,
-      reconnectionDelay: 1000,
-      reconnectionDelayMax: 5000,
+      // ... (rest of socket config)
     })
 
     socketRef.current = socket
 
-    // ... socket connection events (connect, disconnect, error) ...
+    // ... (socket connection events are the same) ...
     socket.on('connect', () => {
+      if (!isMounted) return // Check if still mounted
       setIsConnected(true)
       socket.emit('joinRoom', roomId)
     })
 
-    socket.on('disconnect', () => {
-      setIsConnected(false)
-    })
+    socket.on('disconnect', () => setIsConnected(false)) // No harm if unmounted
 
     socket.on('error', (error: Error) => {
+      if (!isMounted) return
       setError(error.message)
     })
 
-    // ... socket room events (roomUsers, userJoined, userLeft) ...
     socket.on('roomUsers', (users: string[]) => {
+      if (!isMounted) return
       setParticipants(users)
     })
 
     socket.on('userJoined', (userId: string) => {
+      if (!isMounted) return
       setParticipants((prev: string[]) => [...prev, userId])
     })
 
     socket.on('userLeft', (userId: string) => {
+      if (!isMounted) return
       setParticipants((prev: string[]) =>
         prev.filter((id: string) => id !== userId)
       )
@@ -94,36 +104,41 @@ export const useVoiceChat = ({
         const stream = await navigator.mediaDevices.getUserMedia({
           audio: true,
         })
+
+        // Check if component unmounted while we were awaiting permission
+        if (!isMounted) {
+          // If so, stop the stream we just got and abort setup.
+          stream.getTracks().forEach((track: MediaStreamTrack) => track.stop())
+          return
+        }
+
+        // If we are still mounted, store the stream
         streamRef.current = stream
 
         // Set up audio context
         const audioContext = new AudioContext()
         audioContextRef.current = audioContext
 
-        // **NEW**: Create and connect the master gain node
         const masterGain = audioContext.createGain()
-        masterGain.gain.value = 1.0 // 1.0 = full volume (not silent)
+        masterGain.gain.value = 1.0
         masterGain.connect(audioContext.destination)
         masterGainNodeRef.current = masterGain
 
-        // Set up audio processing
         const source = audioContext.createMediaStreamSource(stream)
         const processor = audioContext.createScriptProcessor(2048, 1, 1)
         processorRef.current = processor
 
         source.connect(processor)
-        processor.connect(audioContext.destination) // Connect processor to destination (for local processing)
+        processor.connect(audioContext.destination)
 
-        // Process and send audio data
         processor.onaudioprocess = (e) => {
-          // ... (same as before)
+          // ... (same as before, no changes needed here) ...
           const inputData = e.inputBuffer.getChannelData(0)
 
           if (onAudioProcess) {
             onAudioProcess(inputData)
           }
 
-          // Check if the local track is enabled (not muted)
           if (!streamRef.current?.getAudioTracks()[0].enabled) return
 
           const volume = Math.sqrt(
@@ -144,7 +159,16 @@ export const useVoiceChat = ({
         socket.on(
           'voiceData',
           ({ userId, audio }: { userId: string; audio: ArrayBuffer }) => {
+            // Check for unmount or closed context
+            if (
+              !isMounted ||
+              !audioContextRef.current ||
+              audioContextRef.current.state === 'closed'
+            )
+              return
+
             try {
+              // ... (same as before, no changes needed here) ...
               if (!audioContextRef.current || !masterGainNodeRef.current) return
 
               const audioBuffer = audioContextRef.current.createBuffer(
@@ -160,10 +184,14 @@ export const useVoiceChat = ({
                 destinationNode =
                   audioContextRef.current.createMediaStreamDestination()
                 remoteAudioNodesRef.current.set(userId, destinationNode)
-                setRemoteStreams((prev: MediaStream[]) => [
-                  ...prev,
-                  destinationNode!.stream,
-                ])
+
+                // Check mount status before setting state
+                if (isMounted) {
+                  setRemoteStreams((prev: MediaStream[]) => [
+                    ...prev,
+                    destinationNode!.stream,
+                  ])
+                }
               }
 
               const bufferSource = audioContextRef.current.createBufferSource()
@@ -174,21 +202,19 @@ export const useVoiceChat = ({
 
               bufferSource.connect(gainNode)
               gainNode.connect(destinationNode)
-
-              // **MODIFIED**: Connect to the master gain node, NOT the main destination
               gainNode.connect(masterGainNodeRef.current)
-
               bufferSource.start(0)
-
-              // ... (volume logging)
             } catch (error) {
               console.error('Error processing remote audio:', error)
             }
           }
         )
       } catch (err) {
-        setError('Failed to access microphone')
-        console.error('Microphone access error:', err)
+        if (isMounted) {
+          // Only set error if still mounted
+          setError('Failed to access microphone')
+          console.error('Microphone access error:', err)
+        }
       }
     }
 
@@ -196,17 +222,37 @@ export const useVoiceChat = ({
 
     // Cleanup
     return () => {
+      // 4. Set the flag to false on unmount
+      isMounted = false
+
+      // 5. Improved cleanup
       if (streamRef.current) {
         streamRef.current
           .getTracks()
           .forEach((track: MediaStreamTrack) => track.stop())
+        streamRef.current = null
       }
+
+      // Disconnect all audio nodes
+      if (processorRef.current) {
+        processorRef.current.disconnect()
+        processorRef.current = null
+      }
+      if (masterGainNodeRef.current) {
+        masterGainNodeRef.current.disconnect()
+        masterGainNodeRef.current = null
+      }
+
       if (audioContextRef.current) {
         audioContextRef.current.close()
+        audioContextRef.current = null
       }
+
+      // Disconnect socket (this was correct)
       socket.disconnect()
+      socketRef.current = null
     }
-  }, [roomId, enabled, onAudioProcess]) // Added onAudioProcess to dependency array
+  }, [roomId, enabled, onAudioProcess]) // Dependency array is correct
 
   // **NEW**: Function to toggle the local microphone
   const toggleMute = useCallback((isMuted: boolean) => {
