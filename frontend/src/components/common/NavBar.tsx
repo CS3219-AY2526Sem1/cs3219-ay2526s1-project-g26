@@ -17,7 +17,6 @@ import {
 } from '@mui/material'
 import {
   AccountCircle,
-  Settings,
   ExitToApp,
   KeyboardArrowDown,
 } from '@mui/icons-material'
@@ -74,7 +73,7 @@ const Navbar = (props: NavbarProps) => {
 
   const handleUpdateProfile = async () => {
     handleMenuClose()
-    navigate('/update-profile')
+    navigate('/profile')
   }
 
   return (
@@ -183,25 +182,11 @@ const Navbar = (props: NavbarProps) => {
               },
             }}
           >
-            <MenuItem onClick={handleMenuClose} sx={{ py: 1.5 }}>
+            <MenuItem onClick={handleUpdateProfile} sx={{ py: 1.5 }}>
               <ListItemIcon>
                 <AccountCircle fontSize="small" />
               </ListItemIcon>
               <ListItemText>Profile</ListItemText>
-            </MenuItem>
-
-            <MenuItem onClick={handleUpdateProfile} sx={{ py: 1.5 }}>
-              <ListItemIcon>
-                <Settings fontSize="small" />
-              </ListItemIcon>
-              <ListItemText>Update Profile</ListItemText>
-            </MenuItem>
-
-            <MenuItem onClick={handleMenuClose} sx={{ py: 1.5 }}>
-              <ListItemIcon>
-                <Settings fontSize="small" />
-              </ListItemIcon>
-              <ListItemText>Settings</ListItemText>
             </MenuItem>
 
             <Divider />
