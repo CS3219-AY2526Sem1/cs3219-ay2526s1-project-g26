@@ -498,7 +498,6 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["email", "full_name"],
                 "properties": {
                   "email": {
                     "type": "string",
