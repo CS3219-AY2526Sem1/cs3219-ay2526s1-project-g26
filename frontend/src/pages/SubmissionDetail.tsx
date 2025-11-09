@@ -7,6 +7,7 @@ import {
   Typography,
   Chip,
   Divider,
+  Paper,
 } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import Editor from '@monaco-editor/react'
@@ -125,6 +126,9 @@ const SubmissionResult: React.FC = () => {
     }
   }
 
+  const { overall_result } = submissionData
+  const testCase = overall_result.test_case_details
+
   return (
     <Box sx={{ height: '100vh', py: 3 }}>
       <StyledCard>
@@ -170,7 +174,7 @@ const SubmissionResult: React.FC = () => {
                 />
               </Box>
               <Box>
-                {submissionData.overall_result.result === 'Accepted' ? (
+                {overall_result.result === 'Accepted' ? (
                   <>
                     <Typography variant="body2" sx={{ mb: 1 }}>
                       <Typography
@@ -186,7 +190,7 @@ const SubmissionResult: React.FC = () => {
                         variant="body2"
                         sx={{ color: '#1f2328' }}
                       >
-                        {submissionData.overall_result.time_taken} ms
+                        {overall_result.time_taken} ms
                       </Typography>
                     </Typography>
                     <Typography variant="body2" sx={{ mb: 1 }}>
@@ -203,11 +207,102 @@ const SubmissionResult: React.FC = () => {
                         variant="body2"
                         sx={{ color: '#1f2328' }}
                       >
-                        {submissionData.overall_result.max_memory_used} mb
+                        {overall_result.max_memory_used} mb
                       </Typography>
                     </Typography>
                   </>
+                ) : overall_result.result === 'Wrong Answer' && testCase ? (
+                  <Box sx={{ mb: 2 }}>
+                    <Paper
+                      variant="outlined"
+                      sx={{
+                        p: 2,
+                        borderColor: '#fdaeb7',
+                        backgroundColor: '#fff8f8',
+                      }}
+                    >
+                      {/* Input */}
+                      <Typography
+                        variant="body1"
+                        sx={{ fontWeight: 500, color: 'text.secondary' }}
+                      >
+                        Input
+                      </Typography>
+                      <Box
+                        component="pre"
+                        sx={{
+                          p: 1.5,
+                          backgroundColor: 'grey.100',
+                          borderRadius: 1,
+                          whiteSpace: 'pre-wrap',
+                          wordBreak: 'break-all',
+                          fontFamily: 'monospace',
+                          mt: 0.5,
+                          maxHeight: '120px',
+                          overflow: 'auto',
+                          // --- MODIFICATION ---
+                          fontSize: '0.875rem', // Make font smaller (like body2)
+                        }}
+                      >
+                        {testCase.input}
+                      </Box>
+
+                      {/* Expected Output */}
+                      <Typography
+                        variant="body1"
+                        sx={{ fontWeight: 500, color: 'text.secondary', mt: 2 }}
+                      >
+                        Expected Output
+                      </Typography>
+                      <Box
+                        component="pre"
+                        sx={{
+                          p: 1.5,
+                          backgroundColor: 'grey.100',
+                          borderRadius: 1,
+                          whiteSpace: 'pre-wrap',
+                          wordBreak: 'break-all',
+                          fontFamily: 'monospace',
+                          mt: 0.5,
+                          maxHeight: '120px',
+                          overflow: 'auto',
+                          // --- MODIFICATION ---
+                          fontSize: '0.875rem', // Make font smaller
+                        }}
+                      >
+                        {testCase.expected_output}
+                      </Box>
+
+                      {/* Actual Output */}
+                      <Typography
+                        variant="body1"
+                        sx={{ fontWeight: 500, color: 'error.dark', mt: 2 }}
+                      >
+                        Your Output
+                      </Typography>
+                      <Box
+                        component="pre"
+                        sx={{
+                          p: 1.5,
+                          backgroundColor: 'grey.100',
+                          borderRadius: 1,
+                          whiteSpace: 'pre-wrap',
+                          wordBreak: 'break-all',
+                          fontFamily: 'monospace',
+                          color: 'error.main',
+                          mt: 0.5,
+                          maxHeight: '120px',
+                          overflow: 'auto',
+                          // --- MODIFICATION ---
+                          fontSize: '0.875rem', // Make font smaller
+                        }}
+                      >
+                        {testCase.actual_output || '(No output)'}
+                      </Box>
+                    </Paper>
+                  </Box>
                 ) : (
+                  // <-- FALLBACK: Original block for other errors (Runtime, TLE, etc.) -->
                   <Typography
                     variant="body2"
                     sx={{
@@ -218,6 +313,7 @@ const SubmissionResult: React.FC = () => {
                       padding: 2,
                       borderRadius: 1,
                       border: '1px solid #fdaeb7',
+                      whiteSpace: 'pre-wrap',
                     }}
                   >
                     <Typography
@@ -225,12 +321,12 @@ const SubmissionResult: React.FC = () => {
                       variant="body2"
                       sx={{ fontWeight: 600, display: 'block', mb: 1 }}
                     >
-                      Error:
+                      {overall_result.result}:
                     </Typography>
-                    {submissionData.overall_result.error ||
-                      submissionData.overall_result.output}
+                    {overall_result.error || overall_result.output}
                   </Typography>
                 )}
+
                 <Box
                   sx={{
                     display: 'flex',
@@ -273,17 +369,17 @@ const SubmissionResult: React.FC = () => {
                 <StatusText
                   sx={{
                     color:
-                      submissionData.overall_result.result === 'Accepted'
+                      overall_result.result === 'Accepted'
                         ? '#28a745'
                         : '#dc3545',
                   }}
                 >
-                  {submissionData.overall_result.result}
+                  {overall_result.result}
                 </StatusText>
                 <Typography>
                   <strong>
-                    {submissionData.overall_result.passed_tests} /{' '}
-                    {submissionData.overall_result.total_tests}{' '}
+                    {overall_result.passed_tests} /{' '}
+                    {overall_result.total_tests}{' '}
                   </strong>
                   cases passed
                 </Typography>
