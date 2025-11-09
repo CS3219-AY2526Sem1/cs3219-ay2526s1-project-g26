@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import {
   Box,
   Paper,
@@ -32,7 +31,6 @@ export const SubmissionsOverview = () => {
   const [totalRows, setTotalRows] = useState(0)
   const [currentPage, setCurrentPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(10)
-  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchSubmissions = async (): Promise<void> => {
@@ -178,7 +176,7 @@ export const SubmissionsOverview = () => {
                       {submission.title}
                     </TableCell>
                     <TableCell align="left">
-                      {submission.submission_time}
+                      {new Date(submission.submission_time).toLocaleString()}
                     </TableCell>
                     <TableCell align="left">
                       {submission.overall_status}
@@ -188,9 +186,14 @@ export const SubmissionsOverview = () => {
                     <TableCell align="left">
                       <Button
                         variant="contained"
-                        onClick={() => {
-                          navigate(`/submissions/${submission.submission_id}`)
-                        }}
+                        onClick={() =>
+                          window
+                            .open(
+                              `/submissions/${submission.submission_id}`,
+                              '_blank'
+                            )
+                            ?.focus()
+                        }
                       >
                         View Details
                       </Button>

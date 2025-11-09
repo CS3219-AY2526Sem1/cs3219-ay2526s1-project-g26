@@ -6,7 +6,6 @@ import {
   Button,
   Box,
   IconButton,
-  Avatar,
   AvatarGroup,
   Tooltip,
   CircularProgress,
@@ -16,35 +15,59 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import ExitToAppIcon from '@mui/icons-material/ExitToApp'
 import MicIcon from '@mui/icons-material/Mic'
 import MicOffIcon from '@mui/icons-material/MicOff'
-import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../../store'
 import {
   messageEventCodeSubmitted,
+  messageEventSessionExit,
   WebsocketProvider,
 } from '../../utils/y-websocket'
 import { setIsCodeExecuting } from '../../store/slices/collaborationSlice'
 import * as encoding from 'lib0/encoding'
+import BackgroundLetterAvatar from '../common/BackgroundLetterAvatar.tsx'
+import { PeerProfile } from '../../types/user.ts'
+import { useVoiceChat } from '../../hooks/useVoiceChat.ts'
+import VolumeUpIcon from '@mui/icons-material/VolumeUp'
+import VolumeOffIcon from '@mui/icons-material/VolumeOff'
 
 interface TopToolBarProps {
-  provider: WebsocketProvider | null
+  provider: WebsocketProvider | undefined
   questionId: string | null
+  peerProfile: PeerProfile | null
+  roomId: string | undefined
 }
 
 const TopToolBar = (props: TopToolBarProps) => {
+  const me = useSelector((state: RootState) => state.user.user)
   const dispatch = useDispatch()
-  const navigate = useNavigate()
-  const [isMuted, setIsMuted] = useState(false)
   const { isCodeExecuting, selectedLanguage } = useSelector(
     (state: RootState) => state.collaboration
   )
+  const [isMuted, setIsMuted] = useState(false)
+  const [isSilent, setIsSilent] = useState(false)
 
-  const handleMuteToggle = () => {
-    setIsMuted((prev) => !prev)
+  const { toggleMute, toggleSilence } = useVoiceChat({
+    roomId: props?.roomId || '',
+    enabled: true,
+  })
+
+  const handleToggleMute = () => {
+    const newMutedState = !isMuted
+    setIsMuted(newMutedState)
+    toggleMute(newMutedState)
+  }
+
+  const handleToggleSilence = () => {
+    const newSilentState = !isSilent
+    setIsSilent(newSilentState)
+    toggleSilence(newSilentState)
   }
 
   const handleExit = () => {
-    navigate(-1)
+    const encoder = encoding.createEncoder()
+    encoding.writeVarUint(encoder, messageEventSessionExit)
+    encoding.writeVarUint8Array(encoder, new TextEncoder().encode(me?.id))
+    props.provider?.ws?.send(encoding.toUint8Array(encoder))
   }
 
   const onRun = () => {
@@ -58,6 +81,7 @@ const TopToolBar = (props: TopToolBarProps) => {
           language: selectedLanguage,
           mode: 'run',
           questionId: props.questionId,
+          roomId: props.roomId,
         })
       )
     )
@@ -75,6 +99,7 @@ const TopToolBar = (props: TopToolBarProps) => {
           language: selectedLanguage,
           mode: 'submit',
           questionId: props.questionId,
+          roomId: props.roomId,
         })
       )
     )
@@ -145,22 +170,30 @@ const TopToolBar = (props: TopToolBarProps) => {
             minWidth: '150px',
           }}
         >
-          <AvatarGroup max={2}>
-            <Tooltip title="You">
-              <Avatar alt="You" sx={{ bgcolor: 'deepOrange.500' }}>
-                W
-              </Avatar>
+          <AvatarGroup max={2} spacing="medium">
+            <Tooltip title="Me">
+              <BackgroundLetterAvatar
+                content={me?.full_name || ''}
+                alt={'My profile icon'}
+              />
             </Tooltip>
-            <Tooltip title="Peer">
-              <Avatar alt="Peer" sx={{ bgcolor: 'deepPurple.500' }}>
-                P
-              </Avatar>
+            <Tooltip title={props.peerProfile?.fullName || ''}>
+              <BackgroundLetterAvatar
+                alt="Peer's profile icon"
+                content={props.peerProfile?.fullName || ''}
+              />
             </Tooltip>
           </AvatarGroup>
 
           <Tooltip title={isMuted ? 'Unmute' : 'Mute'}>
-            <IconButton onClick={handleMuteToggle} color="inherit">
+            <IconButton onClick={handleToggleMute} color="inherit">
               {isMuted ? <MicOffIcon /> : <MicIcon />}
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title={isSilent ? 'Unsilence' : 'Silence Others'}>
+            <IconButton onClick={handleToggleSilence} color="inherit">
+              {isSilent ? <VolumeOffIcon /> : <VolumeUpIcon />}
             </IconButton>
           </Tooltip>
 

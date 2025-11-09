@@ -37,3 +37,9 @@ export interface CreateQuestionInput {
 }
 
 export type MatchedQuestion = Omit<Question, 'testCases' | 'is_active'>
+
+export interface QuestionPartial {
+  _id: string
+  categories: string[]
+  difficulty: string
+}

@@ -44,7 +44,11 @@ import type { Transaction } from 'yjs'
 import { convertUint8Array } from '../index.js'
 
 import { getLogger } from '../logger.js'
-import { verifySubmission } from '../../services/codeExecutionService.js'
+import { RedisPersistence } from './redis-persistence.js'
+
+import { REDIS } from '../../config/index.js'
+import { submitVerificationJob } from '../../services/codeExecutionService.js'
+import { randomUUID } from 'crypto'
 
 const logger = getLogger('y-websocket')
 
@@ -56,27 +60,11 @@ const wsReadyStateClosed = 3 // eslint-disable-line
 // disable gc when using snapshots!
 const gcEnabled = process.env.GC !== 'false' && process.env.GC !== '0'
 
-export interface IPersistence {
-  bindState: (docName: string, ydoc: WSSharedDoc) => void
-  writeState: (docName: string, ydoc: WSSharedDoc) => Promise<unknown>
-  provider: unknown
-}
-
-let persistence: IPersistence | null = null
-
-/**
- * @param {{bindState: function(string,WSSharedDoc):void,
- * writeState:function(string,WSSharedDoc):Promise<any>,provider:any}|null} persistence_
- */
-export const setPersistence = (persistence_: IPersistence | null): void => {
-  persistence = persistence_
-}
-
-/**
- * @return {null|{bindState: function(string,WSSharedDoc):void,
- * writeState:function(string,WSSharedDoc):Promise<any>}|null} used persistence layer
- */
-export const getPersistence = (): IPersistence | null => persistence
+const persistence = new RedisPersistence({
+  redisOpts: {
+    host: REDIS.HOST,
+  },
+})
 
 /**
  * @type {Map<string,WSSharedDoc>}
@@ -89,6 +77,7 @@ const messageAwareness = 1
 // const messageQueryAwareness = 3
 const messageEventSwitchLanguage = 4
 const messageEventCodeSubmitted = 5
+const messageEventSessionExit = 6
 
 /**
  * @param {Uint8Array} update
@@ -250,17 +239,27 @@ const messageListener = (
         break
       case messageEventCodeSubmitted:
         {
-          encoding.writeVarUint(encoder, messageEventCodeSubmitted)
+          const ticketId = randomUUID()
+          const replyEncoder = encoding.createEncoder()
+          encoding.writeVarUint(replyEncoder, messageEventCodeSubmitted)
+          encoding.writeVarUint8Array(
+            replyEncoder,
+            new TextEncoder().encode(ticketId)
+          )
+          doc.conns.forEach((_: Set<number>, socket: WebSocket) => {
+            socket.send(encoding.toUint8Array(replyEncoder))
+          })
+
           const [_, textMessage] = convertUint8Array(message)
           const data = JSON.parse(textMessage)
-          verifySubmission(data, doc).then((ticketId: string | null) => {
-            encoding.writeVarUint8Array(
-              encoder,
-              new TextEncoder().encode(ticketId || '')
-            )
-            doc.conns.forEach((_: Set<number>, socket: WebSocket) => {
-              socket.send(encoding.toUint8Array(encoder))
-            })
+
+          submitVerificationJob(data, doc, ticketId)
+        }
+        break
+      case messageEventSessionExit:
+        {
+          doc.conns.forEach((_: Set<number>, socket: WebSocket) => {
+            socket.send(message)
           })
         }
         break
@@ -291,9 +290,11 @@ const closeConn = (doc: WSSharedDoc, conn: WebSocket): void => {
     )
     if (doc.conns.size === 0 && persistence !== null) {
       // if persisted, we store state and destroy ydocument
-      persistence.writeState(doc.name, doc).then(() => {
-        doc.destroy()
-      })
+      // persistence.writeState(doc.name, doc).then(() => {
+      //   doc.destroy()
+      // })
+      persistence.clearDocument(doc.name)
+      persistence.closeDoc(doc.name)
       docs.delete(doc.name)
     }
   }

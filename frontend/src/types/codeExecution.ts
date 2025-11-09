@@ -12,6 +12,13 @@ export interface ExecuteCodeRequest {
   language: string
   code_text: string
   mode: 'run' | 'submit'
+  room_id: string
+}
+
+export interface TestCaseDetails {
+  input: string
+  expected_output: string
+  actual_output: string
 }
 
 export interface ExecuteCodeResponse {
@@ -22,4 +29,5 @@ export interface ExecuteCodeResponse {
   memory_used?: number
   output?: string
   error?: string
+  test_case_details?: TestCaseDetails
 }

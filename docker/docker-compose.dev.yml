@@ -14,8 +14,10 @@ services:
       - question-service
       - matching-service
       - collaboration-service
+      - communication-service
       - history-service
       - code-execution-service
+      - ai-service
 
   frontend:
     build:
@@ -30,6 +32,7 @@ services:
     environment:
       - REACT_APP_API_BASE_URL=http://localhost
       - REACT_APP_WEBSOCKET_BASE_URL=ws://localhost/ws
+      - NODE_ENV=development
     stdin_open: true
     tty: true
 
@@ -98,7 +101,8 @@ services:
       - NODE_ENV=development
       - PORT=4010
       - DATABASE_URL=mongodb://question-service-db:27017/questions_db
-      - USER_SERVICE_URL=http://user-service:4000
+      - BACKEND_BASE_URL=http://nginx
+      - REDIS_URL=redis://question-service-redis:6379
     depends_on:
       - question-service-db
     ports:
@@ -114,6 +118,15 @@ services:
     volumes:
       - question-service-db-data:/data/db
       - ../services/questionService/src/database/init:/docker-entrypoint-initdb.d
+
+  question-service-redis:
+    image: redis:8-alpine
+    container_name: question-service-redis
+    restart: unless-stopped
+    ports:
+      - "4012:6379"
+    volumes:
+      - question-service-redis-data:/data
 
   question-service-question-generator:
     build:
@@ -166,10 +179,30 @@ services:
       - HOST=0.0.0.0
       - PORT=4030
       - BACKEND_BASE_URL=http://nginx
+      - KAFKA_BROKERS=kafka:9092
+      - REDIS_HOST=collaboration-service-redis
+      - REDIS_USERNAME=peerprep
+      - REDIS_PASSWORD=peerpreppassword
+      - REDIS_PORT=6379
+      - REDIS_DB=0
     ports:
       - "4030:4030"
+    depends_on:
+      - kafka
+      - collaboration-service-redis
     stdin_open: true
     tty: true
+
+  collaboration-service-redis:
+    image: "redis:8-alpine"
+    container_name: collaboration-service-redis
+    restart: always
+    ports:
+      - "4031:6379"
+    command: >
+      redis-server
+    volumes:
+      - collaboration-service-redis-data:/data
 
   # History Service
   history-service:
@@ -184,10 +217,12 @@ services:
       - NODE_ENV=development
       - PORT=4040
       - DATABASE_URL=mongodb://history-service-db:27017/history_db
-      - USER_SERVICE_URL=http://user-service:4000
+      - BACKEND_BASE_URL=http://nginx
       - REDIS_URL=redis://history-service-redis:6379
+      - KAFKA_BROKERS=kafka:9092
     depends_on:
       - history-service-db
+      - kafka
     ports:
       - "4040:4040"
     stdin_open: true
@@ -224,14 +259,75 @@ services:
       - NODE_ENV=development
       - PORT=4050
       - BACKEND_BASE_URL=http://nginx
+      - KAFKA_BROKERS=kafka:9092
     ports:
       - "4050:4050"
+    depends_on:
+      - kafka
     stdin_open: true
     tty: true
+
+  # AI Service
+  ai-service:
+    build:
+      context: ../services/aiService
+      dockerfile: Dockerfile.dev
+    container_name: ai-service
+    volumes:
+      - ../services/aiService:/code
+    environment:
+      - BACKEND_BASE_URL=http://nginx
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    ports:
+      - "4060:4060"
+    restart: unless-stopped
+
+  # Kafka / Zookeeper
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.4
+    hostname: zookeeper
+    ports:
+      - "4101:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.4
+    hostname: kafka
+    ports:
+      - "4100:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:4100
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - zookeeper
+
+  # Communication Service
+  communication-service:
+    build:
+      context: ../services/communicationService
+      dockerfile: Dockerfile.dev
+    container_name: communication-service
+    volumes:
+      - ../services/communicationService:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=4070
+    ports:
+      - "4070:4070"
+    restart: unless-stopped
 
 volumes:
   user-service-db-data:
   question-service-db-data:
+  question-service-redis-data:
   matching-service-redis-data:
   history-service-db-data:
+  collaboration-service-redis-data:
   history-service-redis-data:

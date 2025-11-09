@@ -10,8 +10,10 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=4040
+      - BACKEND_BASE_URL=${BACKEND_BASE_URL}
       - DATABASE_URL=${DATABASE_URL}
       - REDIS_URL=${REDIS_URL}
+      - KAFKA_BROKERS=${KAFKA_BROKERS}
 
   db:
     image: mongo:8.0

@@ -1,28 +1,40 @@
-import { CODE_EXECUTION_SERVICE_URL } from '../config/index.js'
+import { KAFKA } from '../constants/index.js'
+import { producer } from '../kafka/index.js'
+import { getLogger } from '../utils/logger.js'
 import { type WSSharedDoc } from '../utils/y-websocket/index.js'
 
-export const verifySubmission = async (
-  data: { language: string; mode: 'run' | 'submit'; questionId: string },
-  doc: WSSharedDoc
+const logger = getLogger('codeExecutionService')
+
+export const submitVerificationJob = async (
+  data: { language: string; mode: 'run' | 'submit'; roomId: string; questionId: string },
+  doc: WSSharedDoc,
+  ticketId: string
 ) => {
-  const res = await fetch(`${CODE_EXECUTION_SERVICE_URL}/execute`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
+  try {
+    const payload = {
+      ticket_id: ticketId,
       question_id: data.questionId,
       language: data.language,
       code_text: doc.getText().toString(),
       mode: data.mode,
+      room_id: data.roomId,
       user_ids: Array.from(doc.awareness.getStates().values()).map(
         (val) => val.id
       ),
-    }),
-  })
-  if (!res.ok) {
-    return null
+    }
+
+    await producer.send({
+      topic: KAFKA.SUBMIT_CODE_MESSAGE_NAME,
+      messages: [
+        {
+          key: ticketId,
+          value: JSON.stringify(payload),
+        },
+      ],
+    })
+
+    logger.info(`Submission job sent to Kafka: ${ticketId}`)
+  } catch (error) {
+    logger.error('Failed to send job to Kafka', error)
   }
-  const result = (await res.json()) as { success: boolean; ticketId: string }
-  return result.ticketId
 }

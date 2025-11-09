@@ -1,12 +1,11 @@
 import { Router } from 'express'
 import {
+  getRoomSubmissions,
   getUserSubmission,
   getUserSubmissions,
-  insertSubmission,
 } from '../services/submissionHistoryService.js'
 import { authenticate } from '../middleware/auth.js'
 import { AppError } from '../utils/errors.js'
-import { CreateSubmissionBody } from '../models/submissionHistoryModel.js'
 import redisClient from '../database/redis.js'
 
 const router = Router()
@@ -33,13 +32,7 @@ router.get('/:submission_id', authenticate(), async (req, res) => {
   return res.json({ success: true, submission })
 })
 
-router.post('/', async (req, res) => {
-  const body = req.body as CreateSubmissionBody
-  await insertSubmission(body)
-  return res.status(204).send()
-})
-
-router.get('/status/:ticket_id', async (req, res) => {
+router.get('/status/:ticket_id', authenticate(), async (req, res) => {
   const { ticket_id } = req.params
   if (!ticket_id) {
     throw new AppError('Ticket ID is necessary', 401)
@@ -51,8 +44,16 @@ router.get('/status/:ticket_id', async (req, res) => {
   return res.status(200).send({ success: true, result: JSON.parse(data) })
 })
 
-router.put('/:submission_id', authenticate(), async (_req, _res) => {
-  // ignore for now, not sure if this should neeed authenticate() anyway
+router.get('/rooms/:room_id', authenticate(), async (req, res) => {
+  const roomId = req.params.room_id
+  const page = parseInt((req.query?.page as string) || '0')
+  const limit = parseInt((req.query?.limit as string) || '10')
+
+  const submissions = await getRoomSubmissions(roomId, page, limit)
+  if (!submissions) {
+    throw new AppError('Invalid room id', 404)
+  }
+  return res.json({ success: true, submissions })
 })
 
 export default router

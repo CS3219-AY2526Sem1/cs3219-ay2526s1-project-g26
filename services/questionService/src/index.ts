@@ -10,6 +10,9 @@ import questionRoute from './routes/questionRoute.js'
 import errorHandler from './middleware/errorHandler.js'
 import { PORT } from './config/index.js'
 import { connectDB } from './database/index.js'
+import { fork } from 'child_process'
+import path from 'node:path'
+import { fileURLToPath } from 'url'
 
 const logger = getLogger('app')
 const app = express()
@@ -31,3 +34,10 @@ app.use(errorHandler)
 app.listen(PORT, () => {
   logger.info(`Server running on port ${PORT}`)
 })
+
+fork(
+  path.join(
+    path.dirname(fileURLToPath(import.meta.url)),
+    './utils/loadQuestionFromDBToRedis.js'
+  )
+)

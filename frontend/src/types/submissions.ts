@@ -1,10 +1,29 @@
+export type ResultLabel =
+  | 'Accepted'
+  | 'Wrong Answer'
+  | 'Time Limit Exceeded'
+  | 'Memory Limit Exceeded'
+  | 'Runtime Error'
+  | 'Compilation Error'
+
+export type Language = 'cpp' | 'javascript' | 'python'
+export type RunMode = 'run' | 'submit'
+
+export interface RoomSubmissionSummary {
+  submission_id: string
+  status: ResultLabel
+  mode: RunMode
+  submitted_at: string
+  language: Language
+}
+
 export interface SubmissionDataSummary {
   submission_id: string
   title: string
   submission_time: string
-  overall_status: string
+  overall_status: ResultLabel
   difficulty: string
-  language: string
+  language: Language
 }
 
 export interface SubmissionDataResponse {
@@ -12,42 +31,31 @@ export interface SubmissionDataResponse {
   total: number
 }
 
-// old schema
-export interface SubmissionDetail {
-  submission_id: string
-  title: string
-  difficulty: 'Easy' | 'Medium' | 'Hard'
-  language: string
-  submission_time: string
-  overall_status: string
-  status: 'Passed' | 'Failed'
-  runtime?: string
-  memory?: string
-  algorithms: string[]
-  error_message?: string
-  code: string
+export interface TestCaseDetails {
+  input: string
+  expected_output: string
+  actual_output: string
 }
 
-// new schema
 export interface ResultInformation {
-  result: string
+  result: ResultLabel
   max_memory_used?: number // in MB
   time_taken: number // in ms
   error?: string
   output: string | undefined
   passed_tests: number
   total_tests: number
+  test_case_details?: TestCaseDetails
 }
 
-// new schema
-export interface SubmissionDetail2 {
+export interface SubmissionDetail {
   question_id: string
+  mode: RunMode
   question_title: string
-  categories: string[]
-  difficulty: string
+  submission_time: string
+  language: Language
   code: string
-  language: string
-  mode: string
-  ticket_id: string
+  difficulty: string
+  categories: string[]
   overall_result: ResultInformation
 }

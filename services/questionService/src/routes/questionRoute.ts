@@ -14,15 +14,15 @@ import { AppError } from '../utils/errors.js'
 
 const router = Router()
 
-router.get('/match', authenticate(), async (req, res) => {
-  const { difficulty, categories } = req.query
+router.get('/match', async (req, res) => {
+  const { difficulties, categories } = req.query
 
-  if (!difficulty) {
+  if (!difficulties) {
     return res.status(400).json({ error: 'Difficulty is required' })
   }
 
   const question = await getMatchingQuestion(
-    difficulty as string,
+    difficulties as string,
     categories as string
   )
   return res.json({ success: true, question })

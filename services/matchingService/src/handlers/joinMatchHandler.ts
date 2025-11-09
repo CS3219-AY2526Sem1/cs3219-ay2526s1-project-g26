@@ -59,7 +59,7 @@ async function fetchQuestion(
   token: string
 ): Promise<Question> {
   const params = new URLSearchParams({
-    difficulty: overlapDifficulties.join(','),
+    difficulties: overlapDifficulties.join(','),
     categories: overlapTopics.join(','),
   })
   const res = await fetch(`${QUESTION_SERVICE_URL}/match?${params}`, {

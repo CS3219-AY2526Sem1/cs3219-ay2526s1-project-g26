@@ -21,11 +21,17 @@ export const API_ENDPOINTS = {
   },
   HISTORY: {
     GET_USER_SUBMISSIONS: '/api/history/submissions',
+    GET_SUBMISSION_BY_ID: '/api/history/submissions',
     GET_SUBMISSION_STATUS_WITH_TICKET: '/api/history/submissions/status',
+    GET_ROOM_SUBMISSIONS: '/api/history/submissions/rooms',
   },
   CODE_EXECUTION: {
     EXECUTE: '/api/code-execution/execute',
   },
+  AI: {
+    CODE_TRANSLATE: '/api/ai/code-translate',
+  },
+  COMMUNICATION: '/api/communication',
 } as const
 
 export const WEBSOCKET_BASE_URL =

@@ -8,7 +8,6 @@ import {
   Tabs,
   Tab,
   Box,
-  Avatar,
   Menu,
   MenuItem,
   Button,
@@ -27,6 +26,7 @@ import { RootState } from '../../store'
 import { setActiveTab } from '../../store/slices/navbarSlice.ts'
 import authService from '../../services/authService.ts'
 import { logout } from '../../store/slices/userSlice.ts'
+import BackgroundLetterAvatars from './BackgroundLetterAvatar.tsx'
 
 interface NavbarProps {
   ref?: Ref<HTMLElement>
@@ -115,9 +115,10 @@ const Navbar = (props: NavbarProps) => {
           <Button
             onClick={handleMenuOpen}
             startIcon={
-              <Avatar alt={user?.full_name} sx={{ width: 32, height: 32 }}>
-                {user?.full_name[0]}
-              </Avatar>
+              <BackgroundLetterAvatars
+                alt={'user profile icon'}
+                content={user?.full_name || ''}
+              />
             }
             endIcon={<KeyboardArrowDown />}
             sx={{

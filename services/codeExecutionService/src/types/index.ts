@@ -20,6 +20,12 @@ export interface CodeExecutionOutput {
   memoryUsed?: number // Memory used in MB
 }
 
+export interface TestCaseDetails {
+  input: string
+  expected_output: string
+  actual_output: string
+}
+
 export interface SubmissionResult {
   status: ExecutionStatus
   passed_tests: number
@@ -28,6 +34,7 @@ export interface SubmissionResult {
   memory_used?: number
   output?: string
   error?: string
+  test_case_details?: TestCaseDetails
 }
 
 export interface ExecuteCodeRequest {
@@ -35,6 +42,7 @@ export interface ExecuteCodeRequest {
   language: string
   code_text: string
   mode: 'run' | 'submit'
+  room_id: string
   user_ids: string[]
 }
 
@@ -48,27 +56,4 @@ export interface Question {
   difficulty: string
   categories: string[]
   test_cases: TestCase[]
-}
-
-export interface CreateSubmissionResult {
-  result: {
-    question_id: string
-    question_title: string
-    categories: string[]
-    difficulty: string
-    code: string
-    language: Language
-    mode: RunMode
-    ticket_id: string
-    overall_result: {
-      result: ExecutionStatus
-      max_memory_used?: number
-      time_taken?: number
-      error?: string
-      output: string | undefined
-      passed_tests: number
-      total_tests: number
-    }
-  }
-  user_ids: string[]
 }
