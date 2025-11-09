@@ -38,12 +38,12 @@ export interface Submission {
   mode: RunMode
   ticket_id: string
   overall_result: ResultInformation
+  room_id: string
 }
 
 export interface UserSubmission {
   user_id: string
   submission_id: string | ObjectId
-  room_id: string
 }
 
 export interface SubmissionSummary {
@@ -57,6 +57,14 @@ export interface SubmissionSummary {
 export interface SubmissionHistoryResponse {
   submissions: SubmissionSummary[]
   total: number
+}
+
+export interface RoomSubmissionSummary {
+  submission_id: string
+  status: ResultLabel
+  mode: RunMode
+  submitted_at: string
+  language: Language
 }
 
 export interface SubmissionDetailsResponse {
