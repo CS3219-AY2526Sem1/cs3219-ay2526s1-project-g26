@@ -58,7 +58,7 @@
                     "minLength": 8,
                     "maxLength": 128,
                     "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!-,:-@\\[-`{-~])[!-~]+$",
-                    "description": "Password must be 8-128 characters and contain at least one uppercase letter, one lowercase letter, one number, and one special character (!-,:-@[-`{-~)",
+                    "description": "Password must be 8-128 characters and contain at least one uppercase letter, one lowercase letter, one number, and one special character (e.g. !@#$%^&*()-_=+[]{}|;:',.<>?/`~).",
                     "example": "SecurePass123!"
                   },
                   "full_name": {
@@ -493,7 +493,6 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["email", "full_name"],
                 "properties": {
                   "email": {
                     "type": "string",
