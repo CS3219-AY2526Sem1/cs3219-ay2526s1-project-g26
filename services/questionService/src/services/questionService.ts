@@ -5,122 +5,85 @@ import {
   CreateQuestionInput,
   type MatchedQuestion,
   TestCase,
+  QuestionPartial,
 } from '../models/questionModel.js'
 import { ensureArray } from '../utils/index.js'
-import { type Document, ObjectId, type UpdateFilter, WithoutId } from 'mongodb'
+import { ObjectId, type UpdateFilter, WithoutId } from 'mongodb'
+import redis from '../database/redis.js'
+import { REDIS } from '../constants/index.js'
 
 const getQuestionCollection = () => getDb().collection<Question>('questions')
+
+const calculateScore = (
+  question: QuestionPartial,
+  categories: string[],
+  difficulties: string[]
+) => {
+  const overlappedCategories: number = question.categories.filter((category) =>
+    categories.includes(category)
+  ).length
+  const overlappedDifficulties: number = Number(
+    difficulties.includes(question.difficulty)
+  )
+  return (
+    (((Math.min(overlappedCategories, 1) << 1) + overlappedDifficulties) << 6) +
+    overlappedCategories
+  )
+}
 
 /**
  * Finds the best matching question from the database based on difficulty and categories.
  *
- * This function calculates a similarity score for each question in the collection based on the provided criteria.
- * The score is weighted: 40% for a matching difficulty and 60% for matching categories.
- * The category match score is calculated as `(intersection of categories) / (number of user-provided categories)`.
- * It then identifies all questions with the highest score and randomly selects one to return.
- * This ensures that if multiple questions are an equally good match, the user receives a varied experience.
- *
- * @param difficulty - The desired difficulty level ('easy', 'medium', 'hard').
+ * @param difficulties - The desired difficulty levels (e.g., 'easy,medium').
  * @param categories - A comma-separated string of desired categories (e.g., 'array,string,hash-table').
  * @returns A promise that resolves to the question object that best matches the criteria, containing a subset of fields.
  * @throws {AppError} Throws an error if the questions collection is empty and no question can be returned.
  */
 export const getMatchingQuestion = async (
-  difficulty: string,
+  difficulties: string,
   categories: string
 ): Promise<MatchedQuestion> => {
-  const categoriesArray = categories
+  const categoriesArray: string[] = categories
     ? (categories as string).split(',').map((c) => c.trim())
     : []
+  const difficultiesArray: string[] = difficulties
+    ? (difficulties as string).split(',').map((c) => c.trim())
+    : []
 
-  const pipeline: Document[] = [
-    {
-      $addFields: {
-        similarityScore: {
-          $add: [
-            {
-              $cond: {
-                if: { $eq: ['$difficulty', difficulty] },
-                then: 0.4,
-                else: 0,
-              },
-            },
-            categoriesArray.length > 0
-              ? {
-                  $multiply: [
-                    {
-                      $divide: [
-                        {
-                          $size: {
-                            $setIntersection: ['$categories', categoriesArray],
-                          },
-                        },
-                        categoriesArray.length,
-                      ],
-                    },
-                    0.6,
-                  ],
-                }
-              : 0,
-          ],
-        },
-      },
-    },
-    {
-      $sort: {
-        similarityScore: -1,
-      },
-    },
-    {
-      $group: {
-        _id: null,
-        maxScore: { $first: '$similarityScore' },
-        questions: { $push: '$$ROOT' },
-      },
-    },
-    {
-      $unwind: '$questions',
-    },
-    {
-      $match: {
-        $expr: {
-          $eq: ['$questions.similarityScore', '$maxScore'],
-        },
-      },
-    },
-    {
-      $replaceRoot: {
-        newRoot: '$questions',
-      },
-    },
-    {
-      $sample: {
-        size: 1,
-      },
-    },
-    {
-      $project: {
-        _id: 1,
-        description: 1,
-        title: 1,
-        difficulty: 1,
-        categories: 1,
-        hints: 1,
-        constraints: 1,
-        examples: 1,
-      },
-    },
-  ]
+  let maxScore: number = -1
+  let maxQuestionId: string | null = null
 
-  const questions = await getQuestionCollection()
-    .aggregate<MatchedQuestion>(pipeline)
-    .toArray()
+  await redis
+    .get(REDIS.QUESTIONS_KEY)
+    .then((result) => (result ? JSON.parse(result) : []) as QuestionPartial[])
+    .then(
+      (questions: QuestionPartial[]) =>
+        void questions.forEach((question: QuestionPartial) => {
+          const score = calculateScore(
+            question,
+            categoriesArray,
+            difficultiesArray
+          )
+          if (score > maxScore || (score === maxScore && Math.random() > 0.5)) {
+            maxScore = score
+            maxQuestionId = question._id as string
+          }
+        })
+    )
 
-  if (!questions || questions.length === 0) {
-    throw new AppError('No questions available in the database.', 404)
+  const matchedQuestion =
+    await getQuestionCollection().findOne<MatchedQuestion>(
+      {
+        _id: new ObjectId(maxQuestionId!),
+      },
+      { projection: { test_cases: 0, is_active: 0 } }
+    )
+
+  if (!matchedQuestion) {
+    throw new AppError('Not Question Found', 404)
   }
 
-  return questions[0]
+  return matchedQuestion
 }
 
 export const getQuestionById = async (id: string): Promise<Question | null> => {

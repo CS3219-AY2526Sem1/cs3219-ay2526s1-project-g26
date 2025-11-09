@@ -98,6 +98,7 @@ services:
       - PORT=4010
       - DATABASE_URL=mongodb://question-service-db:27017/questions_db
       - BACKEND_BASE_URL=http://nginx
+      - REDIS_URL=redis://question-service-redis:6379
     depends_on:
       - question-service-db
     ports:
@@ -113,6 +114,15 @@ services:
     volumes:
       - question-service-db-data:/data/db
       - ../services/questionService/src/database/init:/docker-entrypoint-initdb.d
+
+  question-service-redis:
+    image: redis:8-alpine
+    container_name: question-service-redis
+    restart: unless-stopped
+    ports:
+      - "4012:6379"
+    volumes:
+      - question-service-redis-data:/data
 
   question-service-question-generator:
     build:
@@ -166,12 +176,29 @@ services:
       - PORT=4030
       - BACKEND_BASE_URL=http://nginx
       - KAFKA_BROKERS=kafka:9092
+      - REDIS_HOST=collaboration-service-redis
+      - REDIS_USERNAME=peerprep
+      - REDIS_PASSWORD=peerpreppassword
+      - REDIS_PORT=6379
+      - REDIS_DB=0
     ports:
       - "4030:4030"
     depends_on:
       - kafka
+      - collaboration-service-redis
     stdin_open: true
     tty: true
+
+  collaboration-service-redis:
+    image: "redis:8-alpine"
+    container_name: collaboration-service-redis
+    restart: always
+    ports:
+      - "4031:6379"
+    command: >
+      redis-server
+    volumes:
+      - collaboration-service-redis-data:/data
 
   # History Service
   history-service:
@@ -295,6 +322,8 @@ services:
 volumes:
   user-service-db-data:
   question-service-db-data:
+  question-service-redis-data:
   matching-service-redis-data:
   history-service-db-data:
+  collaboration-service-redis-data:
   history-service-redis-data:

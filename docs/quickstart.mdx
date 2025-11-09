@@ -38,24 +38,34 @@ docker --version
 
 ---
 
-## Clone the Repository
+## Steps to Start
 
-Use Git to clone the project and move into the project directory:
+<Steps>
+<Step title="Clone the Repository">
 
 ```bash
 git clone https://github.com/CS3219-AY2526Sem1/cs3219-ay2526s1-project-g26
 cd cs3219-ay2526s1-project-g26
 ```
 
-## Build with Docker
+</Step>
 
-Navigate into `docker` folder:
+<Step title="Add Environment Variables">
+
+Add a `.env` file under `docker`.
 
 ```bash
 cd docker
+cp .env.template .env
 ```
 
-Start building with `docker compose`:
+Fill in all environment variables in `.env`.
+
+</Step>
+
+<Step title="Build with Docker">
+
+Start building with `docker compose` (make sure you are in `/docker`):
 
 <Note>It may take some time for the initial build</Note>
 
@@ -70,9 +80,11 @@ docker-compose -f docker-compose.dev.yml up --build -d
 
 </CodeGroup>
 
+</Step>
+</Steps>
+
 ## Open the Project
 
-1. You can access the `frontend` from any browser via `http://localhost`
-2. You can access the `documentation` from any browser via `http://localhost:3005`
-3. You can access the `user-service` endpoints via `http://localhost/api/user`
-4. You can access the `question-service` endpoints via `http://localhost/api/question`
+1. You can access the `frontend` via `http://localhost`
+2. You can access the `documentation` via `http://localhost:3005`
+3. You can access the backend services via `http://localhost/api/${backend_service_name}`

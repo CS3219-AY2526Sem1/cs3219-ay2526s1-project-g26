@@ -15,7 +15,14 @@
         "groups": [
           {
             "group": "Getting started",
-            "pages": ["index", "quickstart", "development"]
+            "pages": ["index", "quickstart", "development", "deployment"]
+          },
+          {
+            "group": "Implementations",
+            "pages": [
+              "implementations/peer-coding",
+              "implementations/code-submission"
+            ]
           },
           {
             "group": "Customization",
