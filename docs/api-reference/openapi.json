@@ -406,11 +406,6 @@
                           "type": "string",
                           "example": "John Doe",
                           "description": "User's full name"
-                        },
-                        "password_hash": {
-                          "type": "string",
-                          "example": "$2b$10$abcdefghijklmnopqrstuv",
-                          "description": "Hashed password (bcrypt)"
                         }
                       }
                     }
@@ -419,7 +414,7 @@
               }
             }
           },
-          "400": {
+          "404": {
             "description": "Bad request - user not found in database",
             "content": {
               "application/json": {
@@ -1372,7 +1367,7 @@
               }
             }
           },
-          "401": {
+          "400": {
             "description": "Invalid test cases type",
             "content": {
               "application/json": {
@@ -2132,7 +2127,7 @@
           "202": {
             "description": "Execution still in progress, poll again (empty response body)"
           },
-          "401": {
+          "400": {
             "description": "Ticket ID is necessary",
             "content": {
               "application/json": {
