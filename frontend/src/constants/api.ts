@@ -6,6 +6,8 @@ export const API_ENDPOINTS = {
     LOGIN: '/api/user/auth/login',
     REGISTER: '/api/user/auth/register',
     VERIFY_TOKEN: '/api/user/auth/verify-token',
+    FORGOT_PASSWORD: '/api/user/auth/forgot-password',
+    RESET_PASSWORD: '/api/user/auth/reset-password',
   },
   PROFILE: {
     GET: '/api/user/profile/me',

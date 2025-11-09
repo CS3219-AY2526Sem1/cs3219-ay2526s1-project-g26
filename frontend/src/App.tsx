@@ -17,6 +17,7 @@ import UpdateProfile from './pages/UpdateProfile.tsx'
 import Match from './pages/Match.tsx'
 import CollaborationPanel from './pages/CollaborationPanel.tsx'
 import SubmissionDetail from './pages/SubmissionDetail.tsx'
+import ForgotPassword from './pages/ForgotPassword.tsx'
 
 const NotificationSnackbar = lazy(
   () => import('./components/common/NotificationSnackbar.tsx')
@@ -54,6 +55,7 @@ function App() {
           <Route path="/" element={<Navigate to={'home'} />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route element={<ProtectedRoutes />}>
             <Route element={<NavBarLayout />}>
               <Route path="/home" element={<Home />} />
