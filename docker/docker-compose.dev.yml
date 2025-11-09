@@ -166,12 +166,29 @@ services:
       - PORT=4030
       - BACKEND_BASE_URL=http://nginx
       - KAFKA_BROKERS=kafka:9092
+      - REDIS_HOST=collaboration-service-redis
+      - REDIS_USERNAME=peerprep
+      - REDIS_PASSWORD=peerpreppassword
+      - REDIS_PORT=6379
+      - REDIS_DB=0
     ports:
       - "4030:4030"
     depends_on:
       - kafka
+      - collaboration-service-redis
     stdin_open: true
     tty: true
+
+  collaboration-service-redis:
+    image: "redis:8-alpine"
+    container_name: collaboration-service-redis
+    restart: always
+    ports:
+      - "4031:6379"
+    command: >
+      redis-server
+    volumes:
+      - collaboration-service-redis-data:/data
 
   # History Service
   history-service:
@@ -297,4 +314,5 @@ volumes:
   question-service-db-data:
   matching-service-redis-data:
   history-service-db-data:
+  collaboration-service-redis-data:
   history-service-redis-data:

@@ -1,7 +1,7 @@
 // VoiceChat.tsx
 import { useEffect, useRef, useState, useCallback } from 'react' // Import useCallback
 import { io, Socket } from 'socket.io-client'
-import { API_ENDPOINTS, API_BASE_URL } from '../constants/api'
+import { API_ENDPOINTS } from '../constants/api'
 
 interface UseVoiceChatProps {
   roomId: string
@@ -47,7 +47,7 @@ export const useVoiceChat = ({
     if (!enabled) return
 
     // Initialize WebSocket connection
-    const socket = io(`${API_BASE_URL}/microphone`, {
+    const socket = io(`/microphone`, {
       path: `${API_ENDPOINTS.COMMUNICATION}/socket.io`,
       transports: ['websocket', 'polling'],
       forceNew: true,
