@@ -1,5 +1,6 @@
 import axiosInstance from '../utils/axios.ts'
 import {
+  RoomSubmissionSummary,
   SubmissionDataResponse,
   SubmissionDetail,
 } from '../types/submissions.ts'
@@ -32,7 +33,7 @@ export const submissionsService = {
 
   getSubmissionStatusByTicketId: async (
     ticketId: string
-  ): Promise<SubmissionDetail | null> => {
+  ): Promise<RoomSubmissionSummary | null> => {
     const response = await axiosInstance.get(
       `${API_ENDPOINTS.HISTORY.GET_SUBMISSION_STATUS_WITH_TICKET}/${ticketId}`
     )
@@ -44,18 +45,10 @@ export const submissionsService = {
   },
 
   fetchRoomSubmissions: async (
-    roomId: string,
-    page: number,
-    limit: number
-  ): Promise<SubmissionDataResponse> => {
+    roomId: string
+  ): Promise<RoomSubmissionSummary[]> => {
     const response = await axiosInstance.get(
-      `${API_ENDPOINTS.HISTORY.GET_ROOM_SUBMISSIONS}/${roomId}`,
-      {
-        params: {
-          page,
-          limit,
-        },
-      }
+      `${API_ENDPOINTS.HISTORY.GET_ROOM_SUBMISSIONS}/${roomId}`
     )
     return response.data.submissions
   },
