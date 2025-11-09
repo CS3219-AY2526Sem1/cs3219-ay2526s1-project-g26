@@ -115,11 +115,11 @@ const SubmissionResult: React.FC = () => {
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case 'Easy':
+      case 'easy':
         return 'success'
-      case 'Medium':
+      case 'medium':
         return 'warning'
-      case 'Hard':
+      case 'hard':
         return 'error'
       default:
         return 'success'
