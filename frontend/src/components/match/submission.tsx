@@ -2,9 +2,6 @@ import React from 'react'
 import { Box, Alert, Button, CircularProgress } from '@mui/material'
 import type { MatchState } from '../../types/matchState'
 
-const sessionDurationAlert =
-  'Collaborative session will last 30 minutes for Easy, 45 minutes for Medium and 60 minutes for Hard'
-
 export const Submission = ({
   checkedTopics,
   checkedDifficulties,
@@ -30,11 +27,6 @@ export const Submission = ({
         height: '10vh',
       }}
     >
-      {/* Duration of session information alert */}
-      <Alert sx={{ gridColumn: '1 / 3' }} severity="info">
-        {sessionDurationAlert}
-      </Alert>
-
       {/* Information bar showing match state */}
       {matchState !== 'IDLE' && (
         <Box sx={{ gridColumn: '4', gridRow: '1' }}>
