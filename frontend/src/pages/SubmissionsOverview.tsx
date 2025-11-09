@@ -176,7 +176,7 @@ export const SubmissionsOverview = () => {
                       {submission.title}
                     </TableCell>
                     <TableCell align="left">
-                      {submission.submission_time}
+                      {new Date(submission.submission_time).toLocaleString()}
                     </TableCell>
                     <TableCell align="left">
                       {submission.overall_status}

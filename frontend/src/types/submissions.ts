@@ -9,13 +9,21 @@ export type ResultLabel =
 export type Language = 'cpp' | 'javascript' | 'python'
 export type RunMode = 'run' | 'submit'
 
+export interface RoomSubmissionSummary {
+  submission_id: string
+  status: ResultLabel
+  mode: RunMode
+  submitted_at: string
+  language: Language
+}
+
 export interface SubmissionDataSummary {
   submission_id: string
   title: string
   submission_time: string
-  overall_status: string
+  overall_status: ResultLabel
   difficulty: string
-  language: string
+  language: Language
 }
 
 export interface SubmissionDataResponse {

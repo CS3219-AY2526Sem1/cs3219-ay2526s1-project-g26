@@ -1,21 +1,21 @@
+import { RoomSubmissionSummary } from './../../types/submissions'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { DEFAULT_LANGUAGE } from '../../constants/collaboration_editor.ts'
-import { ExecuteCodeResponse } from '../../types/codeExecution.ts'
 
 interface CollaborationState {
   selectedLanguage: string
   isCodeExecuting: boolean
-  submissionResult: ExecuteCodeResponse | null
   targetTranslatedLanguage: string | null
   translatedCode: string | null
+  submissions: RoomSubmissionSummary[]
 }
 
 const initialState: CollaborationState = {
   selectedLanguage: DEFAULT_LANGUAGE,
   isCodeExecuting: false,
-  submissionResult: null,
   targetTranslatedLanguage: null,
   translatedCode: null,
+  submissions: [],
 }
 
 const collaborationSlice = createSlice({
@@ -27,16 +27,6 @@ const collaborationSlice = createSlice({
     },
     setIsCodeExecuting: (state, action: PayloadAction<boolean>) => {
       state.isCodeExecuting = action.payload
-      if (action.payload) {
-        state.submissionResult = null
-      }
-    },
-    setSubmissionResult: (
-      state,
-      action: PayloadAction<ExecuteCodeResponse>
-    ) => {
-      state.submissionResult = action.payload
-      state.isCodeExecuting = false
     },
     setTargetTranslatedLanguage: (
       state,
@@ -47,14 +37,21 @@ const collaborationSlice = createSlice({
     setTranslatedCode: (state, action: PayloadAction<string | null>) => {
       state.translatedCode = action.payload
     },
+    setSubmissions: (state, action: PayloadAction<RoomSubmissionSummary[]>) => {
+      state.submissions = action.payload
+    },
+    addSubmission: (state, action: PayloadAction<RoomSubmissionSummary>) => {
+      state.submissions.push(action.payload)
+    },
   },
 })
 
 export const {
   setSelectedLanguage,
   setIsCodeExecuting,
-  setSubmissionResult,
   setTargetTranslatedLanguage,
   setTranslatedCode,
+  setSubmissions,
+  addSubmission,
 } = collaborationSlice.actions
 export default collaborationSlice.reducer
