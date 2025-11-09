@@ -18,7 +18,6 @@ import Match from './pages/Match.tsx'
 import CollaborationPanel from './pages/CollaborationPanel.tsx'
 import SubmissionDetail from './pages/SubmissionDetail.tsx'
 import ForgotPassword from './pages/ForgotPassword.tsx'
-import ResetPassword from './pages/ResetPassword.tsx'
 
 const NotificationSnackbar = lazy(
   () => import('./components/common/NotificationSnackbar.tsx')
@@ -57,7 +56,6 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
           <Route element={<ProtectedRoutes />}>
             <Route element={<NavBarLayout />}>
               <Route path="/home" element={<Home />} />

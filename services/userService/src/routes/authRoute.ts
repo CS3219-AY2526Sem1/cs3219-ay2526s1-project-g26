@@ -53,7 +53,7 @@ router.post('/forgot-password', async (req, res, next) => {
     return next(new AppError('User not found', 404))
   }
 
-  return res.json({ success: true, message: 'OTP has been sent (1234)' })
+  return res.json({ success: true, message: 'OTP has been sent' })
 })
 
 router.post('/reset-password', async (req, res, next) => {

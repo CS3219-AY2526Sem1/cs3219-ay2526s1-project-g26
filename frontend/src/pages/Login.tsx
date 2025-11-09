@@ -142,6 +142,7 @@ const Login = () => {
               <Link
                 component="button"
                 variant="body2"
+                type="button"
                 onClick={() => navigate('/forgot-password')}
                 underline="hover"
               >

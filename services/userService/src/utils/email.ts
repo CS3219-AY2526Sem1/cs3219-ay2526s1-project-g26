@@ -39,7 +39,7 @@ export async function sendEmail(to: string, subject: string, text: string) {
     from: `"PeerPrep" <${USER}>`,
     to,
     subject,
-    text,
+    html: text,
   })
 
   logger.info('Email sent:', info.messageId)

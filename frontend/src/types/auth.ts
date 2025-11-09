@@ -49,3 +49,7 @@ export interface UpdateProfileForm {
   password?: string | undefined
   confirmPassword: string | undefined
 }
+
+export interface RegisterFormDataClient extends RegisterFormData {
+  confirmPassword: string
+}

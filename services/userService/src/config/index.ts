@@ -14,3 +14,4 @@ export const SMTP = {
   USER: process.env.SMTP_USER || 'peerprep',
   PASS: process.env.SMTP_PASS || '',
 }
+export const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379'

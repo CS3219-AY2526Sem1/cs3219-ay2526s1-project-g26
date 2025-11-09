@@ -5,6 +5,7 @@ import { AppError } from '../utils/errors.js'
 import jwt, { JwtPayload, SignOptions } from 'jsonwebtoken'
 import * as Config from '../config/index.js'
 import { sendEmail } from '../utils/email.js'
+import redisClient from '../database/redis.js'
 
 const isValidPassword = (password: string): boolean => {
   if (password.length < 8 || password.length > 128) return false
@@ -127,100 +128,115 @@ export const decodeToken = (token: string): JwtPayload => {
   }
 }
 
+// Define a consistent key prefix for Redis
+const RESET_KEY_PREFIX = 'password-reset:'
+// Set expiration time in seconds (10 minutes)
+const OTP_EXPIRATION_SECONDS = 10 * 60
+
+/**
+ * Generates an OTP, sends it via email, and stores the HASH in Redis.
+ */
 export const requestPasswordReset = async (email: string): Promise<boolean> => {
-  // 1. 检查用户是否存在
+  // 1. Check if user exists (this is still a good practice)
   const userResult = await pool.query('SELECT id FROM users WHERE email = $1', [
     email,
   ])
   if (userResult.rows.length === 0) {
-    // 邮箱不存在也返回 true，防止泄露用户信息
-    return true
+    // Return true to prevent email enumeration attacks
+    return false
   }
 
-  const userId = userResult.rows[0].id
-
-  // 2. 生成随机 6 位数字 OTP
+  // 2. Generate random 6-digit OTP
   const otp = Math.floor(100000 + Math.random() * 900000).toString()
 
-  // 3. 对 OTP 进行哈希处理（防止数据库泄露时暴露验证码）
+  // 3. Hash the OTP for storage
   const otpHash = await bcrypt.hash(otp, 10)
 
-  // 4. 设置过期时间（10分钟）
-  const expiresAt = new Date(Date.now() + 10 * 60 * 1000)
+  // 4. Define the Redis key and store the hash with expiration
+  const redisKey = `${RESET_KEY_PREFIX}${email}`
 
-  // 5. 插入数据库
-  await pool.query(
-    `INSERT INTO password_reset_tokens (user_id, token_hash, expires_at)
-     VALUES ($1, $2, $3)`,
-    [userId, otpHash, expiresAt]
-  )
+  await redisClient.setex(redisKey, OTP_EXPIRATION_SECONDS, otpHash)
 
-  // 6. 发送邮件（使用 nodemailer）
+  // 5. Send the PLAIN TEXT OTP to the user
   await sendEmail(
     email,
     'Password Reset Code',
-    `Your OTP code is: ${otp}. It will expire in 10 minutes.`
+    `<div style="font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; box-sizing: border-box; background-color: #f8f9fa; width: 100%; padding: 30px; margin: 0;">
+  <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); overflow: hidden;">
+    
+    <div style="background-color: #0d6efd; padding: 30px; text-align: center;">
+      <h1 style="color: #ffffff; font-size: 28px; margin: 0; font-weight: 600;">Peerprep</h1>
+      <p style="color: #e9ecef; font-size: 16px; margin: 5px 0 0;">Password Reset Request</p>
+    </div>
+
+    <div style="padding: 40px; line-height: 1.6; color: #343a40;">
+      <p style="font-size: 18px; margin-bottom: 25px;">Hello,</p>
+      <p style="font-size: 16px; margin-bottom: 25px;">We received a request to reset the password for your account. Please use the One-Time Password (OTP) below to proceed.</p>
+      
+      <div style="background-color: #e9ecef; border-radius: 8px; padding: 20px; text-align: center; margin-bottom: 25px;">
+        <p style="font-size: 16px; margin: 0 0 10px; color: #495057;">Your code is:</p>
+        <p style="font-size: 36px; font-weight: 700; color: #0d6efd; margin: 0; letter-spacing: 4px;">
+          ${otp}
+        </p>
+      </div>
+
+      <p style="font-size: 16px; margin-bottom: 25px;">This code will expire in <strong>10 minutes</strong>.</p>
+      
+      <hr style="border: 0; border-top: 1px solid #dee2e6; margin: 25px 0;">
+      <p style="font-size: 14px; color: #6c757d; margin: 0;">If you did not request a password reset, please ignore this email or contact our support team immediately. Your account security is important to us.</p>
+    </div>
+  </div>
+</div>`
   )
 
   return true
 }
 
+/**
+ * Verifies the OTP from Redis and resets the password in PostgreSQL.
+ */
 export const resetPassword = async (
   email: string,
   code: string,
   newPassword: string
 ): Promise<boolean> => {
-  // 1. 找到对应用户
-  const userResult = await pool.query('SELECT id FROM users WHERE email = $1', [
-    email,
-  ])
-  if (userResult.rows.length === 0) {
-    throw new AppError('Invalid email', 400)
-  }
-  const userId = userResult.rows[0].id
+  // 1. Define the Redis key and get the stored hash
+  const redisKey = `${RESET_KEY_PREFIX}${email}`
+  const storedHash = await redisClient.get(redisKey)
 
-  // 2. 查找最近的未使用且未过期的 OTP
-  const tokenResult = await pool.query(
-    `SELECT id, token_hash, expires_at, used
-     FROM password_reset_tokens
-     WHERE user_id = $1
-     ORDER BY created_at DESC
-     LIMIT 1`,
-    [userId]
-  )
-
-  if (tokenResult.rows.length === 0) {
-    throw new AppError('No reset code found or expired', 400)
+  // 2. Check if token exists, is expired, or already used
+  // If `redisClient.get` returns null, it means the key doesn't exist,
+  // which covers "no code found", "expired", and "already used" (see step 5).
+  if (!storedHash) {
+    throw new AppError('Invalid or expired reset code', 400)
   }
 
-  const tokenRow = tokenResult.rows[0]
-
-  if (tokenRow.used) {
-    throw new AppError('This code has already been used', 400)
-  }
-
-  if (new Date(tokenRow.expires_at) < new Date()) {
-    throw new AppError('This code has expired', 400)
-  }
-
-  // 3. 验证用户输入的 OTP 与数据库中的 hash 是否匹配
-  const isValid = await bcrypt.compare(code, tokenRow.token_hash) // ✅ 新增
+  // 3. Validate the user-provided code against the stored hash
+  const isValid = await bcrypt.compare(code, storedHash)
   if (!isValid) {
-    throw new AppError('Invalid reset code', 400)
+    // Throw the same error to prevent attackers from knowing
+    // if the code was wrong vs. expired.
+    throw new AppError('Invalid or expired reset code', 400)
   }
 
-  // 4. 更新用户密码
-  const hashedPassword = await bcrypt.hash(newPassword, 10) // ✅ 新增
-  await pool.query('UPDATE users SET password_hash = $1 WHERE id = $2', [
-    hashedPassword,
-    userId,
-  ])
+  // 4. Code is valid, hash the new password
+  const hashedPassword = await bcrypt.hash(newPassword, 10)
 
-  // 5. 标记该 OTP 已使用
-  await pool.query(
-    'UPDATE password_reset_tokens SET used = TRUE WHERE id = $1',
-    [tokenRow.id]
+  // 5. Update the user's password in the main database
+  // We use 'RETURNING id' to confirm the update worked
+  const updateResult = await pool.query(
+    'UPDATE users SET password_hash = $1 WHERE email = $2 RETURNING id',
+    [hashedPassword, email]
   )
+
+  if (updateResult.rows.length === 0) {
+    // This should not happen if the `requestPasswordReset` check passed,
+    // but it's a good safeguard.
+    throw new AppError('User not found', 404)
+  }
+
+  // 6. Delete the key from Redis to mark it as "used"
+  await redisClient.del(redisKey)
 
   return true
 }

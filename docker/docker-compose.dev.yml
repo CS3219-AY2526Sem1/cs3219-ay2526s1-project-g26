@@ -68,8 +68,10 @@ services:
       - SMTP_PORT=${SMTP_PORT}
       - SMTP_USER=${SMTP_USER}
       - SMTP_PASS=${SMTP_PASS}
+      - REDIS_URL=redis://user-service-redis:6379
     depends_on:
       - user-service-db
+      - user-service-redis
     ports:
       - "4000:4000"
     stdin_open: true
@@ -87,6 +89,15 @@ services:
     volumes:
       - user-service-db-data:/var/lib/postgresql/data
       - ../services/userService/src/database/init:/docker-entrypoint-initdb.d
+
+  user-service-redis:
+    image: redis:8-alpine
+    container_name: user-service-redis
+    restart: unless-stopped
+    ports:
+      - "4002:6379"
+    volumes:
+      - user-service-redis-data:/data
 
   # Question Service
   question-service:
@@ -325,6 +336,7 @@ services:
 
 volumes:
   user-service-db-data:
+  user-service-redis-data:
   question-service-db-data:
   question-service-redis-data:
   matching-service-redis-data:
