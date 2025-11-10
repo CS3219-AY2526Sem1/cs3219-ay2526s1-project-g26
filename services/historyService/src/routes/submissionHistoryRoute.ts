@@ -46,13 +46,8 @@ router.get('/status/:ticket_id', authenticate(), async (req, res) => {
 
 router.get('/rooms/:room_id', authenticate(), async (req, res) => {
   const roomId = req.params.room_id
-  const page = parseInt((req.query?.page as string) || '0')
-  const limit = parseInt((req.query?.limit as string) || '10')
 
-  const submissions = await getRoomSubmissions(roomId, page, limit)
-  if (!submissions) {
-    throw new AppError('Invalid room id', 404)
-  }
+  const submissions = await getRoomSubmissions(roomId)
   return res.json({ success: true, submissions })
 })
 
