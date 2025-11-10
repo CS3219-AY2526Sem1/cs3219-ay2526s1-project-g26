@@ -1,3 +1,10 @@
+/**
+ * AI Assistance Disclosure:
+ * Tool: GEMINI 2.5 Pro, date: from 2025‑09-24 to 2025-10-23
+ * Scope: Generated endpoints implementation for `getQuestionTestCases`, `getAllQuestions`, `getAllCategoryAndDifficulty`, `updateQuestion`, `createQuestion`, `deleteQuestion`.
+ * Author review: I validated correctness, edited for style.
+ */
+
 import { getDb } from '../database/index.js'
 import { AppError } from '../utils/errors.js'
 import {
