@@ -22,7 +22,7 @@ router.put('/', async (req: AuthRequest, res, next) => {
   }
 
   await updateUserProfile(req!.user?.id, email, password, full_name)
-  return res.status(201).json({ success: true })
+  return res.status(200).json({ success: true })
 })
 
 export default router

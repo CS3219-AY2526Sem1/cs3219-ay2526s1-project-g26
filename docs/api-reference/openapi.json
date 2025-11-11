@@ -199,7 +199,7 @@
                   },
                   "password": {
                     "type": "string",
-                    "example": "SecurePass123"
+                    "example": "SecurePass123!"
                   }
                 }
               }
@@ -549,7 +549,7 @@
           }
         },
         "responses": {
-          "201": {
+          "200": {
             "description": "Profile updated successfully",
             "content": {
               "application/json": {
@@ -2334,97 +2334,55 @@
         "responses": {
           "200": {
             "description": "Room submissions retrieved successfully",
-            "200": {
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "properties": {
-                      "success": {
-                        "type": "boolean",
-                        "example": true
-                      },
-                      "submissions": {
-                        "type": "array",
-                        "items": {
-                          "properties": {
-                            "submission_id": {
-                              "type": "string",
-                              "example": "673e8f9a1234567890abcdef"
-                            },
-                            "status": {
-                              "type": "string",
-                              "enum": [
-                                "Accepted",
-                                "Wrong Answer",
-                                "Time Limit Exceeded",
-                                "Memory Limit Exceeded",
-                                "Runtime Error",
-                                "Compilation Error"
-                              ],
-                              "example": "Accepted"
-                            },
-                            "mode": {
-                              "type": "string",
-                              "enum": [
-                                "run",
-                                "submit"
-                              ],
-                              "example": "submit"
-                            },
-                            "submitted_at": {
-                              "type": "string",
-                              "example": "2025-11-07T10:30:00.000Z",
-                              "description": "ISO 8601 date-time string"
-                            },
-                            "language": {
-                              "type": "string",
-                              "enum": [
-                                "cpp",
-                                "javascript",
-                                "python"
-                              ],
-                              "example": "cpp"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                },
-                "401": {
-                  "description": "Unauthorized - invalid or missing token",
-                  "content": {
-                    "application/json": {
-                      "schema": {
-                        "type": "object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "submissions": {
+                      "type": "array",
+                      "items": {
                         "properties": {
-                          "success": {
-                            "type": "boolean",
-                            "example": false
-                          },
-                          "message": {
+                          "submission_id": {
                             "type": "string",
-                            "example": "Invalid or expired token"
-                          }
-                        }
-                      }
-                    }
-                  }
-                },
-                "404": {
-                  "description": "Submissions not found",
-                  "content": {
-                    "application/json": {
-                      "schema": {
-                        "type": "object",
-                        "properties": {
-                          "success": {
-                            "type": "boolean",
-                            "example": false
+                            "example": "673e8f9a1234567890abcdef"
                           },
-                          "message": {
+                          "status": {
                             "type": "string",
-                            "example": "Submissions not found"
+                            "enum": [
+                              "Accepted",
+                              "Wrong Answer",
+                              "Time Limit Exceeded",
+                              "Memory Limit Exceeded",
+                              "Runtime Error",
+                              "Compilation Error"
+                            ],
+                            "example": "Accepted"
+                          },
+                          "mode": {
+                            "type": "string",
+                            "enum": [
+                              "run",
+                              "submit"
+                            ],
+                            "example": "submit"
+                          },
+                          "submitted_at": {
+                            "type": "string",
+                            "example": "2025-11-07T10:30:00.000Z",
+                            "description": "ISO 8601 date-time string"
+                          },
+                          "language": {
+                            "type": "string",
+                            "enum": [
+                              "cpp",
+                              "javascript",
+                              "python"
+                            ],
+                            "example": "cpp"
                           }
                         }
                       }
@@ -2434,114 +2392,154 @@
               }
             }
           },
-          "/ai/code-translate": {
-            "post": {
-              "tags": [
-                "AIService"
-              ],
-              "summary": "Translate code between programming languages",
-              "operationId": "translateCode",
-              "security": [
-                {
-                  "bearerAuth": []
-                }
-              ],
-              "requestBody": {
-                "required": true,
-                "content": {
-                  "application/json": {
-                    "schema": {
-                      "type": "object",
-                      "required": [
-                        "from_lang",
-                        "to_lang",
-                        "code"
-                      ],
-                      "properties": {
-                        "from_lang": {
-                          "type": "string",
-                          "example": "python",
-                          "description": "Source programming language"
-                        },
-                        "to_lang": {
-                          "type": "string",
-                          "example": "javascript",
-                          "description": "Target programming language"
-                        },
-                        "code": {
-                          "type": "string",
-                          "example": "def hello_world():\n    print('Hello, World!')",
-                          "description": "The code to translate"
-                        }
-                      }
+          "401": {
+            "description": "Unauthorized - invalid or missing token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid or expired token"
                     }
                   }
                 }
-              },
-              "responses": {
-                "200": {
-                  "description": "Code translated successfully",
-                  "content": {
-                    "application/json": {
-                      "schema": {
-                        "type": "object",
-                        "properties": {
-                          "data": {
-                            "type": "string",
-                            "example": "function helloWorld() {\n  console.log('Hello, World!');\n}",
-                            "description": "The translated code"
-                          }
-                        }
-                      }
-                    }
-                  }
-                },
-                "401": {
-                  "description": "Unauthorized - invalid or missing token",
-                  "content": {
-                    "application/json": {
-                      "schema": {
-                        "type": "object",
-                        "properties": {
-                          "detail": {
-                            "type": "string",
-                            "example": "Unauthorized"
-                          }
-                        }
-                      }
-                    }
-                  }
-                },
-                "500": {
-                  "description": "Internal server error",
-                  "content": {
-                    "application/json": {
-                      "schema": {
-                        "type": "object",
-                        "properties": {
-                          "detail": {
-                            "type": "string",
-                            "example": "Something went wrong"
-                          }
-                        }
-                      }
+              }
+            }
+          },
+          "404": {
+            "description": "Submissions not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Submissions not found"
                     }
                   }
                 }
               }
             }
           }
+        }
+      }
+    },
+    "/ai/code-translate": {
+      "post": {
+        "tags": [
+          "AIService"
+        ],
+        "summary": "Translate code between programming languages",
+        "operationId": "translateCode",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "from_lang",
+                  "to_lang",
+                  "code"
+                ],
+                "properties": {
+                  "from_lang": {
+                    "type": "string",
+                    "example": "python",
+                    "description": "Source programming language"
+                  },
+                  "to_lang": {
+                    "type": "string",
+                    "example": "javascript",
+                    "description": "Target programming language"
+                  },
+                  "code": {
+                    "type": "string",
+                    "example": "def hello_world():\n    print('Hello, World!')",
+                    "description": "The code to translate"
+                  }
+                }
+              }
+            }
+          }
         },
-        "components": {
-          "securitySchemes": {
-            "bearerAuth": {
-              "type": "http",
-              "scheme": "bearer",
-              "bearerFormat": "JWT",
-              "description": "JWT token obtained from login or registration"
+        "responses": {
+          "200": {
+            "description": "Code translated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "string",
+                      "example": "function helloWorld() {\n  console.log('Hello, World!');\n}",
+                      "description": "The translated code"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "Something went wrong"
+                    }
+                  }
+                }
+              }
             }
           }
         }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT token obtained from login or registration"
       }
     }
   }
