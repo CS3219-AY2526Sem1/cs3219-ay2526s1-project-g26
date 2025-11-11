@@ -36,7 +36,7 @@ router.post(
   async (req: AuthRequest, res, next) => {
     const shouldBeAdmin = req.query?.shouldBeAdmin
     if (shouldBeAdmin === 'true' && req.user?.role != 'admin') {
-      return next(new AppError('You do not have the permission!', 401))
+      return next(new AppError('You do not have permissions to perform this operation!', 401))
     }
     return res.json({ success: true, user: req.user })
   }
