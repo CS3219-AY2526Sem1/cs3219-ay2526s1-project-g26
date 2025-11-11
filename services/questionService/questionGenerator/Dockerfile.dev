@@ -14,6 +14,4 @@ RUN pip3 install --break-system-packages -r ./requirements.txt
 
 COPY . .
 
-RUN chmod +x ./solutions/compile_all.sh
-
 CMD ["tail", "-f", "/dev/null"]
