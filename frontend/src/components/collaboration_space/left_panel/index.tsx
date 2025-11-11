@@ -74,7 +74,7 @@ const LeftPanel = (props: LeftPanelProps) => {
         <CodeTranslationPanel provider={props.provider} />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
-        <SubmissionsPanel roomId={props.roomId} provider={props.provider} />
+        <SubmissionsPanel />
       </CustomTabPanel>
     </Box>
   )
