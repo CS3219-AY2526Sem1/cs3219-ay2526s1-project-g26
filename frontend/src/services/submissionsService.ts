@@ -1,5 +1,6 @@
 import axiosInstance from '../utils/axios.ts'
 import {
+  RoomSubmissionSummary,
   SubmissionDataResponse,
   SubmissionDetail,
 } from '../types/submissions.ts'
@@ -26,13 +27,13 @@ export const submissionsService = {
     const response = await axiosInstance.get<{
       success: boolean
       submission: SubmissionDetail
-    }>(`${API_ENDPOINTS.HISTORY.GET_SUBMISSION_BY_ID}${id}`)
+    }>(`${API_ENDPOINTS.HISTORY.GET_SUBMISSION_BY_ID}/${id}`)
     return response.data.submission
   },
 
   getSubmissionStatusByTicketId: async (
     ticketId: string
-  ): Promise<SubmissionDetail | null> => {
+  ): Promise<RoomSubmissionSummary | null> => {
     const response = await axiosInstance.get(
       `${API_ENDPOINTS.HISTORY.GET_SUBMISSION_STATUS_WITH_TICKET}/${ticketId}`
     )
@@ -41,6 +42,15 @@ export const submissionsService = {
     } else {
       return response.data.result
     }
+  },
+
+  fetchRoomSubmissions: async (
+    roomId: string
+  ): Promise<RoomSubmissionSummary[]> => {
+    const response = await axiosInstance.get(
+      `${API_ENDPOINTS.HISTORY.GET_ROOM_SUBMISSIONS}/${roomId}`
+    )
+    return response.data.submissions
   },
 }
 

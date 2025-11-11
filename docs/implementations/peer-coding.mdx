@@ -1,0 +1,67 @@
+---
+title: "Peer Coding"
+description: "Architecture of the real-time editing service."
+---
+
+The **Peer Coding** is the core feature that enables real-time, multi-user editing within the same session. Its primary responsibility is to synchronize the state of the code editor between two users in a session, ensuring all participants see the same content, in real-time.
+
+It also serves as a real-time message broker, forwarding requests from the client (like "run code") to the appropriate backend services via Kafka.
+
+## 1. Conflict-Free Editing (CRDT)
+
+The service is built to handle the complexity of simultaneous edits from multiple users. If User A and User B type in the same place at the same time, the system must resolve this without conflicts and ensure both users eventually see the same result.
+
+This is achieved using **Conflict-free Replicated Data Types (CRDTs)**.
+
+<Steps>
+  <Step title="Yjs Implementation">
+    We use the **[Yjs](https://docs.yjs.dev/)** library, a high-performance CRDT implementation. A Yjs document (`Y.Doc`) is created for each collaboration session.
+  </Step>
+
+<Step title="WebSocket Communication">
+  Clients communicate with the Collaboration Service over a WebSocket
+  connection, routed via the API gateway at `/ws/collaboration/`. A custom
+  `y-websocket` server implementation manages these connections.
+</Step>
+
+  <Step title="State Synchronization">
+    When a client makes a change (e.g., types a character), it sends a small Yjs state update to the server. The server merges this update into the central Yjs document and immediately broadcasts the merged update to all other clients in the same session.
+  </Step>
+    
+  <Step title="Conflict Resolution">
+    Because Yjs uses CRDTs, the order in which updates are received by the server or clients does not matter. The mathematical properties of CRDTs guarantee that all clients will converge to the exact same document state.
+  </Step>
+</Steps>
+
+A heartbeat mechanism is implemented to send a `ping` request to both clients every 30 seconds to check if they are still active. If both clients are inactive, the collaboration service disconnects both connections and clear the document.
+
+<img src="/images/collaboration-service-1.png" />
+
+---
+
+## 2. Scalability and Event-Driven Architecture
+
+A single server instance managing all WebSocket connections and document states would be a major bottleneck. The Collaboration Service is designed to be horizontally scalable, allowing us to run multiple instances (e.g., as separate Kubernetes pods).
+
+This scalability is achieved by using **Redis** Pub-Sub model as a distributed message bus.
+
+### State Synchronization Across Instances
+
+When multiple instances of the service are running, Redis Pub-Sub model ensures that document states are synchronized between them.
+
+1.  **User Connection:** A user connects via WebSocket to any available service instance (e.g., Pod A).
+2.  **Edit (Produce):** The user makes an edit. Pod A's Yjs document is updated.
+3.  **Redis:** The latest document is written into Redis after running [CRDT](<#1-Conflict-Free-Editing-(CRDT)>).
+4.  **Redis Pub-Sub Model:** Pod A produces this state update for that collaboration session.
+5.  **Broadcast (Consume):** All service instances (Pod A, Pod B, Pod C, etc.) are consuming from that topic. When Pod B receives the message, it updates its local Yjs document.
+6.  **Client Sync:** Pod B then broadcasts the update to _its_ connected clients.
+
+This pattern ensures that all server instances remain in sync, and by extension, all clients receive all updates, regardless of which server instance they are connected to.
+
+<img src="/images/collaboration-service-2.png" />
+
+<Note>
+  The redis also stores the latest copy of a shared document from every session.
+  In a case of a disconnection, this allows both users to retreive the code
+  after reconnecting to the server.
+</Note>

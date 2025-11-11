@@ -1,0 +1,55 @@
+---
+title: "Code Submission"
+description: "Understanding the asynchronous journey of a code submission."
+---
+
+When a user submits code for verification, it kicks off a complex asynchronous workflow that spans multiple microservices. This process is orchestrated using **Kafka** as a message bus, following a **request-reply** pattern to ensure the system is decoupled and resilient while keeping collaboration-service highly available.
+
+The flow involves three main services:
+
+1.  **Collaboration Service:** The entry point for the user's request.
+2.  **Code Execution Service:** The worker that runs the code and verifies the solution.
+3.  **History Service:** The service that records successful submissions.
+
+---
+
+## Asynchronous Submission Workflow
+
+Here is the step-by-step journey of a single code submission:
+
+<Steps>
+  <Step title="1. Request (Client → Collaboration Service)">
+    Client 1 clicks the "Submit" button. The frontend sends a `CODE_EXECUTION_REQUEST` message over the WebSocket. This message is received by the `y-websocket` server logic.
+  </Step>
+
+  <Step title="2. Produce Request (Collaboration → Code Execution)">
+    The `collaboration-service` acts as a message broker. It receives the WebSocket request and forwards it to the backend system by producing a new message. This message contains the user's code, the `selected language`, `questionId`, `userIds`, and a unique `submissionId` to track the request.
+
+    This message is sent to the `CODE_EXECUTION_TOPIC` via Kafka and **immediately returns a unique `ticketId` to both client 1 and client 2.**
+
+  </Step>
+
+<Step title="3. Client Fetching Result">
+  Both clients query `history service` with the `ticketId` returned from
+  collaboration service at an interval of 500ms.
+</Step>
+
+<Step title="4. Consume & Execute (Code Execution Service)">
+  The `code-execution-service` is a dedicated consumer of the
+  `CODE_EXECUTION_TOPIC`. When it receives a new message, it fetches the hidden
+  test cases for the given `questionId`. After executing the code, it produces
+  the result to `SUBMISSION_TOPIC` via Kafka.
+</Step>
+
+<Step title="5. Save History (Kafka -> History Service)">
+  The `history-service` consumes messages from the `SUBMISSION_TOPIC`. It writes
+  the result into redis which expires in 30 seconds with the key being
+  `ticketID`. A permanent copy is also saved to MongoDB.
+</Step>
+
+   <Step title="6. Client Fetched Result">
+    Then, the next query from clients will retrieve the submission result from Redis from history service.
+  </Step>
+</Steps>
+
+<img src="/images/code-submission-flow.png" />

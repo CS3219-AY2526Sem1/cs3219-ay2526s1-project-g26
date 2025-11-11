@@ -6,6 +6,7 @@ import {
   SubmissionSummary,
   SubmissionDetailsResponse,
   Submission,
+  RoomSubmissionSummary,
 } from '../models/submissionHistoryModel.js'
 import { CreateSubmissionBody } from '../models/submissionHistoryModel.js'
 import redisClient from '../database/redis.js'
@@ -51,9 +52,8 @@ export const getUserSubmissions = async (
         title: '$submissionDetails.question_title',
         submission_time: {
           $dateToString: {
-            format: '%Y-%m-%d %H:%M',
+            format: '%Y-%m-%d %H:%M:%S UTC',
             date: { $toDate: '$submissionDetails._id' },
-            timezone: '+08:00', // hardcode for now
           },
         },
         overall_status: '$submissionDetails.overall_result.result',
@@ -136,17 +136,68 @@ export const getUserSubmission = async (
   return submission as SubmissionDetailsResponse
 }
 
+export const getRoomSubmissions = async (
+  roomId: string
+): Promise<RoomSubmissionSummary[]> => {
+  const submissionsCollection = getSubmissionsCollection()
+  const projection = {
+    _id: 1,
+    'overall_result.result': 1,
+    mode: 1,
+    language: 1,
+  }
+
+  const submissions = await submissionsCollection
+    .find(
+      { room_id: roomId },
+      {
+        projection,
+        sort: { _id: 1 },
+      }
+    )
+    .toArray()
+
+  const summaries: RoomSubmissionSummary[] = submissions.map((sub) => {
+    return {
+      submission_id: sub._id.toString(),
+      status: sub.overall_result.result,
+      mode: sub.mode,
+      language: sub.language,
+      submitted_at: sub._id.getTimestamp().toISOString(),
+    }
+  })
+
+  return summaries
+}
+
 export const insertSubmission = async (data: CreateSubmissionBody) => {
-  const result = await getSubmissionsCollection().insertOne(data.result)
   if (data.user_ids.length !== 2) {
     return
   }
-  await redisClient.set(data.result.ticket_id, JSON.stringify(data.result), {
-    EX: 15,
-  })
+  data.result.room_id = data.room_id
+  const result = await getSubmissionsCollection().insertOne(data.result)
   const submissionId = result.insertedId.toString()
+  await redisClient.set(
+    data.result.ticket_id,
+    JSON.stringify({
+      submission_id: submissionId,
+      status: data.result.overall_result.result,
+      mode: data.result.mode,
+      submitted_at: new Date(),
+      language: data.result.language,
+    }),
+    {
+      EX: 15,
+    }
+  )
   await getUserSubmissionsCollection().insertMany([
-    { user_id: data.user_ids[0], submission_id: submissionId },
-    { user_id: data.user_ids[1], submission_id: submissionId },
+    {
+      user_id: data.user_ids[0],
+      submission_id: submissionId,
+    },
+    {
+      user_id: data.user_ids[1],
+      submission_id: submissionId,
+    },
   ])
 }

@@ -1,3 +1,10 @@
+/**
+ * AI Assistance Disclosure:
+ * Tool: GEMINI 2.5 Pro, date: 2025‑09-24
+ * Scope: Generated UI implementation of a LoadingSkeleton component.
+ * Author review: I validated correctness, edited for style.
+ */
+
 import React from 'react'
 import { Box, Skeleton } from '@mui/material'
 
