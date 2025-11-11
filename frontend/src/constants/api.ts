@@ -6,6 +6,8 @@ export const API_ENDPOINTS = {
     LOGIN: '/api/user/auth/login',
     REGISTER: '/api/user/auth/register',
     VERIFY_TOKEN: '/api/user/auth/verify-token',
+    FORGOT_PASSWORD: '/api/user/auth/forgot-password',
+    RESET_PASSWORD: '/api/user/auth/reset-password',
   },
   PROFILE: {
     GET: '/api/user/profile/me',
@@ -19,8 +21,9 @@ export const API_ENDPOINTS = {
   },
   HISTORY: {
     GET_USER_SUBMISSIONS: '/api/history/submissions',
-    GET_SUBMISSION_BY_ID: '/api/history/submissions/',
+    GET_SUBMISSION_BY_ID: '/api/history/submissions',
     GET_SUBMISSION_STATUS_WITH_TICKET: '/api/history/submissions/status',
+    GET_ROOM_SUBMISSIONS: '/api/history/submissions/rooms',
   },
   CODE_EXECUTION: {
     EXECUTE: '/api/code-execution/execute',

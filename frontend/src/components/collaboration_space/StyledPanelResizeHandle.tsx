@@ -1,3 +1,10 @@
+/**
+ * AI Assistance Disclosure:
+ * Tool: GEMINI 2.5 Pro, date: 2025‑10-23
+ * Scope: Generated UI implementation of a ResizeHandle.
+ * Author review: I validated correctness, edited for style.
+ */
+
 import { styled } from '@mui/material/styles'
 import { PanelResizeHandle } from 'react-resizable-panels'
 

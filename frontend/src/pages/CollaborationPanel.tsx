@@ -11,6 +11,8 @@ import {
   setSelectedLanguage,
   setTargetTranslatedLanguage,
   setTranslatedCode,
+  addSubmission,
+  setSubmissions,
 } from '../store/slices/collaborationSlice.ts'
 import * as Y from 'yjs'
 import { useDispatch, useSelector } from 'react-redux'
@@ -22,6 +24,7 @@ import { setOpen as setNotificationBarOpen } from '../store/slices/notificationS
 import { PeerProfile } from '../types/user.ts'
 import LoadingSkeleton from '../components/common/LoadingSkeleton.tsx'
 import { DEFAULT_LANGUAGE } from '../constants/collaboration_editor.ts'
+import { useAsyncEffect } from '../hooks'
 
 const CollaborationPanel = () => {
   const me = useSelector((state: RootState) => state.user.user)
@@ -35,6 +38,12 @@ const CollaborationPanel = () => {
   const navigate = useNavigate()
   const ydoc = useMemo(() => new Y.Doc(), [])
   const [peerProfile, setPeerProfile] = useState<PeerProfile | null>(null)
+
+  useAsyncEffect(async () => {
+    if (!roomid) return
+    const submissions = await submissionService.fetchRoomSubmissions(roomid)
+    dispatch(setSubmissions(submissions))
+  }, [])
 
   useEffect(() => {
     return () => {
@@ -70,10 +79,11 @@ const CollaborationPanel = () => {
             if (!result) return
             dispatch(
               setNotificationBarOpen({
-                message: JSON.stringify(result),
-                severity: 'success',
+                message: `Code Submitted with Result: ${result.status}`,
+                severity: 'info',
               })
             )
+            dispatch(addSubmission(result))
             dispatch(setIsCodeExecuting(false))
             clearInterval(n)
           }, 500)
@@ -160,7 +170,11 @@ const CollaborationPanel = () => {
                 overflow: 'hidden',
               }}
             >
-              <LeftPanel question={question || undefined} provider={provider} />
+              <LeftPanel
+                question={question || undefined}
+                roomId={roomid || undefined}
+                provider={provider}
+              />
             </Paper>
           </Panel>
 
@@ -168,12 +182,7 @@ const CollaborationPanel = () => {
 
           <Panel defaultSize={50} maxSize={80} minSize={20}>
             <PanelGroup direction={'vertical'}>
-              <Panel
-                defaultSize={85}
-                maxSize={95}
-                minSize={20}
-                onResize={handleResize}
-              >
+              <Panel defaultSize={100} onResize={handleResize}>
                 <Paper
                   elevation={1}
                   sx={{
@@ -189,22 +198,6 @@ const CollaborationPanel = () => {
                     resizeTrigger={resizeTrigger}
                     provider={provider!}
                   />
-                </Paper>
-              </Panel>
-
-              <StyledPanelResizeHandle />
-
-              <Panel defaultSize={15} minSize={5} maxSize={80}>
-                <Paper
-                  elevation={1}
-                  sx={{
-                    height: '100%',
-                    borderRadius: 2,
-                    border: '1px solid',
-                    borderColor: 'divider',
-                  }}
-                >
-                  Test Case Panel (Reserved)
                 </Paper>
               </Panel>
             </PanelGroup>

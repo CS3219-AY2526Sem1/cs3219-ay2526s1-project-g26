@@ -38,6 +38,7 @@ export interface Submission {
   mode: RunMode
   ticket_id: string
   overall_result: ResultInformation
+  room_id: string
 }
 
 export interface UserSubmission {
@@ -58,7 +59,14 @@ export interface SubmissionHistoryResponse {
   total: number
 }
 
-// Todo: Alter this to fit with frontend new schema
+export interface RoomSubmissionSummary {
+  submission_id: string
+  status: ResultLabel
+  mode: RunMode
+  submitted_at: string
+  language: Language
+}
+
 export interface SubmissionDetailsResponse {
   question_id: string
   mode: RunMode
@@ -73,5 +81,6 @@ export interface SubmissionDetailsResponse {
 
 export interface CreateSubmissionBody {
   result: Submission
+  room_id: string
   user_ids: string[]
 }

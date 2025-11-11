@@ -36,7 +36,6 @@ temp/
 config.ini
 .env
 
-solutions/output
 test_case_input_generator/inputs
 test_case_output_generator/outputs
 
@@ -44,3 +43,5 @@ sql/
 outputs/
 questions_output.json
 questions.jsonl
+
+solutions/

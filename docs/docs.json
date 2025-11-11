@@ -8,6 +8,11 @@
     "dark": "#15803D"
   },
   "favicon": "/favicon.svg",
+  "api": {
+    "playground": {
+      "proxy": false
+    }
+  },
   "navigation": {
     "tabs": [
       {
@@ -15,7 +20,14 @@
         "groups": [
           {
             "group": "Getting started",
-            "pages": ["index", "quickstart", "development"]
+            "pages": ["index", "quickstart", "development", "deployment"]
+          },
+          {
+            "group": "Implementations",
+            "pages": [
+              "implementations/peer-coding",
+              "implementations/code-submission"
+            ]
           },
           {
             "group": "Customization",
@@ -52,12 +64,37 @@
             "pages": [
               "api-reference/userservice/register-a-new-user",
               "api-reference/userservice/login-an-existing-user",
-              "api-reference/userservice/verify-jwt-token-and-get-user-info"
+              "api-reference/userservice/verify-jwt-token-and-get-user-info",
+              "api-reference/userservice/get-current-user-profile",
+              "api-reference/userservice/update-user-profile"
             ]
           },
           {
             "group": "QuestionService",
-            "pages": ["api-reference/questionservice/get-a-matching-question"]
+            "pages": [
+              "api-reference/questionservice/get-matching-question",
+              "api-reference/questionservice/get-categories-and-difficulties",
+              "api-reference/questionservice/get-question-by-id",
+              "api-reference/questionservice/update-question",
+              "api-reference/questionservice/delete-question",
+              "api-reference/questionservice/get-question-test-cases",
+              "api-reference/questionservice/get-all-questions",
+              "api-reference/questionservice/create-question"
+            ]
+          },
+          {
+            "group": "HistoryService",
+            "pages": [
+              "api-reference/historyservice/get-user-submissions",
+              "api-reference/historyservice/get-submission-details",
+              "api-reference/historyservice/get-submission-status"
+            ]
+          },
+          {
+            "group": "AIService",
+            "pages": [
+              "api-reference/aiservice/translate-code"
+            ]
           }
         ]
       }

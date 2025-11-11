@@ -1,0 +1,76 @@
+---
+title: "Deployment"
+description: "Understanding the automated CD pipeline and manual deployment options."
+---
+
+## Continuous Deployment (CD) Pipeline
+
+Our production environment is hosted on Google Kubernetes Engine (GKE) and is updated automatically. As a developer, your main responsibility is to merge your code into the main branch. The CD pipeline handles the rest.
+
+Here is a step-by-step breakdown of the automated process:
+
+<Steps>
+  <Step title="1. GitHub Trigger">
+    The process begins when a developer pushes a new commit or merges a pull request into the `master` branch of the GitHub repository. A **Google Cloud Build trigger** is configured to listen for these events.
+  </Step>
+  
+  <Step title="2. Cloud Build Execution">
+    Once triggered, Google Cloud Build executes the instructions defined in the `cloudbuild.yaml` file at the root of the repository.
+  </Step>
+
+<Step title="3. Build & Push Images">
+  The `cloudbuild.yaml` script builds Docker images for every service (e.g.,
+  `frontend-prod`, `user-service-prod`, etc.) using their production
+  Dockerfiles. After a successful build, each image is tagged as `latest` and
+  pushed to our private **Google Cloud Artifact Registry**.
+</Step>
+
+  <Step title="4. GKE Rollout Update">
+    The final step in the Cloud Build script initiates a deployment to GKE.
+    * **Apply Secrets:** The GKE cluster applies the necessary secret files stored securely on the server (e.g., API keys, database passwords, JWT secrets).
+    * **Rolling Update:** GKE uses the Kubernetes manifests from the `kubernetes/` directory to perform a **rollout update**. This gradually replaces the old pods with new ones using the `latest` images, ensuring zero downtime for the application.
+  </Step>
+</Steps>
+
+<Info>
+  **Developer's Role:** Your main task is to ensure your code is properly
+  merged. The automated pipeline takes over from there. You can monitor the
+  build and deployment status in the Google Cloud Build dashboard.
+</Info>
+## API Gateway and Routing
+
+We use an **NGINX reverse proxy** as an API Gateway to manage and direct all incoming traffic. This provides a single, unified entry point for our application, abstracting the underlying microservice architecture from the client.
+
+<Tabs>
+  <Tab title="Production (Kubernetes Ingress)">
+    In our GKE production environment, routing is handled by an **NGINX Ingress Controller**, which is configured by our Kubernetes manifest files.
+
+    * **Frontend Routing:** The `frontend-ingress.yaml` file routes all traffic from the base path (`/`) directly to the `frontend` service.
+
+    * **Backend API Routing:** The `backend-ingress.yaml` file defines all API and WebSocket routes. It uses regular expressions to match URL paths and forward them to the correct backend service.
+
+    **Example Routes from `backend-ingress.yaml`:**
+    * `path: /api/user(/|$)(.*)` is routed to `user-service:4000`
+    * `path: /api/question(/|$)(.*)` is routed to `question-service:4010`
+    * `path: /api/matching(/|$)(.*)` is routed to `matching-service:4020`
+
+    <img
+    src="/images/deployment-api-gateway.png"
+    alt="deployment-api-gateway"
+    />
+
+  </Tab>
+
+  <Tab title="Local">
+    In the local development environment routing is handled by the `docker/nginx/nginx.dev.conf` file.
+
+    The logic is similar, using `location` blocks to proxy requests:
+
+    **Example Routes from `nginx.dev.conf`:**
+    * `location /` is proxied to `http://frontend:3000`
+    * `location /api/user/` is proxied to `http://user-service:4000/`
+    * `location /api/question/` is proxied to `http://question-service:4010/`
+    * `location /ws/matching/` is proxied to `http://matching-service:4030/`
+
+  </Tab>
+</Tabs>

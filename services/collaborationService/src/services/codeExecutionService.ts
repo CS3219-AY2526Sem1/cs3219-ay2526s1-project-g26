@@ -6,7 +6,7 @@ import { type WSSharedDoc } from '../utils/y-websocket/index.js'
 const logger = getLogger('codeExecutionService')
 
 export const submitVerificationJob = async (
-  data: { language: string; mode: 'run' | 'submit'; questionId: string },
+  data: { language: string; mode: 'run' | 'submit'; roomId: string; questionId: string },
   doc: WSSharedDoc,
   ticketId: string
 ) => {
@@ -17,6 +17,7 @@ export const submitVerificationJob = async (
       language: data.language,
       code_text: doc.getText().toString(),
       mode: data.mode,
+      room_id: data.roomId,
       user_ids: Array.from(doc.awareness.getStates().values()).map(
         (val) => val.id
       ),

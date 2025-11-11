@@ -1,5 +1,5 @@
 import { Difficulty, UserInfo } from '../models/userInfo.js'
-import { fillPrefixZeros, sleep } from '../utils/index.js'
+import { sleep } from '../utils/index.js'
 import { getLogger } from '../utils/logger.js'
 import redisClient from './redis.js'
 import {
@@ -73,10 +73,10 @@ export class UserStorage {
     const users = await UserStorage.getAllUsers()
     const currTime = Date.now()
 
-    let score = '0'
+    let score: number = -1
     let target = null
     users.forEach((targetUserInfo) => {
-      const targetUserScore = this.calculateSimilarityScore(
+      const targetUserScore = this.calculateScore(
         userInfo,
         targetUserInfo,
         currTime
@@ -87,13 +87,18 @@ export class UserStorage {
       }
     })
 
-    if (score.charAt(0) === '0') {
+    if (!((score >>> 21) & 1)) {
       return null
     }
 
-    // If second digit of score is 0 after checking first digit above
+    // If waiting time more than 2min, skip difficulty check and match
+    if ((score >>> 20) & 1) {
+      return target
+    }
+
+    // If third bit of score is 0 after checking first digit above
     // then no one else has overlapping difficulties
-    if (score.charAt(1) === '0') {
+    if (!((score >>> 19) & 1)) {
       return null
     }
 
@@ -120,11 +125,11 @@ export class UserStorage {
   }
 
   // Returns similarity score between recently joined user and targetUser in the storage
-  private static calculateSimilarityScore(
+  private static calculateScore(
     user: UserInfo,
     targetUser: UserStorageFields,
     currTime: number
-  ): string {
+  ): number {
     const user1Topics = user.topics
     const user1Difficulties = user.difficulty
 
@@ -137,15 +142,15 @@ export class UserStorage {
     const overlapDifficulties = user1Difficulties.filter((diff) =>
       user2Difficulties.includes(diff)
     )
+    const waitingTime = Math.round((currTime - targetUser.timeJoined) / 1000) // Time waited in seconds
 
-    const A = overlapTopics.length === 0 ? '0' : '1' // 1 digit
-    const B = overlapDifficulties.length === 0 ? '0' : '1' // 1 digit
-    const C = fillPrefixZeros(overlapTopics.length, 2) // 2 digits
-    const D = overlapDifficulties.length // 1 digit
-    const E = fillPrefixZeros(currTime - targetUser.timeJoined, 7) // 7 digits - time waited in milliseconds
+    const A = Number(overlapTopics.length >= 1) // 1 bit
+    const T = waitingTime >= 120 ? 1 : 0 // 1 bit
+    const B = Number(overlapDifficulties.length >= 1) // 1 bit
+    const C = overlapTopics.length // 5 bits
+    const D = overlapDifficulties.length // 2 bits
+    const E = Math.min(waitingTime, 3600) // 12 bits - time waited in seconds up to max of 1 hour
 
-    const similarityScore = `${A}${B}${C}${D}${E}`
-
-    return similarityScore
+    return (A << 21) + (T << 20) + (B << 19) + (C << 14) + (D << 12) + E
   }
 }

@@ -81,6 +81,7 @@ const TopToolBar = (props: TopToolBarProps) => {
           language: selectedLanguage,
           mode: 'run',
           questionId: props.questionId,
+          roomId: props.roomId,
         })
       )
     )
@@ -98,6 +99,7 @@ const TopToolBar = (props: TopToolBarProps) => {
           language: selectedLanguage,
           mode: 'submit',
           questionId: props.questionId,
+          roomId: props.roomId,
         })
       )
     )
