@@ -50,3 +50,87 @@
   - Output Summary: A .ts file with implementation with all these endpoints.
   - Action Taken: Modified.
   - Author Notes: Modified the output to match the prettier style format.
+
+- `/services/codeExecutionService/src/services/codeExecutionService.ts`.
+  - Date: 2025-10-24
+  - Tool: Github Copilot (Claude Sonnet 4.5)
+  - Prompt (with attachments of `services/codeExecutionService/src/types/index.ts` and `services/codeExecutionService/src/utils/codeExecutor.ts`):
+    ```markdown
+    Create a `validateCode` async function that orchestrates code execution against test cases. Requirements:
+
+    1. Function signature: `validateCode(testCases: TestCase[], language: Language, code_text: string): Promise<SubmissionResult>`
+
+    2. Implementation flow:
+       - Generate unique temp file with UUID for the submission
+       - Write source code to temp file with appropriate extension (.cpp/.py/.cjs)
+       - For C++: compile with g++ first, handle compilation errors
+       - Loop through each test case: call `executeCode` utility with test case input
+       - Compare actual output with expected output (string comparison)
+       - Track passed_tests count, total execution time, and max memory usage
+       - Return early on first failure with appropriate status
+
+    3. Status determination priority: Compilation Error > Time Limit Exceeded > Runtime Error > Wrong Answer
+
+    4. Return SubmissionResult with: status, passed_tests, total_tests, execution_time, memory_used, error (if any), test_case_details (input, expected_output, actual_output)
+
+    5. Clean up temp files after execution
+    
+    Use the TypeScript interfaces from the attached types file for type safety.
+    ```
+  - Output Summary: A .ts file with core business logic implementing the `validateCode` function with test case execution loop, basic string equality for output comparison, and initial error handling structure.
+  - Action Taken: Modified.
+  - Author Notes: Added `normalizeOutput` and `compareOutputs` helper functions for robust multi-line and order-independent output comparison.
+
+- `/services/codeExecutionService/src/utils/codeExecutor.ts`.
+  - Date: 2025-10-24
+  - Tool: Github Copilot (Claude Sonnet 4.5)
+  - Prompt (with attachments of `services/codeExecutionService/src/types/index.ts`):
+    ```markdown
+    Implement an `executeCode` async function as the low-level execution engine. Requirements:
+
+    1. Function signature: `executeCode(filename: string, language: Language, input: string, timeLimit: number): Promise<CodeExecutionOutput>`
+
+    2. Create a LANGUAGE_CONFIG object mapping each language to:
+       - extension: '.cpp' for C++, '.py' for Python, '.cjs' for JavaScript
+       - compileCmd: function returning g++ command for C++, null for Python/JS
+       - executeCmd: function returning execution command (./executable for C++, python/node for others)
+
+    3. Implementation:
+       - Use child_process to spawn processes (separate for compilation and execution)
+       - For C++: spawn g++ compilation process first
+       - Spawn execution process and write input to stdin stream
+       - Capture stdout and stderr in real-time
+       - Implement timeout mechanism: kill process if execution exceeds timeLimit milliseconds
+       - Track execution time from start to finish
+
+    4. Return CodeExecutionOutput with: success (boolean), output (stdout string), error (stderr/error message), executionTime (in ms)
+
+    5. Handle three error types: compilation errors, timeout errors, runtime errors
+    
+    Use the CodeExecutionOutput and Language types from the attached types file.
+    ```
+  - Output Summary: A .ts file with low-level code execution engine implementing the `executeCode` function and basic timeout handling with setTimeout.
+  - Action Taken: Modified.
+  - Author Notes: added `pidusage` for memory monitoring, tested with edge cases.
+
+- `/frontend/src/pages/SubmissionDetail.tsx`.
+  - Date: 2025-10-17
+  - Tool: Github Copilot (Claude Sonnet 4.5)
+  - Prompt (with attachments of Figma prototype screenshots for submission detail page):
+    ```markdown
+    Create `SubmissionDetail` page component. Fetch submission by ID from URL params, show loading/error states. UI: problem title with difficulty chip, status chip with test case count, performance metrics (time/memory), Monaco Editor for code display, failing test case details if applicable. Use MUI components, styled-components, responsive design, color-coded statuses.
+    ```
+  - Output Summary: A .tsx file with SubmissionDetail component including styled-components (StyledCard, ProblemTitle, StatusText), useEffect data fetching, getDifficultyColor function, and Monaco Editor integration.
+  - Action Taken: Modified.
+  - Author Notes: Enhanced styled-components with custom color schemes and spacing.
+
+- `/frontend/src/components/common/QuestionPanel.tsx`.
+  - Date: 2025-10-08
+  - Tool: Github Copilot (Claude Sonnet 4.5)
+  - Prompt (with attachments of Figma prototype screenshots for question display panel and `services\questionService\src\database\init\questions_output.json`):
+    ```markdown
+    Create `QuestionPanel` component following the question schema in attached JSON file. Props: question, loading, error, onQuestionChange. Display question title with difficulty chip, category tags, description, MUI Accordions for examples (input/output/explanation) and constraints/hints. Include loading spinner and error alert.
+    ```
+  - Output Summary: A .tsx file implementing the QuestionPanel component with basic MUI layout, ReactMarkdown integration, and accordion structure for examples/constraints.
+  - Action Taken: Modified.
+  - Author Notes: Enhanced markdown rendering with custom styles for code blocks and lists and refined category chip layout and colors.
