@@ -79,7 +79,7 @@
     ```
   - Output Summary: A .ts file with core business logic implementing the `validateCode` function with test case execution loop, basic string equality for output comparison, and initial error handling structure.
   - Action Taken: Modified.
-  - Author Notes: Added `normalizeOutput` and `compareOutputs` helper functions for robust multi-line and order-independent output comparison; integrated with optimized `executeCode`; added temp file cleanup.
+  - Author Notes: Added `normalizeOutput` and `compareOutputs` helper functions for robust multi-line and order-independent output comparison.
 
 - `/services/codeExecutionService/src/utils/codeExecutor.ts`.
   - Date: 2025-10-24
@@ -109,9 +109,9 @@
     
     Use the CodeExecutionOutput and Language types from the attached types file.
     ```
-  - Output Summary: A .ts file with low-level code execution engine implementing the `executeCode` function using child_process.exec for process execution and basic timeout handling with setTimeout.
+  - Output Summary: A .ts file with low-level code execution engine implementing the `executeCode` function and basic timeout handling with setTimeout.
   - Action Taken: Modified.
-  - Author Notes: Refactored to use `spawn` for better stream handling; added `pidusage` for memory monitoring; implemented proper stdin piping and comprehensive cleanup; enhanced error handling for compilation/timeout/runtime errors; tested with edge cases.
+  - Author Notes: added `pidusage` for memory monitoring, tested with edge cases.
 
 - `/frontend/src/pages/SubmissionDetail.tsx`.
   - Date: 2025-10-17
