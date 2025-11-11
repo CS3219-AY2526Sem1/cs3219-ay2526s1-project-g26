@@ -55,8 +55,7 @@ router.post('/forgot-password', async (req, res, next) => {
 
   const exists = await requestPasswordReset(email)
   if (!exists) {
-    return next(new AppError('User not found', 404)
-    )
+    return next(new AppError('User not found', 404))
   }
 
   return res.json({ success: true, message: 'OTP has been sent' })
