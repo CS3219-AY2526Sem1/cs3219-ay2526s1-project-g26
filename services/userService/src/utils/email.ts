@@ -1,7 +1,7 @@
 // utils/email.ts
 import nodemailer from 'nodemailer'
-import { SMTP } from '../config'
-import { getLogger } from './logger'
+import { SMTP } from '../config/index.js'
+import { getLogger } from './logger.js'
 
 const logger = getLogger('email-service')
 
