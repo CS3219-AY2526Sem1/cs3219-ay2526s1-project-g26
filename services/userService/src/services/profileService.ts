@@ -57,8 +57,8 @@ export const updateUserProfile = async (
   } else if (password && !isValidPassword(password)) {
     throw new AppError(
       'Invalid email or password, please apply validation before sending',
-       400
-      )
+      400
+    )
   }
 
   let result
