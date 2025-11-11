@@ -1,3 +1,9 @@
+/**
+ * AI Assistance Disclosure:
+ * Tool: Github Copilot(Claude Sonnet 4.5), date: 2025-10-24
+ * Scope: Generated initial implementation of `validateCode` function including test case execution loop, output comparison logic, status determination, and error handling structure.
+ * Author review: I validated correctness, edited for style.
+ */
 import { randomUUID, type UUID } from 'crypto'
 import { executeCode } from '../utils/codeExecutor.js'
 import { TIME_LIMIT } from '../config/index.js'
