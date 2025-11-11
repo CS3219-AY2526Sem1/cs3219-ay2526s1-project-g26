@@ -1,3 +1,9 @@
+/**
+ * AI Assistance Disclosure:
+ * Tool: Github Copilot(Claude Sonnet 4.5), date: 2025-10-17
+ * Scope: Generated SubmissionDetail component including styled-components (StyledCard, ProblemTitle, StatusText), useEffect data fetching, getDifficultyColor function, and Monaco Editor integration.
+ * Author review:  I validated correctness and enhanced styled-components with custom color schemes and spacing.
+ */
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import {

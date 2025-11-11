@@ -112,3 +112,25 @@
   - Output Summary: A .ts file with low-level code execution engine implementing the `executeCode` function using child_process.exec for process execution and basic timeout handling with setTimeout.
   - Action Taken: Modified.
   - Author Notes: Refactored to use `spawn` for better stream handling; added `pidusage` for memory monitoring; implemented proper stdin piping and comprehensive cleanup; enhanced error handling for compilation/timeout/runtime errors; tested with edge cases.
+
+- `/frontend/src/pages/SubmissionDetail.tsx`.
+  - Date: 2025-10-17
+  - Tool: Github Copilot (Claude Sonnet 4.5)
+  - Prompt (with attachments of Figma prototype screenshots for submission detail page):
+    ```markdown
+    Create `SubmissionDetail` page component. Fetch submission by ID from URL params, show loading/error states. UI: problem title with difficulty chip, status chip with test case count, performance metrics (time/memory), Monaco Editor for code display, failing test case details if applicable. Use MUI components, styled-components, responsive design, color-coded statuses.
+    ```
+  - Output Summary: A .tsx file with SubmissionDetail component including styled-components (StyledCard, ProblemTitle, StatusText), useEffect data fetching, getDifficultyColor function, and Monaco Editor integration.
+  - Action Taken: Modified.
+  - Author Notes: Enhanced styled-components with custom color schemes and spacing.
+
+- `/frontend/src/components/common/QuestionPanel.tsx`.
+  - Date: 2025-10-08
+  - Tool: Github Copilot (Claude Sonnet 4.5)
+  - Prompt (with attachments of Figma prototype screenshots for question display panel and `services\questionService\src\database\init\questions_output.json`):
+    ```markdown
+    Create `QuestionPanel` component following the question schema in attached JSON file. Props: question, loading, error, onQuestionChange. Display question title with difficulty chip, category tags, description, MUI Accordions for examples (input/output/explanation) and constraints/hints. Include loading spinner and error alert.
+    ```
+  - Output Summary: A .tsx file implementing the QuestionPanel component with basic MUI layout, ReactMarkdown integration, and accordion structure for examples/constraints.
+  - Action Taken: Modified.
+  - Author Notes: Enhanced markdown rendering with custom styles for code blocks and lists and refined category chip layout and colors.
