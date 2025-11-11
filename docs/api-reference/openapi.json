@@ -40,7 +40,7 @@
           "UserService - Auth"
         ],
         "summary": "Register a new user",
-        "operationId": "registerUser",
+        "operationId": "createUser",
         "requestBody": {
           "required": true,
           "content": {
@@ -68,9 +68,7 @@
                   },
                   "full_name": {
                     "type": "string",
-                    "minLength": 2,
-                    "maxLength": 50,
-                    "description": "User's full name (optional)",
+                    "description": "User's full name",
                     "example": "John Doe"
                   }
                 }
@@ -145,26 +143,6 @@
                         "Full name already exists"
                       ],
                       "example": "Invalid email or password, please apply validation before sending"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error - database or server failure",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": false
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Internal Server Error"
                     }
                   }
                 }
@@ -382,7 +360,7 @@
                       "type": "string",
                       "enum": [
                         "Invalid or expired token",
-                        "You do not have the permission!",
+                        "You do not have permissions to perform this operation!",
                         "Authorization token missing"
                       ],
                       "example": "Invalid or expired token"
