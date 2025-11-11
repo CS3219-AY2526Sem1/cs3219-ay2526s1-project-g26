@@ -20,7 +20,7 @@ export const getUserProfile = async (id: string | undefined) => {
   )
 
   if (!result || result.rows.length === 0) {
-    throw new AppError('User Not Found!', 400)
+    throw new AppError('User Not Found!', 404)
   }
 
   return result.rows[0]
@@ -55,7 +55,10 @@ export const updateUserProfile = async (
       400
     )
   } else if (password && !isValidPassword(password)) {
-    throw new AppError('Invalid password!', 400)
+    throw new AppError(
+      'Invalid email or password, please apply validation before sending',
+       400
+      )
   }
 
   let result

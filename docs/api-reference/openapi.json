@@ -337,6 +337,14 @@
                             "admin"
                           ],
                           "example": "user"
+                        },
+                        "iat": {
+                          "type": "integer",
+                          "example": 1617187200
+                        },
+                        "exp": {
+                          "type": "integer",
+                          "example": 1617273600
                         }
                       }
                     }
@@ -387,7 +395,7 @@
         ],
         "responses": {
           "200": {
-            "description": "User profile retrieved successfully",
+            "description": "The user profile of the user",
             "content": {
               "application/json": {
                 "schema": {
@@ -410,6 +418,11 @@
                           "type": "string",
                           "example": "John Doe",
                           "description": "User's full name"
+                        },
+                        "password_hash": {
+                          "type": "string",
+                          "example": "$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36...",
+                          "description": "The hash of the user's password"
                         }
                       }
                     }
@@ -451,6 +464,10 @@
                     },
                     "message": {
                       "type": "string",
+                      "enum": [
+                        "Invalid or expired token",
+                        "Authorization token missing"
+                      ],
                       "example": "Invalid or expired token"
                     }
                   }
@@ -560,7 +577,6 @@
                         "Email must be provided",
                         "Full name must be provided",
                         "Invalid email or password, please apply validation before sending",
-                        "Invalid password!",
                         "Email already exists",
                         "Full name already exists"
                       ],
