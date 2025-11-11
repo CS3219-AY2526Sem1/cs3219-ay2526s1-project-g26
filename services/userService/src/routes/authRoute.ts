@@ -36,7 +36,12 @@ router.post(
   async (req: AuthRequest, res, next) => {
     const shouldBeAdmin = req.query?.shouldBeAdmin
     if (shouldBeAdmin === 'true' && req.user?.role != 'admin') {
-      return next(new AppError('You do not have permissions to perform this operation!', 401))
+      return next(
+        new AppError(
+          'You do not have permissions to perform this operation!',
+          401
+        )
+      )
     }
     return res.json({ success: true, user: req.user })
   }
@@ -45,16 +50,12 @@ router.post(
 router.post('/forgot-password', async (req, res, next) => {
   const { email } = req.body
   if (!email) {
-    return next(
-      new AppError('Email is required', 400))
+    return next(new AppError('Email is required', 400))
   }
 
   const exists = await requestPasswordReset(email)
   if (!exists) {
-    return next(
-      new AppError('User not found',
-                   404
-                  )
+    return next(new AppError('User not found', 404)
     )
   }
 
