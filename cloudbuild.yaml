@@ -33,126 +33,126 @@ steps:
         "push",
         "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/user-service:latest",
       ]
-  - name: "gcr.io/cloud-builders/docker"
-    args:
-      [
-        "build",
-        "--no-cache",
-        "-t",
-        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/question-service:latest",
-        "-f",
-        "services/questionService/Dockerfile.prod",
-        "./services/questionService",
-      ]
-  - name: "gcr.io/cloud-builders/docker"
-    args:
-      [
-        "push",
-        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/question-service:latest",
-      ]
-  - name: "gcr.io/cloud-builders/docker"
-    args:
-      [
-        "build",
-        "--no-cache",
-        "-t",
-        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/matching-service:latest",
-        "-f",
-        "services/matchingService/Dockerfile.prod",
-        "./services/matchingService",
-      ]
-  - name: "gcr.io/cloud-builders/docker"
-    args:
-      [
-        "push",
-        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/matching-service:latest",
-      ]
+  # - name: "gcr.io/cloud-builders/docker"
+  #   args:
+  #     [
+  #       "build",
+  #       "--no-cache",
+  #       "-t",
+  #       "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/question-service:latest",
+  #       "-f",
+  #       "services/questionService/Dockerfile.prod",
+  #       "./services/questionService",
+  #     ]
+  # - name: "gcr.io/cloud-builders/docker"
+  #   args:
+  #     [
+  #       "push",
+  #       "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/question-service:latest",
+  #     ]
+  # - name: "gcr.io/cloud-builders/docker"
+  #   args:
+  #     [
+  #       "build",
+  #       "--no-cache",
+  #       "-t",
+  #       "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/matching-service:latest",
+  #       "-f",
+  #       "services/matchingService/Dockerfile.prod",
+  #       "./services/matchingService",
+  #     ]
+  # - name: "gcr.io/cloud-builders/docker"
+  #   args:
+  #     [
+  #       "push",
+  #       "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/matching-service:latest",
+  #     ]
 
-  - name: "gcr.io/cloud-builders/docker"
-    args:
-      [
-        "build",
-        "--no-cache",
-        "-t",
-        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/collaboration-service:latest",
-        "-f",
-        "services/collaborationService/Dockerfile.prod",
-        "./services/collaborationService",
-      ]
-  - name: "gcr.io/cloud-builders/docker"
-    args:
-      [
-        "push",
-        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/collaboration-service:latest",
-      ]
-  - name: "gcr.io/cloud-builders/docker"
-    args:
-      [
-        "build",
-        "--no-cache",
-        "-t",
-        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/code-execution-service:latest",
-        "-f",
-        "services/codeExecutionService/Dockerfile.prod",
-        "./services/codeExecutionService",
-      ]
-  - name: "gcr.io/cloud-builders/docker"
-    args:
-      [
-        "push",
-        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/code-execution-service:latest",
-      ]
-  - name: "gcr.io/cloud-builders/docker"
-    args:
-      [
-        "build",
-        "--no-cache",
-        "-t",
-        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/history-service:latest",
-        "-f",
-        "services/historyService/Dockerfile.prod",
-        "./services/historyService",
-      ]
-  - name: "gcr.io/cloud-builders/docker"
-    args:
-      [
-        "push",
-        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/history-service:latest",
-      ]
-  - name: "gcr.io/cloud-builders/docker"
-    args:
-      [
-        "build",
-        "--no-cache",
-        "-t",
-        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/ai-service:latest",
-        "-f",
-        "services/aiService/Dockerfile.prod",
-        "./services/aiService",
-      ]
-  - name: "gcr.io/cloud-builders/docker"
-    args:
-      [
-        "push",
-        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/ai-service:latest",
-      ]
-  - name: "gcr.io/cloud-builders/docker"
-    args:
-      [
-        "build",
-        "--no-cache",
-        "-t",
-        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/communication-service:latest",
-        "-f",
-        "services/communicationService/Dockerfile.prod",
-        "./services/communicationService",
-      ]
-  - name: "gcr.io/cloud-builders/docker"
-    args:
-      [
-        "push",
-        "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/communication-service:latest",
-      ]
+  # - name: "gcr.io/cloud-builders/docker"
+  #   args:
+  #     [
+  #       "build",
+  #       "--no-cache",
+  #       "-t",
+  #       "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/collaboration-service:latest",
+  #       "-f",
+  #       "services/collaborationService/Dockerfile.prod",
+  #       "./services/collaborationService",
+  #     ]
+  # - name: "gcr.io/cloud-builders/docker"
+  #   args:
+  #     [
+  #       "push",
+  #       "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/collaboration-service:latest",
+  #     ]
+  # - name: "gcr.io/cloud-builders/docker"
+  #   args:
+  #     [
+  #       "build",
+  #       "--no-cache",
+  #       "-t",
+  #       "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/code-execution-service:latest",
+  #       "-f",
+  #       "services/codeExecutionService/Dockerfile.prod",
+  #       "./services/codeExecutionService",
+  #     ]
+  # - name: "gcr.io/cloud-builders/docker"
+  #   args:
+  #     [
+  #       "push",
+  #       "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/code-execution-service:latest",
+  #     ]
+  # - name: "gcr.io/cloud-builders/docker"
+  #   args:
+  #     [
+  #       "build",
+  #       "--no-cache",
+  #       "-t",
+  #       "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/history-service:latest",
+  #       "-f",
+  #       "services/historyService/Dockerfile.prod",
+  #       "./services/historyService",
+  #     ]
+  # - name: "gcr.io/cloud-builders/docker"
+  #   args:
+  #     [
+  #       "push",
+  #       "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/history-service:latest",
+  #     ]
+  # - name: "gcr.io/cloud-builders/docker"
+  #   args:
+  #     [
+  #       "build",
+  #       "--no-cache",
+  #       "-t",
+  #       "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/ai-service:latest",
+  #       "-f",
+  #       "services/aiService/Dockerfile.prod",
+  #       "./services/aiService",
+  #     ]
+  # - name: "gcr.io/cloud-builders/docker"
+  #   args:
+  #     [
+  #       "push",
+  #       "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/ai-service:latest",
+  #     ]
+  # - name: "gcr.io/cloud-builders/docker"
+  #   args:
+  #     [
+  #       "build",
+  #       "--no-cache",
+  #       "-t",
+  #       "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/communication-service:latest",
+  #       "-f",
+  #       "services/communicationService/Dockerfile.prod",
+  #       "./services/communicationService",
+  #     ]
+  # - name: "gcr.io/cloud-builders/docker"
+  #   args:
+  #     [
+  #       "push",
+  #       "${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/communication-service:latest",
+  #     ]
 
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     entrypoint: gcloud
@@ -181,13 +181,13 @@ steps:
         "restart",
         # "deployment/frontend",
         "deployment/user-service",
-        "deployment/question-service",
-        "deployment/matching-service",
-        "deployment/collaboration-service",
-        "deployment/code-execution-service",
-        "deployment/history-service",
-        "deployment/ai-service",
-        "deployment/communication-service",
+        # "deployment/question-service",
+        # "deployment/matching-service",
+        # "deployment/collaboration-service",
+        # "deployment/code-execution-service",
+        # "deployment/history-service",
+        # "deployment/ai-service",
+        # "deployment/communication-service",
       ]
 
 options:
