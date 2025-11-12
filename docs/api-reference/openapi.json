@@ -859,9 +859,14 @@
         ],
         "summary": "Get a matching question",
         "operationId": "getMatchingQuestion",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
-            "name": "difficulty",
+            "name": "difficulties",
             "in": "query",
             "required": true,
             "description": "The difficulty level of the question",
@@ -903,15 +908,23 @@
                       "properties": {
                         "_id": {
                           "type": "string",
-                          "example": "673e8f9a1234567890abcdef"
+                          "example": "68f0e1e4c9e660121ace5f54  "
                         },
                         "title": {
                           "type": "string",
                           "example": "Two Sum"
                         },
+                        "input": {
+                          "type": "string",
+                          "example": "The first line contains two integers `n` and `target`. The second line contains `n` integers giving the elements in `nums`."
+                        },
+                        "output": {
+                          "type": "string",
+                          "example": "Two integers that are the smallest indices. Output `-1 -1` if there no answer."
+                        },
                         "description": {
                           "type": "string",
-                          "example": "Given an array of integers..."
+                          "example": "Given an array of integers `nums` of length `n`, and an integer `target`, return the smallest indices of the two numbers such that they add up to target.\n\nYou may not use the same element twice."
                         },
                         "difficulty": {
                           "type": "string",
@@ -962,13 +975,19 @@
                               },
                               "output": {
                                 "type": "string"
+                              },
+                              "is_hidden": {
+                                "type": "boolean",
+                                "description": "Indicates if the example is a part of hidden test cases",
+                                "default": false
                               }
                             }
                           },
                           "example": [
                             {
                               "input": "[2,7,11,15], target = 9",
-                              "output": "[0,1]"
+                              "output": "[0,1]",
+                              "is_hidden": false
                             }
                           ]
                         }
@@ -980,7 +999,7 @@
             }
           },
           "400": {
-            "description": "Bad request - difficulty is required",
+            "description": "Bad request - difficulty and categories are required",
             "content": {
               "application/json": {
                 "schema": {
@@ -988,15 +1007,15 @@
                   "properties": {
                     "error": {
                       "type": "string",
-                      "example": "Difficulty is required"
+                      "example": "Difficulty and categories are required"
                     }
                   }
                 }
               }
             }
           },
-          "404": {
-            "description": "No matching question found",
+          "401": {
+            "description": "Unauthorized - invalid or missing token",
             "content": {
               "application/json": {
                 "schema": {
@@ -1008,7 +1027,27 @@
                     },
                     "message": {
                       "type": "string",
-                      "example": "No questions available in the database."
+                      "example": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No question in the database",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "No question found"
                     }
                   }
                 }
@@ -1024,7 +1063,7 @@
           "QuestionService"
         ],
         "summary": "Get all categories and difficulties",
-        "operationId": "getCategoriesAndDifficulties",
+        "operationId": "getAllCategoryAndDifficulty",
         "responses": {
           "200": {
             "description": "Categories and difficulties retrieved successfully",
@@ -1088,7 +1127,7 @@
             "description": "The unique identifier of the question (MongoDB ObjectId)",
             "schema": {
               "type": "string",
-              "example": "673e8f9a1234567890abcdef"
+              "example": "68f0e1e4c9e660121ace5f5b"
             }
           }
         ],
@@ -1109,19 +1148,27 @@
                       "properties": {
                         "_id": {
                           "type": "string",
-                          "example": "673e8f9a1234567890abcdef"
+                          "example": "68f0e1e4c9e660121ace5f5b"
                         },
                         "title": {
                           "type": "string",
-                          "example": "Two Sum"
+                          "example": "Exam Manipulation"
+                        },
+                        "input": {
+                          "type": "string",
+                          "example": "The first line contains two integers `n` and `k`, where `n` is the number of students and `k` is the number of True/False questions on the exam.\n\nEach of the next `n` lines contains a string of length `k`, consisting only of upper-case T and upper-case F. This string represents the answers that a student submitted, in the order the questions were given."
+                        },
+                        "output": {
+                          "type": "string",
+                          "example": "A single integer, the best possible lowest score in the class."
                         },
                         "description": {
                           "type": "string",
-                          "example": "Given an array of integers..."
+                          "example": "A group of students is taking a True/False exam. Each question is worth one point. You, as their teacher, want to make your students look as good as possible—so you cheat! (I know, you would never actually do that.) To cheat, you manipulate the answer key so that the lowest score in the class is as high as possible.\n\nWhat is the best possible lowest score you can achieve?"
                         },
                         "difficulty": {
                           "type": "string",
-                          "example": "easy"
+                          "example": "medium"
                         },
                         "categories": {
                           "type": "array",
@@ -1129,7 +1176,7 @@
                             "type": "string"
                           },
                           "example": [
-                            "algorithms"
+                            "array"
                           ]
                         },
                         "hints": {
@@ -1144,7 +1191,10 @@
                           "items": {
                             "type": "string"
                           },
-                          "example": []
+                          "example": [
+                            "1 <= n <= 1000",
+                            "1 <= k <= 10"
+                          ]
                         },
                         "examples": {
                           "type": "array",
@@ -1156,10 +1206,25 @@
                               },
                               "output": {
                                 "type": "string"
+                              },
+                              "is_hidden": {
+                                "type": "boolean",
+                                "description": "Indicates if the example is a part of hidden test cases"
                               }
                             }
                           },
-                          "example": []
+                          "example": [
+                            {
+                              "input": "5 4\nTFTF\nTFFF\nTFTT\nTFFT\nTFTF",
+                              "output": "2",
+                              "is_hidden": false
+                            },
+                            {
+                              "input": "3 5\nTFTFT\nTFTFT\nTFTFT",
+                              "output": "5",
+                              "is_hidden": false
+                            }
+                          ]
                         }
                       }
                     }
@@ -1214,7 +1279,7 @@
         "tags": [
           "QuestionService"
         ],
-        "summary": "Update question",
+        "summary": "Update question (admin only)",
         "operationId": "updateQuestion",
         "security": [
           {
@@ -1374,6 +1439,14 @@
                             "arrays"
                           ]
                         },
+                        "input": {
+                          "type": "string",
+                          "example": "The first line contains two integers `n` and `target`. The second line contains `n` integers giving the elements in `nums`."
+                        },
+                        "output": {
+                          "type": "string",
+                          "example": "Two integers that are the smallest indices. Output `-1 -1` if there no answer."
+                        },
                         "constraints": {
                           "type": "array",
                           "items": {
@@ -1445,7 +1518,7 @@
                     },
                     "message": {
                       "type": "string",
-                      "example": "You do not have the permission!"
+                      "example": "Unauthorized"
                     }
                   }
                 }
@@ -1478,7 +1551,7 @@
         "tags": [
           "QuestionService"
         ],
-        "summary": "Delete question",
+        "summary": "Delete question (admin only)",
         "operationId": "deleteQuestion",
         "security": [
           {
@@ -1531,7 +1604,7 @@
                     },
                     "message": {
                       "type": "string",
-                      "example": "You do not have the permission!"
+                      "example": "Unauthorized"
                     }
                   }
                 }
@@ -1568,6 +1641,7 @@
         ],
         "summary": "Get question test cases",
         "operationId": "getQuestionTestCases",
+        "description": "Special endpoint for code execution service - no authentication required",
         "parameters": [
           {
             "name": "id",
@@ -1806,7 +1880,7 @@
                     },
                     "message": {
                       "type": "string",
-                      "example": "You do not have the permission!"
+                      "example": "Unauthorized"
                     }
                   }
                 }
@@ -1819,7 +1893,7 @@
         "tags": [
           "QuestionService"
         ],
-        "summary": "Create a new question",
+        "summary": "Create a new question (admin only)",
         "operationId": "createQuestion",
         "security": [
           {
@@ -1856,6 +1930,14 @@
                       "hard"
                     ],
                     "example": "medium"
+                  },
+                  "input": {
+                    "type": "string",
+                    "example": "An integer array nums"
+                  },
+                  "output": {
+                    "type": "string",
+                    "example": "A list of triplets"
                   },
                   "categories": {
                     "type": "array",
@@ -1969,6 +2051,14 @@
                           "type": "string",
                           "example": "medium"
                         },
+                        "input": {
+                          "type": "string",
+                          "example": "An integer array nums"
+                        },
+                        "output": {
+                          "type": "string",
+                          "example": "A list of triplets"
+                        },
                         "categories": {
                           "type": "array",
                           "items": {
@@ -2050,7 +2140,7 @@
                     },
                     "message": {
                       "type": "string",
-                      "example": "You do not have the permission!"
+                      "example": "Unauthorized"
                     }
                   }
                 }

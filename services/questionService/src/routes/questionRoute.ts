@@ -14,11 +14,11 @@ import { AppError } from '../utils/errors.js'
 
 const router = Router()
 
-router.get('/match', async (req, res) => {
+router.get('/match', authenticate(), async (req, res) => {
   const { difficulties, categories } = req.query
-
-  if (!difficulties) {
-    return res.status(400).json({ error: 'Difficulty is required' })
+  
+  if (!difficulties || !categories) {
+    return res.status(400).json({ error: 'Difficulty and categories are required' })
   }
 
   const question = await getMatchingQuestion(
@@ -48,7 +48,7 @@ router.get('/:id/test-cases', async (req, res) => {
   const { type } = req.query
 
   if (type !== 'public' && type !== 'private' && type !== 'all') {
-    throw new AppError('Invalid test cases type', 401)
+    throw new AppError('Invalid test cases type', 400)
   }
 
   const question = await getQuestionTestCases(id, type)

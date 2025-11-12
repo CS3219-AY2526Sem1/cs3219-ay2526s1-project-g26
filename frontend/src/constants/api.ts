@@ -15,7 +15,6 @@ export const API_ENDPOINTS = {
   },
   MATCHING: '/api/matching',
   QUESTION: {
-    MATCH: '/api/question/match',
     GET_BY_ID: '/api/question',
     GET_TOPICS_AND_DIFFICULTIES: '/api/question/cnd',
   },

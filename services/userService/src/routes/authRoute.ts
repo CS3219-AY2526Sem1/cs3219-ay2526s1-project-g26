@@ -69,7 +69,7 @@ router.post('/reset-password', async (req, res, next) => {
 
   const ok = await resetPassword(email, code, newPassword)
   // Note: Should not normally occur due to resetPassword throwing errors on failure modes
-  if (!ok) { 
+  if (!ok) {
     return next(new AppError('OTP is incorrect or User does not exist', 400))
   }
 
