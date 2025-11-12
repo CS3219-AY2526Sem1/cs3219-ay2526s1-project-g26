@@ -211,3 +211,19 @@
   - Output Summary: Generated explanation relating to prompt and provided changes to the related files
   - Action Taken: Rejected.
   - Author Notes: Rejected code writen by AI as code generated seem to be more overcomplicated than it should, but had a better understanding of code workflow and followed what has been done for code submission/run to implement synchronised exit.
+
+- `services/historyService/src/services/submissionHistoryService.ts`.
+  - Date: Between Sep and Oct 2025
+  - Tool: Github Copilot (Calude Sonnet 4.5)
+  - Prompt (paraphrased, summarised): Break down what the existing code committed by others does, and (later on) modify the code to filter by run mode.
+  - Output Summary: The relevant explanation, and a .tsx file with the changes made
+  - Action Taken: Confirmed with Google, and rejected due to it not working.
+  - Author Notes: Also modified with attempted code to run and asking for debugging assistance, but it did not work here.
+
+- `services\userService\src\services\authService.ts`.
+  - Date: Between Sep and Oct 2025
+  - Tool: Github Copilot (Calude Sonnet 4.5)
+  - Prompt (summarised): suggest an alternative to the regex that doesn't trip the security flags for polynomial backtracking.
+  - Output Summary: The code separated out into a function for later use.
+  - Action Taken: Modified.
+  - Author Notes: The generated code did not quite have the same behaviour as before, and needed to change to ensure sync between frontend and backend.
