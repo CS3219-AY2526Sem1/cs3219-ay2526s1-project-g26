@@ -26,7 +26,8 @@
             "group": "Key Decisions",
             "pages": [
               "implementations/peer-coding",
-              "implementations/code-submission"
+              "implementations/code-submission",
+              "implementations/matching-algorithm"
             ]
           }
         ]

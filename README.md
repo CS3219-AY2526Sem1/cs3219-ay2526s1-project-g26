@@ -81,7 +81,8 @@
   - Action Taken: Accepted.
 
 - `/services/questionService/src/services/questionService.ts`.
-  - Date: from 2025‑09-24 to 2025-10-23
+
+  - Date: from 2025-09-24 to 2025-10-23
   - Tool: Gemini 2.5 Pro
   - Prompt (Summary): Generate endpoints implementation for `getQuestionTestCases`, `getAllQuestions`, `getAllCategoryAndDifficulty`, `updateQuestion`, `createQuestion`, `deleteQuestion`.
   - Output Summary: A .ts file with implementation with all these endpoints.
@@ -89,15 +90,18 @@
   - Author Notes: Modified the output to match the prettier style format.
 
 - `/services/codeExecutionService/src/services/codeExecutionService.ts`.
+
   - Date: 2025-10-24
   - Tool: Github Copilot (Claude Sonnet 4.5)
   - Prompt (with attachments of `services/codeExecutionService/src/types/index.ts` and `services/codeExecutionService/src/utils/codeExecutor.ts`):
+
     ```markdown
     Create a `validateCode` async function that orchestrates code execution against test cases. Requirements:
 
     1. Function signature: `validateCode(testCases: TestCase[], language: Language, code_text: string): Promise<SubmissionResult>`
 
     2. Implementation flow:
+
        - Generate unique temp file with UUID for the submission
        - Write source code to temp file with appropriate extension (.cpp/.py/.cjs)
        - For C++: compile with g++ first, handle compilation errors
@@ -111,28 +115,33 @@
     4. Return SubmissionResult with: status, passed_tests, total_tests, execution_time, memory_used, error (if any), test_case_details (input, expected_output, actual_output)
 
     5. Clean up temp files after execution
-    
+
     Use the TypeScript interfaces from the attached types file for type safety.
     ```
+
   - Output Summary: A .ts file with core business logic implementing the `validateCode` function with test case execution loop, basic string equality for output comparison, and initial error handling structure.
   - Action Taken: Modified.
   - Author Notes: Added `normalizeOutput` and `compareOutputs` helper functions for robust multi-line and order-independent output comparison.
 
 - `/services/codeExecutionService/src/utils/codeExecutor.ts`.
+
   - Date: 2025-10-24
   - Tool: Github Copilot (Claude Sonnet 4.5)
   - Prompt (with attachments of `services/codeExecutionService/src/types/index.ts`):
+
     ```markdown
     Implement an `executeCode` async function as the low-level execution engine. Requirements:
 
     1. Function signature: `executeCode(filename: string, language: Language, input: string, timeLimit: number): Promise<CodeExecutionOutput>`
 
     2. Create a LANGUAGE_CONFIG object mapping each language to:
+
        - extension: '.cpp' for C++, '.py' for Python, '.cjs' for JavaScript
        - compileCmd: function returning g++ command for C++, null for Python/JS
        - executeCmd: function returning execution command (./executable for C++, python/node for others)
 
     3. Implementation:
+
        - Use child_process to spawn processes (separate for compilation and execution)
        - For C++: spawn g++ compilation process first
        - Spawn execution process and write input to stdin stream
@@ -143,14 +152,15 @@
     4. Return CodeExecutionOutput with: success (boolean), output (stdout string), error (stderr/error message), executionTime (in ms)
 
     5. Handle three error types: compilation errors, timeout errors, runtime errors
-    
-    Use the CodeExecutionOutput and Language types from the attached types file.
+       Use the CodeExecutionOutput and Language types from the attached types file.
     ```
+
   - Output Summary: A .ts file with low-level code execution engine implementing the `executeCode` function and basic timeout handling with setTimeout.
   - Action Taken: Modified.
   - Author Notes: added `pidusage` for memory monitoring, tested with edge cases.
 
 - `/frontend/src/pages/SubmissionDetail.tsx`.
+
   - Date: 2025-10-17
   - Tool: Github Copilot (Claude Sonnet 4.5)
   - Prompt (with attachments of Figma prototype screenshots for submission detail page):
@@ -162,6 +172,7 @@
   - Author Notes: Enhanced styled-components with custom color schemes and spacing.
 
 - `/frontend/src/components/common/QuestionPanel.tsx`.
+
   - Date: 2025-10-08
   - Tool: Github Copilot (Claude Sonnet 4.5)
   - Prompt (with attachments of Figma prototype screenshots for question display panel and `services/questionService/src/database/init/questions_output.json`):
@@ -173,6 +184,7 @@
   - Author Notes: Enhanced markdown rendering with custom styles for code blocks and lists and refined category chip layout and colors.
 
 - `/docs/api-reference/openapi.json`.
+
   - Date: 2025-11-08
   - Tool: Github Copilot (Claude Sonnet 4.5)
   - Prompt:
@@ -180,3 +192,22 @@
   - Output Summary: A .json file with OpenAPI 3.0 specification including server configurations, tags for four services, paths for all endpoints request/response schemas.
   - Action Taken: Modified.
   - Author Notes: Tested API requests with "try it" button, traced corresponding implementation files to debug errors, refined details such as password requirements. (.json files do not support comments, so AI usage disclosure is documented here in README only.)
+
+- `/docs/implementations/matching-algorithm.mdx`.
+
+  - Date: 2025-11-12
+  - Tool: Github Copilot (Claude Sonnet 4.5)
+  - Prompt:
+    Generate documentation in matching-algorithm.mdx to explain the matching algorithm. (Attached Two Images, one showing pseudocode of matching algorithm and the other showing the similarity score structure)
+  - Output Summary: Auto generation of documentation inside matching-algorithm.mdx
+  - Action Taken: Modified.
+  - Author Notes: Read through and checked the generated documentation for correctness, removed sections which are not needed and modified parts that were unclear.
+
+- `/frontend/src/utils/y-websocket.js` and `services/collaborationService/src/utils/y-websocket/index.ts`and `frontend/src/components/collaboration_space/TopToolBar.tsx` and `frontend/src/pages/CollaborationPanel.tsx`.
+  - Date: 2025-11-02
+  - Tool: Github Copilot (Claude Sonnet 4.5)
+  - Prompt:
+    Explain the code workflow for code submission from frontend to collaboration service, and how to implement synchronised exit for both users in a room
+  - Output Summary: Generated explanation relating to prompt and provided changes to the related files
+  - Action Taken: Rejected.
+  - Author Notes: Rejected code writen by AI as code generated seem to be more overcomplicated than it should, but had a better understanding of code workflow and followed what has been done for code submission/run to implement synchronised exit.
