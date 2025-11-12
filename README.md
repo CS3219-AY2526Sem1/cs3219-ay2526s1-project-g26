@@ -1,8 +1,45 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/QUdQy4ix)
 
-# CS3219 Project (PeerPrep) - AY2526S1
+# CS3219 Project (PeerPrep) - AY2526S1 G26
 
-## Group: G26
+## Feature List
+
+- User Profile Related:
+  - Sign up
+  - Sign in
+  - Reset password
+  - View & Update profile
+  - Logout
+- Matching Related:
+  - Find a matching
+- Collaboration Session Related:
+  - View the question in Markdown format
+  - Edit on a shared document
+  - Cursor position awareness on the shared document
+  - Editor syntax highlighting and auto completion
+  - Editor CRDT algorithm
+  - Switch programming language
+  - Microphone communication
+  - Adjust panel ratio
+  - Run & Submit the code for verification
+  - Translate the code to another programming language
+  - View summary of attempted submissions in the collaboration session
+  - View a detailed submission in the collaboration session
+  - Gracefully exit the collaboration session
+- Submission History Related:
+  - View summary of all attempted submissions
+  - View a detailed submission
+- Question Related:
+  - Select the most fit question given categories and difficulties.
+  - Allow admins CRUD a question.
+  - Support bulk insert of questions and convert to SQL statements.
+- DevOps:
+  - Kubernetes Cluster (GKE) for deployment.
+  - Dockerfiles for building images.
+  - Google Cloud Build that deploys the application on GitHub push event to master branch.
+  - Rolling deployment strategy.
+  - Auto horizontal and vertical scaling.
+  - Nginx API gateway.
 
 ## AI Use Summary
 

@@ -13,14 +13,14 @@ export const getUserProfile = async (id: string | undefined) => {
   }
 
   const result = await pool.query<User>(
-    `SELECT email, full_name, password_hash
+    `SELECT email, full_name
      FROM users
      WHERE id = $1;`,
     [id]
   )
 
   if (!result || result.rows.length === 0) {
-    throw new AppError('User Not Found!', 400)
+    throw new AppError('User not found', 404)
   }
 
   return result.rows[0]
@@ -55,7 +55,10 @@ export const updateUserProfile = async (
       400
     )
   } else if (password && !isValidPassword(password)) {
-    throw new AppError('Invalid password!', 400)
+    throw new AppError(
+      'Invalid email or password, please apply validation before sending',
+      400
+    )
   }
 
   let result
@@ -93,7 +96,8 @@ export const updateUserProfile = async (
     throw new AppError(err.message, 500)
   }
 
-  if (!result) {
+  console.log(result)
+  if (!result || result.rowCount == 0) {
     throw new AppError('User not found', 404)
   }
 }

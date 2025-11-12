@@ -87,7 +87,7 @@ export const getMatchingQuestion = async (
     )
 
   if (!matchedQuestion) {
-    throw new AppError('Not Question Found', 404)
+    throw new AppError('No question found', 404)
   }
 
   return matchedQuestion

@@ -13,7 +13,7 @@ import {
 } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../store'
-import { formatDistanceToNow } from 'date-fns'
+import { formatDistanceToNow } from 'date-fns/formatDistanceToNow'
 
 export const SubmissionsPanel = () => {
   const submissions = useSelector(
