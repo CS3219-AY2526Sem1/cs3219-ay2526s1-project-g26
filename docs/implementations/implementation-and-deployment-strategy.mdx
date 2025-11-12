@@ -1,0 +1,28 @@
+---
+title: "Implementation & Deployment Strategy"
+description: "Understanding the implementation and deployment strategy of PeerPrep."
+---
+
+## Communication
+
+- Mostly sync communication with Rest APIs.
+
+- WebSocket: Matching Service & Communication Service.
+
+- Async communication: Collaboration Service -> CodeExecution Service -> History Service.
+
+## Development
+
+- Dockerfile and docker-compose files for each micro-service.
+
+- A docker-compose file to build all services with nginx API gateway.
+
+## Deployment
+
+- GitHub Actions pipeline to run linters for push event.
+
+- Google Cloud Build builds all docker images.
+
+- Push docker images to Google Artifact Registry.
+
+- GKE starts rolling-update strategy for zero-downtime updates.

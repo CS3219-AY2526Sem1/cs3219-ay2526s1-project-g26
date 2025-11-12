@@ -1,0 +1,29 @@
+services:
+  collaboration-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    container_name: collaboration-service-prod
+    restart: unless-stopped
+    ports:
+      - "4030:4030"
+    environment:
+      - NODE_ENV=production
+      - PORT=4030
+      - REDIS_HOST=collaboration-service-redis
+      - KAFKA_BROKERS=${KAFKA_BROKERS}
+
+  collaboration-redis:
+    image: "redis:7-alpine"
+    container_name: collaboration-redis-prod
+    restart: always
+    ports:
+      - "4031:6379"
+    command: >
+      redis-server
+    volumes:
+      - redis_data:/data
+
+volumes:
+  redis_data:
+    driver: local

@@ -1,0 +1,54 @@
+services:
+  user-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    container_name: user-service-prod
+    restart: unless-stopped
+    ports:
+      - '4000:4000'
+    environment:
+      - NODE_ENV=production
+      - PORT=4000
+      - DB_USER=${DB_USER}
+      - DB_NAME=${DB_NAME}
+      - DB_HOST=${DB_HOST}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_PORT=${DB_PORT}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=${JWT_EXPIRES}
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:16-alpine
+    container_name: user_service_postgres_prod
+    restart: unless-stopped
+    ports:
+      - '4001:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: users_db
+    volumes:
+      - pgdata_prod:/var/lib/postgresql/data
+      - ./database/init/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql:ro
+
+  redis:
+    image: redis:8-alpine
+    container_name: user-service-redis
+    restart: unless-stopped
+    ports:
+      - '4002:6379'
+    volumes:
+      - user-service-redis-data:/data
+
+volumes:
+  pgdata_prod:
+  user-service-redis-data:

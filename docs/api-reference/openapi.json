@@ -1,0 +1,2832 @@
+﻿{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PeerPrep API",
+    "version": "1.0.0",
+    "description": "API documentation for PeerPrep - A collaborative coding platform for technical interview preparation"
+  },
+  "servers": [
+    {
+      "url": "http://localhost/api",
+      "description": "Full system with Nginx (recommended)"
+    }
+  ],
+  "tags": [
+    {
+      "name": "UserService - Auth",
+      "description": "User authentication endpoints"
+    },
+    {
+      "name": "UserService - Profile",
+      "description": "User profile management endpoints"
+    },
+    {
+      "name": "QuestionService",
+      "description": "Question management endpoints"
+    },
+    {
+      "name": "HistoryService",
+      "description": "Submission history endpoints"
+    },
+    {
+      "name": "AIService",
+      "description": "AI-powered code translation endpoints"
+    }
+  ],
+  "paths": {
+    "/user/auth/register": {
+      "post": {
+        "tags": [
+          "UserService - Auth"
+        ],
+        "summary": "Register a new user",
+        "operationId": "createUser",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "password"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "User's email address. Must be a valid email format.",
+                    "example": "john@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 8,
+                    "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!-,:-@\\[-`{-~])[!-~]+$",
+                    "description": "Password must be at least 8 characters and contain at least one uppercase letter, one lowercase letter, one number, and one special character (e.g. !@#$%^&*()-_=+[]{}|;:',.<>?/`~).",
+                    "example": "SecurePass123!"
+                  },
+                  "full_name": {
+                    "type": "string",
+                    "description": "User's full name",
+                    "example": "John Doe"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User successfully registered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid",
+                          "example": "550e8400-e29b-41d4-a716-446655440000"
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "john@example.com"
+                        },
+                        "full_name": {
+                          "type": "string",
+                          "example": "John Doe"
+                        },
+                        "role": {
+                          "type": "string",
+                          "enum": [
+                            "user",
+                            "admin"
+                          ],
+                          "example": "user"
+                        }
+                      }
+                    },
+                    "token": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - missing required fields, invalid email format, invalid password format, or email/full_name already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "enum": [
+                        "Email and password are required",
+                        "Invalid email or password, please apply validation before sending",
+                        "Email already exists",
+                        "Full name already exists"
+                      ],
+                      "example": "Invalid email or password, please apply validation before sending"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/auth/login": {
+      "post": {
+        "tags": [
+          "UserService - Auth"
+        ],
+        "summary": "Login an existing user",
+        "operationId": "loginUser",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "password"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "john@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "SecurePass123!"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User successfully logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid",
+                          "example": "550e8400-e29b-41d4-a716-446655440000"
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "john@example.com"
+                        },
+                        "full_name": {
+                          "type": "string",
+                          "example": "John Doe"
+                        },
+                        "role": {
+                          "type": "string",
+                          "enum": [
+                            "user",
+                            "admin"
+                          ],
+                          "example": "user"
+                        }
+                      }
+                    },
+                    "token": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - missing required fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Email and password are required"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid email or password"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/auth/verify-token": {
+      "post": {
+        "tags": [
+          "UserService - Auth"
+        ],
+        "summary": "Verify JWT token and get user info",
+        "operationId": "verifyToken",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "shouldBeAdmin",
+            "in": "query",
+            "description": "If 'true', verifies that the user has admin role",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "example": "false"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Token successfully verified",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid",
+                          "example": "550e8400-e29b-41d4-a716-446655440000"
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "john@example.com"
+                        },
+                        "full_name": {
+                          "type": "string",
+                          "example": "John Doe"
+                        },
+                        "role": {
+                          "type": "string",
+                          "enum": [
+                            "user",
+                            "admin"
+                          ],
+                          "example": "user"
+                        },
+                        "iat": {
+                          "type": "integer",
+                          "example": 1617187200
+                        },
+                        "exp": {
+                          "type": "integer",
+                          "example": 1617273600
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or expired token, missing authorization header, or insufficient permissions (when shouldBeAdmin=true)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "enum": [
+                        "Invalid or expired token",
+                        "You do not have permissions to perform this operation!",
+                        "Authorization token missing"
+                      ],
+                      "example": "Invalid or expired token"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/auth/forgot-password": {
+      "post": {
+        "tags": [
+          "UserService - Auth"
+        ],
+        "summary": "Request password reset OTP",
+        "operationId": "requestPasswordReset",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "User's email address to send OTP to",
+                    "example": "john@example.com"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OTP sent successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "OTP has been sent"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - email is required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Email is required"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "User not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/auth/reset-password": {
+      "post": {
+        "tags": [
+          "UserService - Auth"
+        ],
+        "summary": "Reset password using OTP",
+        "operationId": "resetPassword",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "code",
+                  "newPassword"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "User's email address",
+                    "example": "john@example.com"
+                  },
+                  "code": {
+                    "type": "string",
+                    "description": "OTP code received via email",
+                    "example": "123456"
+                  },
+                  "newPassword": {
+                    "type": "string",
+                    "minLength": 8,
+                    "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!-,:-@\\[-`{-~])[!-~]+$",
+                    "description": "New password must be at least 8 characters and contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+                    "example": "NewSecurePass123!"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password reset successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully reset password"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - missing fields, invalid OTP or password",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "enum": [
+                        "Invalid or expired reset code",
+                        "Email, code and new password are required",
+                        "New password does not meet requirements",
+                        "OTP is incorrect or User does not exist"
+                      ],
+                      "example": "Invalid or expired reset code"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found - user does not exist in database",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "User not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/profile/me": {
+      "get": {
+        "tags": [
+          "UserService - Profile"
+        ],
+        "summary": "Get current user profile",
+        "operationId": "getUserProfile",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The user profile of the user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "email": {
+                          "type": "string",
+                          "format": "email",
+                          "example": "john@example.com",
+                          "description": "User's email address"
+                        },
+                        "full_name": {
+                          "type": "string",
+                          "example": "John Doe",
+                          "description": "User's full name"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Bad request - user not found in database",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "User not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "enum": [
+                        "Invalid or expired token",
+                        "Authorization token missing"
+                      ],
+                      "example": "Invalid or expired token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error - missing user ID in JWT or database error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Internal Server Error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/profile": {
+      "put": {
+        "tags": [
+          "UserService - Profile"
+        ],
+        "summary": "Update user profile",
+        "operationId": "updateUserProfile",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "User's new email address. Must be a valid email format and not already taken by another user.",
+                    "example": "john.updated@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 8,
+                    "maxLength": 128,
+                    "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!-,:-@\\[-`{-~])[!-~]+$",
+                    "description": "User's new password (optional). If provided, must be at least characters and contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
+                    "example": "NewSecurePass123!"
+                  },
+                  "full_name": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 50,
+                    "description": "User's new full name. Must be unique and not already taken by another user.",
+                    "example": "John Updated Doe"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Profile updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - missing required fields, invalid email/password format, or email/full_name already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "enum": [
+                        "Email must be provided",
+                        "Full name must be provided",
+                        "Invalid email or password, please apply validation before sending",
+                        "Email already exists",
+                        "Full name already exists"
+                      ],
+                      "example": "Email must be provided"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "enum": [
+                        "Invalid or expired token",
+                        "Authorization token missing"
+                      ],
+                      "example": "Invalid or expired token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found - user does not exist in database",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "User not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error - database or server failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Internal Server Error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/question/match": {
+      "get": {
+        "tags": [
+          "QuestionService"
+        ],
+        "summary": "Get a matching question",
+        "operationId": "getMatchingQuestion",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "difficulties",
+            "in": "query",
+            "required": true,
+            "description": "The difficulty level of the question",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "easy",
+                "medium",
+                "hard"
+              ],
+              "example": "medium"
+            }
+          },
+          {
+            "name": "categories",
+            "in": "query",
+            "required": false,
+            "description": "Comma-separated list of categories to filter by",
+            "schema": {
+              "type": "string",
+              "example": "algorithms,data-structures"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A matching question was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "question": {
+                      "type": "object",
+                      "properties": {
+                        "_id": {
+                          "type": "string",
+                          "example": "68f0e1e4c9e660121ace5f54  "
+                        },
+                        "title": {
+                          "type": "string",
+                          "example": "Two Sum"
+                        },
+                        "input": {
+                          "type": "string",
+                          "example": "The first line contains two integers `n` and `target`. The second line contains `n` integers giving the elements in `nums`."
+                        },
+                        "output": {
+                          "type": "string",
+                          "example": "Two integers that are the smallest indices. Output `-1 -1` if there no answer."
+                        },
+                        "description": {
+                          "type": "string",
+                          "example": "Given an array of integers `nums` of length `n`, and an integer `target`, return the smallest indices of the two numbers such that they add up to target.\n\nYou may not use the same element twice."
+                        },
+                        "difficulty": {
+                          "type": "string",
+                          "enum": [
+                            "easy",
+                            "medium",
+                            "hard"
+                          ],
+                          "example": "easy"
+                        },
+                        "categories": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "example": [
+                            "algorithms",
+                            "data-structures"
+                          ]
+                        },
+                        "hints": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "example": [
+                            "Try using a hash map to store values",
+                            "Think about the complement of each number"
+                          ]
+                        },
+                        "constraints": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "example": [
+                            "2 <= nums.length <= 10^4",
+                            "-10^9 <= nums[i] <= 10^9"
+                          ]
+                        },
+                        "examples": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "input": {
+                                "type": "string"
+                              },
+                              "output": {
+                                "type": "string"
+                              },
+                              "is_hidden": {
+                                "type": "boolean",
+                                "description": "Indicates if the example is a part of hidden test cases",
+                                "default": false
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "input": "[2,7,11,15], target = 9",
+                              "output": "[0,1]",
+                              "is_hidden": false
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - difficulty and categories are required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Difficulty and categories are required"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No question in the database",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "No question found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/question/cnd": {
+      "get": {
+        "tags": [
+          "QuestionService"
+        ],
+        "summary": "Get all categories and difficulties",
+        "operationId": "getAllCategoryAndDifficulty",
+        "responses": {
+          "200": {
+            "description": "Categories and difficulties retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "categories": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": [
+                        "algorithms",
+                        "data-structures",
+                        "dynamic-programming",
+                        "graphs"
+                      ]
+                    },
+                    "difficulties": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": [
+                        "easy",
+                        "medium",
+                        "hard"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/question/{id}": {
+      "get": {
+        "tags": [
+          "QuestionService"
+        ],
+        "summary": "Get question by ID",
+        "operationId": "getQuestionById",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the question (MongoDB ObjectId)",
+            "schema": {
+              "type": "string",
+              "example": "68f0e1e4c9e660121ace5f5b"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Question retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "question": {
+                      "type": "object",
+                      "properties": {
+                        "_id": {
+                          "type": "string",
+                          "example": "68f0e1e4c9e660121ace5f5b"
+                        },
+                        "title": {
+                          "type": "string",
+                          "example": "Exam Manipulation"
+                        },
+                        "input": {
+                          "type": "string",
+                          "example": "The first line contains two integers `n` and `k`, where `n` is the number of students and `k` is the number of True/False questions on the exam.\n\nEach of the next `n` lines contains a string of length `k`, consisting only of upper-case T and upper-case F. This string represents the answers that a student submitted, in the order the questions were given."
+                        },
+                        "output": {
+                          "type": "string",
+                          "example": "A single integer, the best possible lowest score in the class."
+                        },
+                        "description": {
+                          "type": "string",
+                          "example": "A group of students is taking a True/False exam. Each question is worth one point. You, as their teacher, want to make your students look as good as possible—so you cheat! (I know, you would never actually do that.) To cheat, you manipulate the answer key so that the lowest score in the class is as high as possible.\n\nWhat is the best possible lowest score you can achieve?"
+                        },
+                        "difficulty": {
+                          "type": "string",
+                          "example": "medium"
+                        },
+                        "categories": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "example": [
+                            "array"
+                          ]
+                        },
+                        "hints": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "example": []
+                        },
+                        "constraints": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "example": [
+                            "1 <= n <= 1000",
+                            "1 <= k <= 10"
+                          ]
+                        },
+                        "examples": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "input": {
+                                "type": "string"
+                              },
+                              "output": {
+                                "type": "string"
+                              },
+                              "is_hidden": {
+                                "type": "boolean",
+                                "description": "Indicates if the example is a part of hidden test cases"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "input": "5 4\nTFTF\nTFFF\nTFTT\nTFFT\nTFTF",
+                              "output": "2",
+                              "is_hidden": false
+                            },
+                            {
+                              "input": "3 5\nTFTFT\nTFTFT\nTFTFT",
+                              "output": "5",
+                              "is_hidden": false
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid or expired token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Question not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Question not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "QuestionService"
+        ],
+        "summary": "Update question (admin only)",
+        "operationId": "updateQuestion",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the question (MongoDB ObjectId)",
+            "schema": {
+              "type": "string",
+              "example": "673e8f9a1234567890abcdef"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "example": "Updated Two Sum"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Updated description..."
+                  },
+                  "difficulty": {
+                    "type": "string",
+                    "enum": [
+                      "easy",
+                      "medium",
+                      "hard"
+                    ],
+                    "example": "medium"
+                  },
+                  "categories": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "algorithms",
+                      "arrays"
+                    ]
+                  },
+                  "constraints": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "1 <= nums.length <= 1000"
+                    ],
+                    "description": "Optional array of constraint strings"
+                  },
+                  "examples": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "input": {
+                          "type": "string"
+                        },
+                        "output": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "example": [],
+                    "description": "Optional array of example test cases"
+                  },
+                  "hints": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "Consider using a hash map"
+                    ],
+                    "description": "Optional array of hint strings"
+                  },
+                  "test_cases": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "input": {
+                          "type": "string"
+                        },
+                        "output": {
+                          "type": "string"
+                        },
+                        "is_hidden": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "example": [],
+                    "description": "Optional array of test cases"
+                  },
+                  "is_active": {
+                    "type": "boolean",
+                    "example": true,
+                    "description": "Whether the question is active"
+                  }
+                },
+                "description": "All fields are optional. Only provided fields will be updated."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Question updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "question": {
+                      "type": "object",
+                      "properties": {
+                        "_id": {
+                          "type": "string",
+                          "example": "673e8f9a1234567890abcdef"
+                        },
+                        "title": {
+                          "type": "string",
+                          "example": "Updated Two Sum"
+                        },
+                        "description": {
+                          "type": "string",
+                          "example": "Given an array of integers..."
+                        },
+                        "difficulty": {
+                          "type": "string",
+                          "example": "medium"
+                        },
+                        "categories": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "example": [
+                            "algorithms",
+                            "arrays"
+                          ]
+                        },
+                        "input": {
+                          "type": "string",
+                          "example": "The first line contains two integers `n` and `target`. The second line contains `n` integers giving the elements in `nums`."
+                        },
+                        "output": {
+                          "type": "string",
+                          "example": "Two integers that are the smallest indices. Output `-1 -1` if there no answer."
+                        },
+                        "constraints": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "example": []
+                        },
+                        "examples": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "input": {
+                                "type": "string"
+                              },
+                              "output": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": []
+                        },
+                        "hints": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "example": []
+                        },
+                        "test_cases": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "input": {
+                                "type": "string"
+                              },
+                              "output": {
+                                "type": "string"
+                              },
+                              "is_hidden": {
+                                "type": "boolean"
+                              }
+                            }
+                          },
+                          "example": []
+                        },
+                        "is_active": {
+                          "type": "boolean",
+                          "example": true
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - admin role required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Question not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Question not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "QuestionService"
+        ],
+        "summary": "Delete question (admin only)",
+        "operationId": "deleteQuestion",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the question (MongoDB ObjectId)",
+            "schema": {
+              "type": "string",
+              "example": "673e8f9a1234567890abcdef"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Question deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Question deleted"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - admin role required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Question not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Question not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/question/{id}/test-cases": {
+      "get": {
+        "tags": [
+          "QuestionService"
+        ],
+        "summary": "Get question test cases",
+        "operationId": "getQuestionTestCases",
+        "description": "Special endpoint for code execution service - no authentication required",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the question (MongoDB ObjectId)",
+            "schema": {
+              "type": "string",
+              "example": "673e8f9a1234567890abcdef"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": true,
+            "description": "Type of test cases to retrieve",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "public",
+                "private",
+                "all"
+              ],
+              "example": "public"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Test cases retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "question": {
+                      "type": "object",
+                      "properties": {
+                        "title": {
+                          "type": "string",
+                          "example": "Two Sum"
+                        },
+                        "difficulty": {
+                          "type": "string",
+                          "example": "easy"
+                        },
+                        "categories": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "example": [
+                            "algorithms",
+                            "data-structures"
+                          ]
+                        },
+                        "test_cases": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "input": {
+                                "type": "string",
+                                "example": "[2,7,11,15], 9"
+                              },
+                              "output": {
+                                "type": "string",
+                                "example": "[0,1]"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid test cases type",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid test cases type"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Question not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Question not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/question": {
+      "get": {
+        "tags": [
+          "QuestionService"
+        ],
+        "summary": "Get all questions",
+        "operationId": "getAllQuestions",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Page number for pagination",
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "example": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Number of items per page",
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "example": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Questions retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "metadata": {
+                      "type": "object",
+                      "properties": {
+                        "page": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "total_pages": {
+                          "type": "integer",
+                          "example": 10
+                        },
+                        "total_questions": {
+                          "type": "integer",
+                          "example": 95
+                        }
+                      }
+                    },
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "_id": {
+                            "type": "string",
+                            "example": "673e8f9a1234567890abcdef"
+                          },
+                          "title": {
+                            "type": "string",
+                            "example": "Two Sum"
+                          },
+                          "difficulty": {
+                            "type": "string",
+                            "example": "easy"
+                          },
+                          "categories": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            },
+                            "example": [
+                              "algorithms"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - admin role required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "QuestionService"
+        ],
+        "summary": "Create a new question (admin only)",
+        "operationId": "createQuestion",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "title",
+                  "description",
+                  "difficulty",
+                  "categories",
+                  "examples"
+                ],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "example": "Three Sum"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Given an integer array nums..."
+                  },
+                  "difficulty": {
+                    "type": "string",
+                    "enum": [
+                      "easy",
+                      "medium",
+                      "hard"
+                    ],
+                    "example": "medium"
+                  },
+                  "input": {
+                    "type": "string",
+                    "example": "An integer array nums"
+                  },
+                  "output": {
+                    "type": "string",
+                    "example": "A list of triplets"
+                  },
+                  "categories": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "algorithms",
+                      "arrays"
+                    ]
+                  },
+                  "constraints": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "1 <= nums.length <= 1000"
+                    ],
+                    "description": "Optional array of constraint strings"
+                  },
+                  "examples": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "input": {
+                          "type": "string"
+                        },
+                        "output": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "example": [
+                      {
+                        "input": "nums = [-1,0,1,2,-1,-4]",
+                        "output": "[[-1,-1,2],[-1,0,1]]"
+                      }
+                    ],
+                    "description": "Optional array of example test cases"
+                  },
+                  "hints": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "Try using a hash set",
+                      "Sort the array first"
+                    ],
+                    "description": "Optional array of hint strings"
+                  },
+                  "test_cases": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "input": {
+                          "type": "string"
+                        },
+                        "output": {
+                          "type": "string"
+                        },
+                        "is_hidden": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "example": [],
+                    "description": "Optional array of test cases"
+                  },
+                  "is_active": {
+                    "type": "boolean",
+                    "example": true,
+                    "description": "Whether the question is active (default: true)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Question created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "question": {
+                      "type": "object",
+                      "properties": {
+                        "_id": {
+                          "type": "string",
+                          "example": "673e8f9a1234567890abcdef"
+                        },
+                        "title": {
+                          "type": "string",
+                          "example": "Three Sum"
+                        },
+                        "description": {
+                          "type": "string",
+                          "example": "Given an integer array nums..."
+                        },
+                        "difficulty": {
+                          "type": "string",
+                          "example": "medium"
+                        },
+                        "input": {
+                          "type": "string",
+                          "example": "An integer array nums"
+                        },
+                        "output": {
+                          "type": "string",
+                          "example": "A list of triplets"
+                        },
+                        "categories": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "example": [
+                            "algorithms",
+                            "arrays"
+                          ]
+                        },
+                        "constraints": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "example": []
+                        },
+                        "examples": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "input": {
+                                "type": "string"
+                              },
+                              "output": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": []
+                        },
+                        "hints": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "example": []
+                        },
+                        "test_cases": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "input": {
+                                "type": "string"
+                              },
+                              "output": {
+                                "type": "string"
+                              },
+                              "is_hidden": {
+                                "type": "boolean"
+                              }
+                            }
+                          },
+                          "example": []
+                        },
+                        "is_active": {
+                          "type": "boolean",
+                          "example": true
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - admin role required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/history/submissions": {
+      "get": {
+        "tags": [
+          "HistoryService"
+        ],
+        "summary": "Get user submission history",
+        "operationId": "getUserSubmissions",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Page number for pagination",
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "example": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Number of items per page",
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "example": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Submissions retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "submissions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "submission_id": {
+                            "type": "string",
+                            "example": "673e8f9a1234567890abcdef",
+                            "description": "MongoDB ObjectId as string"
+                          },
+                          "title": {
+                            "type": "string",
+                            "example": "Two Sum"
+                          },
+                          "submission_time": {
+                            "type": "string",
+                            "example": "2025-11-07 18:30",
+                            "description": "Formatted as 'YYYY-MM-DD HH:MM' in UTC+8"
+                          },
+                          "overall_status": {
+                            "type": "string",
+                            "enum": [
+                              "Accepted",
+                              "Wrong Answer",
+                              "Time Limit Exceeded",
+                              "Memory Limit Exceeded",
+                              "Runtime Error",
+                              "Compilation Error"
+                            ],
+                            "example": "Accepted"
+                          },
+                          "difficulty": {
+                            "type": "string",
+                            "enum": [
+                              "easy",
+                              "medium",
+                              "hard"
+                            ],
+                            "example": "easy"
+                          },
+                          "language": {
+                            "type": "string",
+                            "enum": [
+                              "cpp",
+                              "javascript",
+                              "python"
+                            ],
+                            "example": "python"
+                          }
+                        }
+                      }
+                    },
+                    "total": {
+                      "type": "integer",
+                      "example": 25,
+                      "description": "Total number of submissions for the user"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid or expired token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Submissions not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Submissions not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/history/submissions/{submission_id}": {
+      "get": {
+        "tags": [
+          "HistoryService"
+        ],
+        "summary": "Get specific submission details",
+        "operationId": "getUserSubmission",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "submission_id",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the submission (MongoDB ObjectId)",
+            "schema": {
+              "type": "string",
+              "example": "673e8f9a1234567890abcdef"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Submission retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "submission": {
+                      "type": "object",
+                      "properties": {
+                        "question_id": {
+                          "type": "string",
+                          "example": "673e8f9a1234567890abcdef"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "run",
+                            "submit"
+                          ],
+                          "example": "submit",
+                          "description": "The mode of submission: 'run' for test runs or 'submit' for actual submissions"
+                        },
+                        "question_title": {
+                          "type": "string",
+                          "example": "Two Sum"
+                        },
+                        "submission_time": {
+                          "type": "string",
+                          "example": "2025-11-07T10:30:00.000Z",
+                          "description": "ISO 8601 date-time string"
+                        },
+                        "language": {
+                          "type": "string",
+                          "enum": [
+                            "cpp",
+                            "javascript",
+                            "python"
+                          ],
+                          "example": "python"
+                        },
+                        "code": {
+                          "type": "string",
+                          "example": "def twoSum(nums, target):\n    # code here"
+                        },
+                        "difficulty": {
+                          "type": "string",
+                          "enum": [
+                            "easy",
+                            "medium",
+                            "hard"
+                          ],
+                          "example": "easy"
+                        },
+                        "categories": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "example": [
+                            "algorithms",
+                            "data-structures"
+                          ]
+                        },
+                        "overall_result": {
+                          "type": "object",
+                          "properties": {
+                            "result": {
+                              "type": "string",
+                              "enum": [
+                                "Accepted",
+                                "Wrong Answer",
+                                "Time Limit Exceeded",
+                                "Memory Limit Exceeded",
+                                "Runtime Error",
+                                "Compilation Error"
+                              ],
+                              "example": "Accepted"
+                            },
+                            "max_memory_used": {
+                              "type": "number",
+                              "example": 14.2,
+                              "description": "Memory usage in MB (optional)"
+                            },
+                            "time_taken": {
+                              "type": "number",
+                              "example": 85,
+                              "description": "Execution time in milliseconds"
+                            },
+                            "error": {
+                              "type": "string",
+                              "example": "",
+                              "description": "Error message if any (optional)"
+                            },
+                            "output": {
+                              "type": "string",
+                              "example": "[0, 1]",
+                              "description": "Program output (optional)"
+                            },
+                            "passed_tests": {
+                              "type": "integer",
+                              "example": 10
+                            },
+                            "total_tests": {
+                              "type": "integer",
+                              "example": 10
+                            },
+                            "test_case_details": {
+                              "type": "object",
+                              "properties": {
+                                "input": {
+                                  "type": "string",
+                                  "example": "[2,7,11,15], 9"
+                                },
+                                "expected_output": {
+                                  "type": "string",
+                                  "example": "[0,1]"
+                                },
+                                "actual_output": {
+                                  "type": "string",
+                                  "example": "[0,1]"
+                                }
+                              },
+                              "description": "Details of failed test case (optional)"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid or expired token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Submission not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Submission not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/history/submissions/status/{ticket_id}": {
+      "get": {
+        "tags": [
+          "HistoryService"
+        ],
+        "summary": "Get submission status by ticket",
+        "operationId": "getSubmissionStatus",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "ticket_id",
+            "in": "path",
+            "required": true,
+            "description": "The ticket ID for the submission",
+            "schema": {
+              "type": "string",
+              "example": "ticket_789xyz"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Execution result is ready",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "example": "accepted"
+                        },
+                        "output": {
+                          "type": "string",
+                          "example": "[0, 1]"
+                        },
+                        "runtime": {
+                          "type": "number",
+                          "example": 85
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Execution still in progress, poll again (empty response body)"
+          },
+          "400": {
+            "description": "Ticket ID is necessary",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Ticket ID is necessary"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/history/submissions/rooms/{room_id}": {
+      "get": {
+        "tags": [
+          "HistoryService"
+        ],
+        "summary": "Get collaboration room submission history",
+        "operationId": "getRoomSubmissions",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "room_id",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the collaboration room",
+            "schema": {
+              "type": "string",
+              "example": "room_789xyz"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Room submissions retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "submissions": {
+                      "type": "array",
+                      "items": {
+                        "properties": {
+                          "submission_id": {
+                            "type": "string",
+                            "example": "673e8f9a1234567890abcdef"
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "Accepted",
+                              "Wrong Answer",
+                              "Time Limit Exceeded",
+                              "Memory Limit Exceeded",
+                              "Runtime Error",
+                              "Compilation Error"
+                            ],
+                            "example": "Accepted"
+                          },
+                          "mode": {
+                            "type": "string",
+                            "enum": [
+                              "run",
+                              "submit"
+                            ],
+                            "example": "submit"
+                          },
+                          "submitted_at": {
+                            "type": "string",
+                            "example": "2025-11-07T10:30:00.000Z",
+                            "description": "ISO 8601 date-time string"
+                          },
+                          "language": {
+                            "type": "string",
+                            "enum": [
+                              "cpp",
+                              "javascript",
+                              "python"
+                            ],
+                            "example": "cpp"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid or expired token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Submissions not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Submissions not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ai/code-translate": {
+      "post": {
+        "tags": [
+          "AIService"
+        ],
+        "summary": "Translate code between programming languages",
+        "operationId": "translateCode",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "from_lang",
+                  "to_lang",
+                  "code"
+                ],
+                "properties": {
+                  "from_lang": {
+                    "type": "string",
+                    "example": "python",
+                    "description": "Source programming language"
+                  },
+                  "to_lang": {
+                    "type": "string",
+                    "example": "javascript",
+                    "description": "Target programming language"
+                  },
+                  "code": {
+                    "type": "string",
+                    "example": "def hello_world():\n    print('Hello, World!')",
+                    "description": "The code to translate"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Code translated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "string",
+                      "example": "function helloWorld() {\n  console.log('Hello, World!');\n}",
+                      "description": "The translated code"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "Something went wrong"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT token obtained from login or registration"
+      }
+    }
+  }
+}

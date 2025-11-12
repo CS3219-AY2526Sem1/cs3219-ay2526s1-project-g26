@@ -1,0 +1,86 @@
+---
+title: "Quickstart"
+description: "Start building this awesome peerprep system in minutes"
+---
+
+## 📦 Prerequisites
+
+Before starting, make sure the following tools are installed:
+
+### Git
+
+- Download: [https://git-scm.com/downloads](https://git-scm.com/downloads)
+
+### Docker
+
+- Download: [https://www.docker.com/get-started](https://www.docker.com/get-started)
+
+<Warning>
+  Ensure Docker Desktop is **running** (especially for Windows/macOS users) as `dockerd` may not
+  start without Docker Desktop
+</Warning>
+
+<Note>
+  macOS M-chip users may use [OrbStack](https://orbstack.dev/) in place of Docker Desktop
+</Note>
+
+<Note>Linux users may need to add themselves to the `docker` group to avoid using `sudo`</Note>
+
+Check if docker is installed:
+
+```bash
+docker --version
+```
+
+---
+
+## Steps to Start
+
+<Steps>
+<Step title="Clone the Repository">
+
+```bash
+git clone https://github.com/CS3219-AY2526Sem1/cs3219-ay2526s1-project-g26
+cd cs3219-ay2526s1-project-g26
+```
+
+</Step>
+
+<Step title="Add Environment Variables">
+
+Add a `.env` file under `docker`.
+
+```bash
+cd docker
+cp .env.template .env
+```
+
+Fill in all environment variables in `.env`.
+
+</Step>
+
+<Step title="Build with Docker">
+
+Start building with `docker compose` (make sure you are in `/docker`):
+
+<Note>It may take some time for the initial build</Note>
+
+<CodeGroup>
+```bash docker-compose V2 (recommended)
+docker compose -f docker-compose.dev.yml up --build -d
+```
+
+```bash docker-compose V1
+docker-compose -f docker-compose.dev.yml up --build -d
+```
+
+</CodeGroup>
+
+</Step>
+</Steps>
+
+## Open the Project
+
+1. You can access the `frontend` via `http://localhost`
+2. You can access the `documentation` via `http://localhost:3005`
+3. You can access the backend services via `http://localhost/api/${backend_service_name}`

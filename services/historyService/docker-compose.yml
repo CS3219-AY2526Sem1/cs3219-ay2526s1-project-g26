@@ -1,0 +1,37 @@
+services:
+  history-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    container_name: history-service-prod
+    restart: unless-stopped
+    ports:
+      - '4040:4040'
+    environment:
+      - NODE_ENV=production
+      - PORT=4040
+      - BACKEND_BASE_URL=${BACKEND_BASE_URL}
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+      - KAFKA_BROKERS=${KAFKA_BROKERS}
+
+  db:
+    image: mongo:8.0
+    container_name: history-service-db
+    ports:
+      - '4041:27017'
+    volumes:
+      - history-service-db-data:/data/db
+      - ./src/database/init:/docker-entrypoint-initdb.d
+
+  redis:
+    image: redis:8-alpine
+    container_name: history-service-redis
+    restart: unless-stopped
+    ports:
+      - '4021:6379'
+    volumes:
+      - history-service-redis-data:/data
+volumes:
+  history-service-db-data:
+  history-service-redis-data:

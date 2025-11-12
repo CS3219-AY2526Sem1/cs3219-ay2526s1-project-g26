@@ -1,0 +1,47 @@
+# Byte-code files
+*.pyc
+__pycache__/
+*.pyd
+*.so
+
+# Editor/IDE files
+.vscode/
+.idea/
+*.swp
+*.bak
+*.swo
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Operating System files
+.DS_Store
+Thumbs.db
+
+# Test/Build artifacts
+.coverage
+.tox/
+dist/
+build/
+*.egg-info/
+
+# Logs and temporary files
+*.log
+tmp/
+temp/
+
+# Configuration files (if sensitive or local-specific)
+config.ini
+.env
+
+test_case_input_generator/inputs
+test_case_output_generator/outputs
+
+sql/
+outputs/
+questions_output.json
+questions.jsonl
+
+solutions/
