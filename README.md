@@ -115,8 +115,7 @@
     4. Return CodeExecutionOutput with: success (boolean), output (stdout string), error (stderr/error message), executionTime (in ms)
 
     5. Handle three error types: compilation errors, timeout errors, runtime errors
-
-    Use the CodeExecutionOutput and Language types from the attached types file.
+       Use the CodeExecutionOutput and Language types from the attached types file.
     ```
 
   - Output Summary: A .ts file with low-level code execution engine implementing the `executeCode` function and basic timeout handling with setTimeout.
@@ -158,6 +157,7 @@
   - Author Notes: Tested API requests with "try it" button, traced corresponding implementation files to debug errors, refined details such as password requirements. (.json files do not support comments, so AI usage disclosure is documented here in README only.)
 
 - `/docs/implementations/matching-algorithm.mdx`.
+
   - Date: 2025-11-12
   - Tool: Github Copilot (Claude Sonnet 4.5)
   - Prompt:
@@ -165,3 +165,12 @@
   - Output Summary: Auto generation of documentation inside matching-algorithm.mdx
   - Action Taken: Modified.
   - Author Notes: Read through and checked the generated documentation for correctness, removed sections which are not needed and modified parts that were unclear.
+
+- `/frontend/src/utils/y-websocket.js` and `services/collaborationService/src/utils/y-websocket/index.ts`and `frontend/src/components/collaboration_space/TopToolBar.tsx` and `frontend/src/pages/CollaborationPanel.tsx`.
+  - Date: 2025-11-02
+  - Tool: Github Copilot (Claude Sonnet 4.5)
+  - Prompt:
+    Explain the code workflow for code submission from frontend to collaboration service, and how to implement synchronised exit for both users in a room
+  - Output Summary: Generated explanation relating to prompt and provided changes to the related files
+  - Action Taken: Rejected.
+  - Author Notes: Rejected code writen by AI as code generated seem to be more overcomplicated than it should, but had a better understanding of code workflow and followed what has been done for code submission/run to implement synchronised exit.
