@@ -13,7 +13,7 @@ export const getUserProfile = async (id: string | undefined) => {
   }
 
   const result = await pool.query<User>(
-    `SELECT email, full_name, password_hash
+    `SELECT email, full_name
      FROM users
      WHERE id = $1;`,
     [id]
