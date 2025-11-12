@@ -158,7 +158,6 @@ export const requestPasswordReset = async (email: string): Promise<boolean> => {
   await redisClient.setex(redisKey, OTP_EXPIRATION_SECONDS, otpHash)
 
   // 5. Send the PLAIN TEXT OTP to the user
-  console.log(`Password reset OTP for ${email}: ${otp}`) // For debugging; remove in production
   await sendEmail(
     email,
     'Password Reset Code',

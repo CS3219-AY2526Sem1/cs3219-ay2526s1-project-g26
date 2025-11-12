@@ -621,11 +621,6 @@
                           "type": "string",
                           "example": "John Doe",
                           "description": "User's full name"
-                        },
-                        "password_hash": {
-                          "type": "string",
-                          "example": "$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36...",
-                          "description": "The hash of the user's password"
                         }
                       }
                     }
