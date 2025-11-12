@@ -127,20 +127,20 @@ Finally, if all checks pass, return the target user **(match found)**
 ### Scenario 2: Long Wait Time Match
 
 - User 1: Topics [Graphs], Difficulty [Hard]
-- User 2: Topics [Graphs], Difficulty [Easy], Waiting Time 150s (2min 45s)
+- User 2: Topics [Graphs], Difficulty [Easy], Waiting Time 150s (2min 30s)
 - Topic Overlap Flag (A): 1 (Graphs)
 - Waiting Time Threshold (T): 1 (150s >= 120s)
 - Difficulty Overlap Flag (B): 0
 - **Result**: Match found despite no difficulty overlap (Check 2: T=1 overrides B check)
 
-### Scenario 3: No Match (No overlap Topics)
+### Scenario 3: No Match (No Topic Overlap)
 
 - User A: Topics [Arrays], Difficulty [Easy]
 - User B: Topics [Graphs], Difficulty [Hard]
 - Topic Overlap Flag (A): 0
 - **Result**: No match (fails Check 1)
 
-### Scenario 4: No Match (No overlap Difficulty with short wait time)
+### Scenario 4: No Match (No Difficulty Overlap with Short Wait Time)
 
 - User A: Topics [Arrays, Graphs], Difficulty [Easy]
 - User B: Topics [Arrays], Difficulty [Medium], Waiting Time 60s
