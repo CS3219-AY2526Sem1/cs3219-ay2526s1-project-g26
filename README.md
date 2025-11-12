@@ -127,10 +127,19 @@
 - `/frontend/src/components/common/QuestionPanel.tsx`.
   - Date: 2025-10-08
   - Tool: Github Copilot (Claude Sonnet 4.5)
-  - Prompt (with attachments of Figma prototype screenshots for question display panel and `services\questionService\src\database\init\questions_output.json`):
+  - Prompt (with attachments of Figma prototype screenshots for question display panel and `services/questionService/src/database/init/questions_output.json`):
     ```markdown
     Create `QuestionPanel` component following the question schema in attached JSON file. Props: question, loading, error, onQuestionChange. Display question title with difficulty chip, category tags, description, MUI Accordions for examples (input/output/explanation) and constraints/hints. Include loading spinner and error alert.
     ```
   - Output Summary: A .tsx file implementing the QuestionPanel component with basic MUI layout, ReactMarkdown integration, and accordion structure for examples/constraints.
   - Action Taken: Modified.
   - Author Notes: Enhanced markdown rendering with custom styles for code blocks and lists and refined category chip layout and colors.
+
+- `/docs/api-reference/openapi.json`.
+  - Date: 2025-11-08
+  - Tool: Github Copilot (Claude Sonnet 4.5)
+  - Prompt:
+    Create API documentation openapi.json on Mintlify for PeerPrep. The document should follow the OpenAPI specification 3.0+. Generate complete API reference structure for four microservices: userservice, questionservice, historyservice, and aiservice. Include all endpoints with request/response schemas, authentication requirements, and list corresponding service implementation files for me to check. After generation, verify the JSON structure for errors.
+  - Output Summary: A .json file with OpenAPI 3.0 specification including server configurations, tags for four services, paths for all endpoints request/response schemas.
+  - Action Taken: Modified.
+  - Author Notes: Tested API requests with "try it" button, traced corresponding implementation files to debug errors, refined details such as password requirements. (.json files do not support comments, so AI usage disclosure is documented here in README only.)
