@@ -16,7 +16,7 @@ const router = Router()
 
 router.get('/match', authenticate(), async (req, res) => {
   const { difficulties, categories } = req.query
-  
+
   if (!difficulties || !categories) {
     return res.status(400).json({ error: 'Difficulty and categories are required' })
   }
