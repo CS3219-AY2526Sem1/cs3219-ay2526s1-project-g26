@@ -1,0 +1,162 @@
+---
+title: "Matching Algorithm"
+description: "Understanding the algorithm behind matching."
+---
+
+When a user clicks on the button to start matching, a `joinMatch` event is sent from the frontend matching socket to matching service socket. When the matching service receives the `joinMatch` event, it executes the matching algorithm to find a match for the user.
+
+## Overview
+
+The matching algorithm uses a **similarity score** system to pair users waiting in the queue. The algorithm balances multiple factors:
+
+- Topic overlap between users
+- Difficulty level compatibility
+- Waiting time (to prevent users from waiting too long)
+
+The similarity score is a 22-bit integer that encodes all these factors in a prioritized manner, allowing the algorithm to quickly compare and find the best match.
+
+## Similarity Score Structure
+
+The similarity score is composed of 6 components packed into a 22-bit integer:
+
+```
+|  A  |  T  |  B  |    C    |  D  |      E       |
+| 1bit| 1bit| 1bit|  5bits  |2bits|    12bits    |
+```
+
+### Component Breakdown
+
+**A (1 bit) - Topic Overlap Flag**
+
+- `0` if no common topics between users
+- `1` if at least one common topic exists
+
+**T (1 bit) - Waiting Time Threshold**
+
+- `0` if waiting time < 2 minutes
+- `1` if waiting time ≥ 2 minutes
+
+**B (1 bit) - Difficulty Overlap Flag**
+
+- `0` if no common difficulty levels
+- `1` if at least one common difficulty level
+
+**C (5 bits) - Topic Overlap Count**
+
+- Number of common topics between users
+- Max value: 31 (stored in 5 bits)
+
+**D (2 bits) - Difficulty Overlap Count**
+
+- Number of common difficulty levels
+- Max value: 3 (stored in 2 bits)
+
+**E (12 bits) - Waiting Time**
+
+- Waiting time of the target user in the queue, measured in seconds
+- Max value: 3600 seconds (60 minutes, stored in 12 bits)
+
+### Score Calculation Formula
+
+```
+Score = (A << 21) + (T << 20) + (B << 19) + (C << 14) + (D << 12) + E
+```
+
+Where `<<` represents bitwise left shift
+
+## Matching Algorithm Pseudocode
+
+```
+getMatch(user):
+    targetUsers = getAllUsers()
+
+    score = -1
+    target = null
+
+    for targetUser in targetUsers:
+        targetScore = calculateScore(user, targetUser)
+        if targetScore > score:
+            score = targetScore
+            target = targetUser
+
+    // Check 1st bit (A) - Must have at least one common topic
+    if 1st bit of score is 0:
+        return null
+
+    // Check 2nd bit (T) - If waiting >= 2 minutes, match immediately
+    if 2nd bit of score is 1:
+        return target
+
+    // Check 3rd bit (B) - Must have at least one common difficulty
+    if 3rd bit of score is 0:
+        return null
+
+    return target
+```
+
+## Matching Logic Flow
+
+### Step 1: Calculate Similarity Scores
+
+For each user waiting in the queue, the algorithm:
+
+1. Retrieves all users currently in the matching queue
+2. Calculates a similarity score between the new user and each queued user
+3. Tracks the highest-scoring potential match
+
+### Step 2: Apply Matching Rules
+
+The algorithm applies these rules in order of priority:
+
+**Rule 1: Topic Overlap Required**
+
+- If the highest score has bit A = 0 (no common topics), return `null` (no match)
+- Ensures users are matched on problems they're both interested in
+
+**Rule 2: Long Wait Time Override**
+
+- If the highest score has bit T = 1 (target waited ≥ 2 minutes), return the match immediately
+- Prevents users from waiting indefinitely
+- Bypasses the difficulty requirement for users who have been waiting for more than 2 minutes
+
+**Rule 3: Difficulty Overlap Required**
+
+- If the highest score has bit B = 0 (no common difficulty), return `null` (no match)
+- Ensures users are matched at appropriate difficulty levels
+- Only checked if waiting time < 2 minutes
+
+**Rule 4: Return Best Match**
+
+- If all checks pass, return the target user with the highest similarity score
+
+## Example Scenarios
+
+### Scenario 1: Perfect Match
+
+- User A: Topics [Arrays, Strings], Difficulty [Easy, Medium]
+- User B: Topics [Arrays, Trees], Difficulty [Easy]
+- Common topics: 1 (Arrays) → A=1
+- Common difficulties: 1 (Easy) → B=1
+- User B waiting time: 30 seconds → T=0, E=30
+- **Result**: Match found (A=1, B=1)
+
+### Scenario 2: Long Wait Time Match
+
+- User A: Topics [Graphs], Difficulty [Hard]
+- User B: Topics [Graphs], Difficulty [Easy]
+- Common topics: 1 (Graphs) → A=1
+- Common difficulties: 0 → B=0
+- User B waiting time: 150 seconds (2.5 min) → T=1
+- **Result**: Match found despite no difficulty overlap (T=1 overrides B check)
+
+### Scenario 3: No Match
+
+- User A: Topics [Arrays], Difficulty [Easy]
+- User B: Topics [Graphs], Difficulty [Hard]
+- Common topics: 0 → A=0
+- **Result**: No match (fails Rule 1)
+
+## Performance Considerations
+
+- **Time Complexity**: O(n) where n is the number of users in the queue
+- **Space Complexity**: O(n) for storing user data

@@ -26,7 +26,8 @@
             "group": "Implementations",
             "pages": [
               "implementations/peer-coding",
-              "implementations/code-submission"
+              "implementations/code-submission",
+              "implementations/matching-algorithm"
             ]
           },
           {
