@@ -45,7 +45,7 @@
 
 - `/services/questionService/src/services/questionService.ts`.
 
-  - Date: from 2025‑09-24 to 2025-10-23
+  - Date: from 2025-09-24 to 2025-10-23
   - Tool: Gemini 2.5 Pro
   - Prompt (Summary): Generate endpoints implementation for `getQuestionTestCases`, `getAllQuestions`, `getAllCategoryAndDifficulty`, `updateQuestion`, `createQuestion`, `deleteQuestion`.
   - Output Summary: A .ts file with implementation with all these endpoints.
@@ -161,7 +161,7 @@
   - Date: 2025-11-12
   - Tool: Github Copilot (Claude Sonnet 4.5)
   - Prompt:
-    Generate documentation in matching-algorithm.mdx to explain the matching algorithm. (Attached Two Images, one showing psuedocode of matching algorithm and the other showing the similarity score structure)
+    Generate documentation in matching-algorithm.mdx to explain the matching algorithm. (Attached Two Images, one showing pseudocode of matching algorithm and the other showing the similarity score structure)
   - Output Summary: Auto generation of documentation inside matching-algorithm.mdx
   - Action Taken: Modified.
   - Author Notes: Read through and checked the generated documentation for correctness, removed sections which are not needed and modified parts that were unclear.
