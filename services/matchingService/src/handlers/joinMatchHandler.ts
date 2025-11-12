@@ -5,7 +5,6 @@ import { SocketIdStorage } from '../database/socketIdStorage.js'
 import { randomUUID } from 'crypto'
 import { QUESTION_SERVICE_URL } from '../config/index.js'
 import { matchSuccess } from '../constants/eventNames.js'
-import { getToken } from './matchingSocketHandler.js'
 import { Question } from '../models/question.js'
 
 export async function joinMatchHandler(
@@ -32,12 +31,8 @@ export async function joinMatchHandler(
     const overlapDifficulties = userinfo.difficulty.filter((diff) =>
       matchedUser!.difficulty.includes(diff)
     )
-    const token = getToken(socket)
-    const question = await fetchQuestion(
-      overlapDifficulties,
-      overlapTopics,
-      token
-    )
+
+    const question = await fetchQuestion(overlapDifficulties, overlapTopics)
 
     const otherSocketId = await SocketIdStorage.getSocketId(matchedUser.id)
     if (!otherSocketId) {
@@ -55,8 +50,7 @@ export async function joinMatchHandler(
 
 async function fetchQuestion(
   overlapDifficulties: string[],
-  overlapTopics: string[],
-  token: string
+  overlapTopics: string[]
 ): Promise<Question> {
   const params = new URLSearchParams({
     difficulties: overlapDifficulties.join(','),
@@ -64,9 +58,6 @@ async function fetchQuestion(
   })
   const res = await fetch(`${QUESTION_SERVICE_URL}/match?${params}`, {
     method: 'GET',
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
   })
   if (!res.ok) {
     throw new Error(`Failed to fetch question with status: ${res.status}`)
