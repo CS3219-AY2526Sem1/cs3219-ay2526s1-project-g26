@@ -61,9 +61,8 @@
                   "password": {
                     "type": "string",
                     "minLength": 8,
-                    "maxLength": 128,
                     "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!-,:-@\\[-`{-~])[!-~]+$",
-                    "description": "Password must be 8-128 characters and contain at least one uppercase letter, one lowercase letter, one number, and one special character (e.g. !@#$%^&*()-_=+[]{}|;:',.<>?/`~).",
+                    "description": "Password must be at least 8 characters and contain at least one uppercase letter, one lowercase letter, one number, and one special character (e.g. !@#$%^&*()-_=+[]{}|;:',.<>?/`~).",
                     "example": "SecurePass123!"
                   },
                   "full_name": {
@@ -528,7 +527,7 @@
                     "minLength": 8,
                     "maxLength": 128,
                     "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!-,:-@\\[-`{-~])[!-~]+$",
-                    "description": "User's new password (optional). If provided, must be 8-128 characters and contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
+                    "description": "User's new password (optional). If provided, must be at least characters and contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
                     "example": "NewSecurePass123!"
                   },
                   "full_name": {
@@ -600,6 +599,10 @@
                     },
                     "message": {
                       "type": "string",
+                      "enum": [
+                        "Invalid or expired token",
+                        "Authorization token missing"
+                      ],
                       "example": "Invalid or expired token"
                     }
                   }
@@ -620,7 +623,7 @@
                     },
                     "message": {
                       "type": "string",
-                      "example": "User not found"
+                      "example": "User Not Found!"
                     }
                   }
                 }

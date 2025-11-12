@@ -96,7 +96,8 @@ export const updateUserProfile = async (
     throw new AppError(err.message, 500)
   }
 
-  if (!result) {
-    throw new AppError('User not found', 404)
+  console.log(result)
+  if (!result || result.rowCount == 0) {
+    throw new AppError('User Not Found!', 404)
   }
 }
