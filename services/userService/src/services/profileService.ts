@@ -20,7 +20,7 @@ export const getUserProfile = async (id: string | undefined) => {
   )
 
   if (!result || result.rows.length === 0) {
-    throw new AppError('User Not Found!', 404)
+    throw new AppError('User not found', 404)
   }
 
   return result.rows[0]
@@ -98,6 +98,6 @@ export const updateUserProfile = async (
 
   console.log(result)
   if (!result || result.rowCount == 0) {
-    throw new AppError('User Not Found!', 404)
+    throw new AppError('User not found', 404)
   }
 }

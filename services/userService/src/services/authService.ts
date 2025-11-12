@@ -158,6 +158,7 @@ export const requestPasswordReset = async (email: string): Promise<boolean> => {
   await redisClient.setex(redisKey, OTP_EXPIRATION_SECONDS, otpHash)
 
   // 5. Send the PLAIN TEXT OTP to the user
+  console.log(`Password reset OTP for ${email}: ${otp}`) // For debugging; remove in production
   await sendEmail(
     email,
     'Password Reset Code',
@@ -222,7 +223,12 @@ export const resetPassword = async (
   // 4. Code is valid, hash the new password
   const hashedPassword = await bcrypt.hash(newPassword, 10)
 
-  // 5. Update the user's password in the main database
+  // 5. Check if the password meets complexity requirements, terminate if otherwise
+  if (!isValidPassword(newPassword)) {
+    throw new AppError('New password does not meet requirements', 400)
+  }
+
+  // 6. Update the user's password in the main database
   // We use 'RETURNING id' to confirm the update worked
   const updateResult = await pool.query(
     'UPDATE users SET password_hash = $1 WHERE email = $2 RETURNING id',
@@ -235,7 +241,7 @@ export const resetPassword = async (
     throw new AppError('User not found', 404)
   }
 
-  // 6. Delete the key from Redis to mark it as "used"
+  // 7. Delete the key from Redis to mark it as "used"
   await redisClient.del(redisKey)
 
   return true

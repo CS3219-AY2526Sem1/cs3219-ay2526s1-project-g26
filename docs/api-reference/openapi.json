@@ -380,6 +380,210 @@
         }
       }
     },
+    "/user/auth/forgot-password": {
+      "post": {
+        "tags": [
+          "UserService - Auth"
+        ],
+        "summary": "Request password reset OTP",
+        "operationId": "requestPasswordReset",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "User's email address to send OTP to",
+                    "example": "john@example.com"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OTP sent successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "OTP has been sent"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - email is required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Email is required"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "User not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/auth/reset-password": {
+      "post": {
+        "tags": [
+          "UserService - Auth"
+        ],
+        "summary": "Reset password using OTP",
+        "operationId": "resetPassword",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "code",
+                  "newPassword"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "User's email address",
+                    "example": "john@example.com"
+                  },
+                  "code": {
+                    "type": "string",
+                    "description": "OTP code received via email",
+                    "example": "123456"
+                  },
+                  "newPassword": {
+                    "type": "string",
+                    "minLength": 8,
+                    "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!-,:-@\\[-`{-~])[!-~]+$",
+                    "description": "New password must be at least 8 characters and contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+                    "example": "NewSecurePass123!"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password reset successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully reset password"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - missing fields, invalid OTP or password",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "enum": [
+                        "Invalid or expired reset code",
+                        "Email, code and new password are required",
+                        "New password does not meet requirements",
+                        "OTP is incorrect or User does not exist"
+                      ],
+                      "example": "Invalid or expired reset code"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found - user does not exist in database",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "User not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/user/profile/me": {
       "get": {
         "tags": [
@@ -443,7 +647,7 @@
                     },
                     "message": {
                       "type": "string",
-                      "example": "User Not Found!"
+                      "example": "User not found"
                     }
                   }
                 }
@@ -623,7 +827,7 @@
                     },
                     "message": {
                       "type": "string",
-                      "example": "User Not Found!"
+                      "example": "User not found"
                     }
                   }
                 }
