@@ -1,3 +1,9 @@
+/**
+ * AI Assistance Disclosure:
+ * Tool: Github Copilot(Claude Sonnet 4.5), date: 2025-10-08
+ * Scope: Generated the QuestionPanel component with basic MUI layout, ReactMarkdown integration, and accordion structure for examples and constraints.
+ * Author review:  I validated correctness and enhanced markdown rendering with custom styles for code blocks and lists and refined category chip layout and colors.
+ */
 import React from 'react'
 import {
   Box,
