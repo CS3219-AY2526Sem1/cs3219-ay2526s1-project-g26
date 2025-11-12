@@ -48,6 +48,9 @@ router.get('/rooms/:room_id', authenticate(), async (req, res) => {
   const roomId = req.params.room_id
 
   const submissions = await getRoomSubmissions(roomId)
+  if (!submissions) {
+    throw new AppError('Submissions not found', 404)
+  }
   return res.json({ success: true, submissions })
 })
 

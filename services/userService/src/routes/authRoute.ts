@@ -36,7 +36,12 @@ router.post(
   async (req: AuthRequest, res, next) => {
     const shouldBeAdmin = req.query?.shouldBeAdmin
     if (shouldBeAdmin === 'true' && req.user?.role != 'admin') {
-      return next(new AppError('You do not have the permission!', 401))
+      return next(
+        new AppError(
+          'You do not have permissions to perform this operation!',
+          401
+        )
+      )
     }
     return res.json({ success: true, user: req.user })
   }
@@ -63,6 +68,7 @@ router.post('/reset-password', async (req, res, next) => {
   }
 
   const ok = await resetPassword(email, code, newPassword)
+  // Note: Should not normally occur due to resetPassword throwing errors on failure modes
   if (!ok) {
     return next(new AppError('OTP is incorrect or User does not exist', 400))
   }
