@@ -8,10 +8,10 @@
   - Sign up
   - Sign in
   - Reset password
-  - Update profile
+  - View & Update profile
   - Logout
 - Matching Related:
-  - Start a matching
+  - Find a matching
 - Collaboration Session Related:
   - View the question in Markdown format
   - Edit on a shared document
@@ -29,6 +29,17 @@
 - Submission History Related:
   - View summary of all attempted submissions
   - View a detailed submission
+- Question Related:
+  - Select the most fit question given categories and difficulties.
+  - Allow admins CRUD a question.
+  - Support bulk insert of questions and convert to SQL statements.
+- DevOps:
+  - Kubernetes Cluster (GKE) for deployment.
+  - Dockerfiles for building images.
+  - Google Cloud Build that deploys the application on GitHub push event to master branch.
+  - Rolling deployment strategy.
+  - Auto horizontal and vertical scaling.
+  - Nginx API gateway.
 
 ## AI Use Summary
 
