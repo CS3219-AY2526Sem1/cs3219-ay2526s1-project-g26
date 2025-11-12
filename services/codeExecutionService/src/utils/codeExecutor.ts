@@ -1,3 +1,9 @@
+/**
+ * AI Assistance Disclosure:
+ * Tool: Github Copilot(Claude Sonnet 4.5), date: 2025-10-24
+ * Scope: Generated `executeCode` function including language configuration for C++/Python/JavaScript, basic process spawning with child_process, and timeout handling structure.
+ * Author review: I validated correctness, added memory monitoring with `pidusage` and edited for style.
+ */
 import { spawn } from 'child_process'
 import pidusage from 'pidusage'
 import { CodeExecutionOutput, Language } from '../types/index.js'
