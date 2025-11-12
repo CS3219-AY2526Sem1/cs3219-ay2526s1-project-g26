@@ -1,0 +1,27 @@
+---
+title: "Database Choices"
+description: "Understanding the database choices for each microservice."
+---
+
+## Question Service
+
+- Choice: **MongoDB**
+- Reasons:
+  - Complex & nested schema.
+  - High availability & scalability.
+  - Unlikely to be changed once created.
+
+## History Service
+
+- Choice: **MongoDB**
+- Reasons:
+  - Complex & nested schema.
+  - High availability & scalability.
+  - Unlikely to be changed once created.
+
+## User Service
+
+- Choice: **PostgreSQL**
+- Reasons:
+  - Data integrity & consistency as user information is critical.
+  - Strict schema to prevent users from having bad/inconsistent data.
