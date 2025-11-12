@@ -143,3 +143,19 @@
   - Output Summary: A .json file with OpenAPI 3.0 specification including server configurations, tags for four services, paths for all endpoints request/response schemas.
   - Action Taken: Modified.
   - Author Notes: Tested API requests with "try it" button, traced corresponding implementation files to debug errors, refined details such as password requirements. (.json files do not support comments, so AI usage disclosure is documented here in README only.)
+
+- `services/historyService/src/services/submissionHistoryService.ts`.
+  - Date: Between Sep and Oct 2025
+  - Tool: Github Copilot (Calude Sonnet 4.5)
+  - Prompt (paraphrased, summarised): Break down what the existing code committed by others does, and (later on) modify the code to filter by run mode.
+  - Output Summary: The relevant explanation, and a .tsx file with the changes made
+  - Action Taken: Confirmed with Google, and rejected due to it not working.
+  - Author Notes: Also modified with attempted code to run and asking for debugging assistance, but it did not work here.
+
+- `services\userService\src\services\authService.ts`.
+  - Date: Between Sep and Oct 2025
+  - Tool: Github Copilot (Calude Sonnet 4.5)
+  - Prompt (summarised): suggest an alternative to the regex that doesn't trip the security flags for polynomial backtracking.
+  - Output Summary: The code separated out into a function for later use.
+  - Action Taken: Modified.
+  - Author Notes: The generated code did not quite have the same behaviour as before, and needed to change to ensure sync between frontend and backend.
